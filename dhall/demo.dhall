@@ -5,20 +5,21 @@ let Prelude =
 
 let Gen = ./package.dhall
 
+let Result = ./Result.dhall
+
 let Config = Natural
 
 let gen
     : Gen.Gen
     = Gen.compileGen
         Config
-        { configParser =
-            \(path : Gen.JsonPath) ->
+        { parseConfig =
             \(json : Gen.Json) ->
-              (Gen.Result Gen.JsonParsingError Config).Success 0
+              (Result.Type Gen.JsonParsingError Config).Success 0
         , generate =
             \(config : Config) ->
             \(project : Gen.Project) ->
-              (Gen.Result Gen.GenerationError Gen.GeneratedFiles).Success
+              (Result.Type Gen.GenerationError Gen.GeneratedFiles).Success
                 [ { mapKey = "file.txt"
                   , mapValue = "This is a generated file."
                   }

@@ -2,19 +2,13 @@ let Prelude =
       https://prelude.dhall-lang.org/v23.1.0/package.dhall
         sha256:931cbfae9d746c4611b07633ab1e547637ab4ba138b16bf65ef1b9ad66a60b7f
 
-let Result =
-      \(Failure : Type) ->
-      \(Success : Type) ->
-        < Failure : Failure | Success : Success >
+let Result = ./Result.dhall
 
 let Json = Prelude.JSON.Type
 
 let JsonPath = List Text
 
 let JsonParsingError = { path : JsonPath, message : Text }
-
-let JsonParser =
-      \(res : Type) -> JsonPath -> Json -> Result JsonParsingError res
 
 let Name = List Text
 
@@ -28,22 +22,23 @@ let Map = Prelude.Map.Type
 
 let GeneratedFiles = Map Text Text
 
-let GenParams =
+let GenSetup =
       \(config : Type) ->
-        { configParser : JsonPath -> Json -> Result JsonParsingError config
-        , generate : config -> Project -> Result GenerationError GeneratedFiles
+        { parseConfig : Json -> Result.Type JsonParsingError config
+        , generate :
+            config -> Project -> Result.Type GenerationError GeneratedFiles
         }
 
 let GenError = < Config : JsonParsingError | Generation : GenerationError >
 
-let GenResult = Result GenError GeneratedFiles
+let GenResult = Result.Type GenError GeneratedFiles
 
 let Gen = Json -> Project -> GenResult
 
 let compileGen
-    : forall (Config : Type) -> GenParams Config -> Gen
+    : forall (Config : Type) -> GenSetup Config -> Gen
     = \(Config : Type) ->
-      \(gen : GenParams Config) ->
+      \(gen : GenSetup Config) ->
       \(configJson : Json) ->
       \(project : Project) ->
         merge
@@ -61,17 +56,15 @@ let compileGen
                   }
                   (gen.generate config project)
           }
-          (gen.configParser ([] : JsonPath) configJson)
+          (gen.parseConfig configJson)
 
-in  { Result
-    , JsonPath
-    , Json
+in  { Json
     , JsonParsingError
-    , JsonParser
+    , JsonPath
     , GenerationError
     , GenError
     , GenResult
-    , GenParams
+    , GenSetup
     , Gen
     , compileGen
     , GeneratedFiles
