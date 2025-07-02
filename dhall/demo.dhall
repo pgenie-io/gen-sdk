@@ -8,17 +8,21 @@ let Gen = ./package.dhall
 let Config = Natural
 
 let gen
-    : Gen.Gen Config
-    = { configParser =
-          \(path : Gen.JsonPath) ->
-          \(json : Gen.Json) ->
-            (Gen.Result Gen.JsonParsingError Config).Success 0
-      , generate =
-          \(config : Config) ->
-          \(project : Gen.Project) ->
-            (Gen.Result Gen.GenerationError Gen.GeneratedFiles).Success
-              [ { mapKey = "file.txt", mapValue = "This is a generated file." }
-              ]
-      }
+    : Gen.Gen
+    = Gen.compileGen
+        Config
+        { configParser =
+            \(path : Gen.JsonPath) ->
+            \(json : Gen.Json) ->
+              (Gen.Result Gen.JsonParsingError Config).Success 0
+        , generate =
+            \(config : Config) ->
+            \(project : Gen.Project) ->
+              (Gen.Result Gen.GenerationError Gen.GeneratedFiles).Success
+                [ { mapKey = "file.txt"
+                  , mapValue = "This is a generated file."
+                  }
+                ]
+        }
 
 in  gen
