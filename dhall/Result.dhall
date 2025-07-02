@@ -1,3 +1,3 @@
-\(Failure : Type) ->
-\(Success : Type) ->
-  < Failure : Failure | Success : Success >
+\(failure : Type) ->
+\(success : Type) ->
+  < Failure : failure | Success : success >
