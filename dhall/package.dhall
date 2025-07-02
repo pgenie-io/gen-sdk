@@ -22,14 +22,57 @@ let Version = { major : Natural, minor : Natural, patch : Natural }
 
 let Project = { name : Name, version : Version }
 
+let GenerationError = { path : List Text, message : Text }
+
 let Map = Prelude.Map.Type
 
 let GeneratedFiles = Map Text Text
 
 let Gen =
       \(config : Type) ->
-        { parseConfig : JsonParser config
-        , generate : config -> Project -> Result Text GeneratedFiles
+        { configParser : JsonPath -> Json -> Result JsonParsingError config
+        , generate : config -> Project -> Result GenerationError GeneratedFiles
         }
 
-in  { Gen, JsonPath, Name, Version, JsonParsingError, Project, JsonParser }
+let GenError = < Config : JsonParsingError | Generation : GenerationError >
+
+let GenResult = Result GenError GeneratedFiles
+
+let runGen
+    : forall (Config : Type) -> Gen Config -> Json -> Project -> GenResult
+    = \(Config : Type) ->
+      \(gen : Gen Config) ->
+      \(configJson : Json) ->
+      \(project : Project) ->
+        merge
+          { Failure =
+              \(err : JsonParsingError) ->
+                GenResult.Failure (GenError.Config err)
+          , Success =
+              \(config : Config) ->
+                merge
+                  { Failure =
+                      \(err : GenerationError) ->
+                        GenResult.Failure (GenError.Generation err)
+                  , Success =
+                      \(files : GeneratedFiles) -> GenResult.Success files
+                  }
+                  (gen.generate config project)
+          }
+          (gen.configParser ([] : JsonPath) configJson)
+
+in  { Result
+    , JsonPath
+    , Json
+    , JsonParsingError
+    , JsonParser
+    , GenerationError
+    , GenError
+    , GenResult
+    , Gen
+    , runGen
+    , GeneratedFiles
+    , Name
+    , Version
+    , Project
+    }
