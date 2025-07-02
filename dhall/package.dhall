@@ -1,1 +1,1 @@
-{ types = ./types.dhall, Gen = ./Gen.dhall }
+{ Gen = ./Gen.dhall }
