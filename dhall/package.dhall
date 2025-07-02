@@ -22,7 +22,7 @@ let Map = Prelude.Map.Type
 
 let GeneratedFiles = Map Text Text
 
-let GenSetup =
+let GenParams =
       \(config : Type) ->
         { parseConfig : Json -> Result.Type JsonParsingError config
         , generate :
@@ -35,10 +35,10 @@ let GenResult = Result.Type GenError GeneratedFiles
 
 let Gen = Json -> Project -> GenResult
 
-let compileGen
-    : forall (Config : Type) -> GenSetup Config -> Gen
+let construct
+    : forall (Config : Type) -> GenParams Config -> Gen
     = \(Config : Type) ->
-      \(gen : GenSetup Config) ->
+      \(gen : GenParams Config) ->
       \(configJson : Json) ->
       \(project : Project) ->
         merge
@@ -62,12 +62,12 @@ in  { Json
     , JsonParsingError
     , JsonPath
     , GenerationError
+    , GeneratedFiles
     , GenError
     , GenResult
-    , GenSetup
+    , GenParams
     , Gen
-    , compileGen
-    , GeneratedFiles
+    , construct
     , Name
     , Version
     , Project

@@ -7,23 +7,20 @@ let Gen = ./package.dhall
 
 let Result = ./Result.dhall
 
-let Config = Natural
+let Config = {}
 
-let gen
-    : Gen.Gen
-    = Gen.compileGen
-        Config
-        { parseConfig =
-            \(json : Gen.Json) ->
-              (Result.Type Gen.JsonParsingError Config).Success 0
-        , generate =
-            \(config : Config) ->
-            \(project : Gen.Project) ->
-              (Result.Type Gen.GenerationError Gen.GeneratedFiles).Success
-                [ { mapKey = "file.txt"
-                  , mapValue = "This is a generated file."
-                  }
-                ]
-        }
+let parseConfig
+    : Gen.Json -> Result.Type Gen.JsonParsingError Config
+    = \(json : Gen.Json) ->
+        (Result.Type Gen.JsonParsingError Config).Success {=}
 
-in  gen
+let generate
+    : Config ->
+      Gen.Project ->
+        Result.Type Gen.GenerationError Gen.GeneratedFiles
+    = \(config : Config) ->
+      \(project : Gen.Project) ->
+        (Result.Type Gen.GenerationError Gen.GeneratedFiles).Success
+          [ { mapKey = "file.txt", mapValue = "This is a generated file." } ]
+
+in  Gen.construct Config { parseConfig, generate }
