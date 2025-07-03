@@ -1,0 +1,1 @@
+{ firstChar : Text, otherChars : Text }

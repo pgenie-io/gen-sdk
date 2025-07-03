@@ -10,7 +10,7 @@ let JsonPath = List Text
 
 let JsonParsingError = { path : JsonPath, message : Text }
 
-let Name = List Text
+let Name = (./Name/package.dhall).Type
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
