@@ -1,1 +1,1 @@
-{ Name/test = ./Name/test.dhall }
+{ Name/test = ./Name/test.dhall, StrictName/test = ./StrictName/test.dhall }
