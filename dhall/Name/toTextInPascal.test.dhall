@@ -1,23 +1,18 @@
 let subj = ./toTextInPascal.dhall
 
+let Name = ./Type.dhall
+
+let Segment = ./Segment/Type.dhall
+
+let seg = ./Segment/fromParts.dhall
+
 in  { multiSegment =
           assert
-        :     subj
-                [ { firstChar = "H", otherChars = "ello" }
-                , { firstChar = "W", otherChars = "orld" }
-                , { firstChar = "E", otherChars = "xample" }
-                ]
+        :     subj [ seg "h" "ello", seg "w" "orld", seg "e" "xample" ]
           ===  "HelloWorldExample"
-    , singleSegment =
-        assert : subj [ { firstChar = "T", otherChars = "est" } ] === "Test"
-    , emptyName =
-        assert : subj ([] : List { firstChar : Text, otherChars : Text }) === ""
+    , singleSegment = assert : subj [ seg "T" "est" ] === "Test"
+    , emptyName = assert : subj ([] : Name) === ""
     , specialChars =
           assert
-        :     subj
-                [ { firstChar = "A", otherChars = "PI" }
-                , { firstChar = "V", otherChars = "2" }
-                , { firstChar = "U", otherChars = "ser" }
-                ]
-          ===  "APIV2User"
+        : subj [ seg "a" "pi", seg "v" "2", seg "u" "ser" ] === "ApiV2User"
     }
