@@ -2,4 +2,5 @@
 , toTextInKebab = ./toTextInKebab.test.dhall
 , toTextInPascal = ./toTextInPascal.test.dhall
 , toTextInSnake = ./toTextInSnake.test.dhall
+, toName = ./toName.test.dhall
 }
