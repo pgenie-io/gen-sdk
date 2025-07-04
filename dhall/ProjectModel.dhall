@@ -1,9 +1,8 @@
-let Imports =
-      { Prelude = ./Prelude.dhall, StrictName = ./StrictName/package.dhall }
+let Prelude = ./Prelude.dhall
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let Name = Imports.StrictName.Type
+let Name = ./StrictName/Type.dhall
 
 let Primitive =
       < Bool
@@ -49,9 +48,9 @@ let Scalar = < Primitive : Primitive | Custom : Name >
 
 let Dimensional = { dimensionality : Natural, scalar : Scalar }
 
-let TypeSig = { isNullable : Bool, dimensional : Dimensional }
+let Value = { isNullable : Bool, dimensional : Dimensional }
 
-let CompositeField = { name : Name, pgName : Text, definition : TypeSig }
+let CompositeField = { name : Name, pgName : Text, definition : Value }
 
 let EnumVariant = { name : Name, pgName : Text }
 
@@ -64,7 +63,26 @@ let CustomTypeDefinition =
 let CustomType =
       { name : Name, pgName : Text, definition : CustomTypeDefinition }
 
-let Project = { name : Name, version : Version, customTypes : List CustomType }
+let Field = { name : Name, type : Value }
+
+let QueryFragment = < Sql : Text | Var : Name >
+
+let Query =
+      { params : List { name : Name, type : Value }
+      , result :
+          Optional
+            { category : < Optional | Single | Mutliple >
+            , row : Prelude.NonEmpty.Type Field
+            }
+      , fragments : List QueryFragment
+      }
+
+let Project =
+      { name : Name
+      , version : Version
+      , customTypes : List CustomType
+      , queries : List Query
+      }
 
 in  { Project
     , Version
@@ -72,9 +90,12 @@ in  { Project
     , Primitive
     , Scalar
     , Dimensional
-    , TypeSig
+    , Value
     , CompositeField
     , EnumVariant
     , CustomTypeDefinition
     , CustomType
+    , Field
+    , QueryFragment
+    , Query
     }
