@@ -68,7 +68,9 @@ let Field = { name : Name, type : Value }
 let QueryFragment = < Sql : Text | Var : Name >
 
 let Query =
-      { params : List Field
+      { name : Name
+      , srcPath : Text
+      , params : List Field
       , result :
           Optional
             { category : < Optional | Single | Mutliple >
