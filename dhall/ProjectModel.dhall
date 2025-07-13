@@ -65,17 +65,18 @@ let CustomType =
 
 let Field = { name : Name, type : Value }
 
+let ResultRowsCategory = < Optional | Single | Multiple >
+
+let ResultRows =
+      { category : ResultRowsCategory, row : Prelude.NonEmpty.Type Field }
+
 let QueryFragment = < Sql : Text | Var : Name >
 
 let Query =
       { name : Name
       , srcPath : Text
       , params : List Field
-      , result :
-          Optional
-            { category : < Optional | Single | Mutliple >
-            , row : Prelude.NonEmpty.Type Field
-            }
+      , result : Optional ResultRows
       , fragments : List QueryFragment
       }
 
