@@ -9,8 +9,8 @@ let Project = Gen.Project
 
 let Config = {}
 
-let gen
-    : Gen.Gen Config
+let generate
+    : Gen.Generate Config
     = \(config : Config) ->
       \(project : Project.Project) ->
         Gen.Result.Success
@@ -22,4 +22,4 @@ let gen
             ]
           }
 
-in  { Config, gen }
+in  Gen.Gen Config generate

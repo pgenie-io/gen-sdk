@@ -10,8 +10,13 @@ let File = { path : Text, content : Text }
 let Result =
       < Failure | Success : { warnings : List Warning, files : List File } >
 
-let Gen
+let Generate
     : Type -> Type
     = \(Config : Type) -> Config -> Project.Project -> Result
 
-in  { Project, Warning, File, Result, Gen }
+let Gen =
+      \(Config : Type) ->
+      \(generate : Generate Config) ->
+        { Config, Project, generate }
+
+in  { Project, Warning, File, Result, Generate, Gen }
