@@ -1,22 +1,17 @@
 let Prelude = ./Prelude.dhall
 
-let ProjectModel = ./ProjectModel.dhall
+let Project = ./ProjectModel.dhall
 
 let Warning =
-      < UnsupportedType :
-          { type : ProjectModel.Value, query : ProjectModel.Query }
-      >
+      < UnsupportedType : { type : Project.Value, query : Project.Query } >
 
-let GenerationResult =
-      < Failure
-      | Success :
-          { warnings : List Warning
-          , generatedFiles : List { path : Text, content : Text }
-          }
-      >
+let File = { path : Text, content : Text }
 
-let Gen =
-      forall (Config : Type) ->
-        { generate : Config -> ProjectModel.Project -> GenerationResult }
+let Result =
+      < Failure | Success : { warnings : List Warning, files : List File } >
 
-in  { Gen }
+let Gen
+    : Type -> Type
+    = \(Config : Type) -> Config -> Project.Project -> Result
+
+in  { Project, Warning, File, Result, Gen }
