@@ -63,7 +63,7 @@ let CustomTypeDefinition =
 let CustomType =
       { name : Name, pgName : Text, definition : CustomTypeDefinition }
 
-let Field = { name : Name, type : Value }
+let Field = { name : Name, value : Value }
 
 let ResultRowsCategory = < Optional | Single | Multiple >
 

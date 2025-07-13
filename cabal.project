@@ -1,0 +1,6 @@
+with-compiler: ghc-9.10.2
+packages:
+  ./haskell
+allow-newer: 
+  , *:ghc-prim
+  , dhall-json:aeson

@@ -7,7 +7,7 @@ let Gen = ../Gen.dhall
 
 let Project = Gen.Project
 
-let Config = {}
+let Config = ./Config.dhall
 
 let generate
     : Gen.Generate Config

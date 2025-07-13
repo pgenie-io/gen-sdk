@@ -1,0 +1,152 @@
+cabal-version: 3.4
+name: pgenie-gen
+version: 0
+category:
+synopsis:
+description:
+homepage: https://github.com/nikita-volkov/pgenie-gen
+bug-reports: https://github.com/nikita-volkov/pgenie-gen/issues
+author: Nikita Volkov <nikita.y.volkov@mail.ru>
+maintainer: Nikita Volkov <nikita.y.volkov@mail.ru>
+copyright: (c) 2025, Nikita Volkov
+license: GPL-3.0-or-later
+license-file: LICENSE
+
+source-repository head
+  type: git
+  location: https://github.com/nikita-volkov/pgenie-gen
+
+common base
+  default-language: Haskell2010
+  default-extensions:
+    ApplicativeDo
+    Arrows
+    BangPatterns
+    BlockArguments
+    ConstraintKinds
+    DataKinds
+    DefaultSignatures
+    DeriveAnyClass
+    DeriveDataTypeable
+    DeriveFoldable
+    DeriveFunctor
+    DeriveGeneric
+    DeriveTraversable
+    DerivingStrategies
+    DerivingVia
+    DuplicateRecordFields
+    EmptyDataDecls
+    FlexibleContexts
+    FlexibleInstances
+    FunctionalDependencies
+    GADTs
+    GeneralizedNewtypeDeriving
+    ImportQualifiedPost
+    LambdaCase
+    LiberalTypeSynonyms
+    MagicHash
+    MultiParamTypeClasses
+    MultiWayIf
+    NamedFieldPuns
+    NoFieldSelectors
+    NoImplicitPrelude
+    NoMonomorphismRestriction
+    NumericUnderscores
+    OverloadedRecordDot
+    OverloadedStrings
+    ParallelListComp
+    PatternGuards
+    QuasiQuotes
+    RankNTypes
+    RecordWildCards
+    ScopedTypeVariables
+    StandaloneDeriving
+    StrictData
+    TemplateHaskell
+    TupleSections
+    TypeApplications
+    TypeFamilies
+    TypeOperators
+    UnboxedTuples
+    ViewPatterns
+
+common executable
+  import: base
+  ghc-options:
+    -O2
+    -threaded
+    "-with-rtsopts=-N -I0 -qg"
+
+common test
+  import: base
+  ghc-options:
+    -threaded
+    "-with-rtsopts=-N -I0 -qg"
+
+library
+  import: base
+  hs-source-dirs: library
+  exposed-modules:
+    PGenieGen.V1
+    PGenieGen.V1.Project
+
+  other-modules:
+    PGenieGen.Dhall.Deriving
+    PGenieGen.Dhall.Orphans
+    PGenieGen.Dhall.Orphans.FromDhall
+    PGenieGen.Dhall.Orphans.ToDhall
+    PGenieGen.Prelude
+
+  build-depends:
+    QuickCheck,
+    aeson,
+    base,
+    bytestring,
+    containers,
+    data-has,
+    dhall ^>=1.42.2,
+    dhall-json ^>=1.7.2,
+    hashable,
+    hspec,
+    lawful-conversions,
+    megaparsec,
+    mtl,
+    profunctors,
+    quickcheck-instances,
+    text,
+    text-builder,
+    text-builder-lawful-conversions,
+    time,
+    tuple,
+    uuid,
+    vector,
+    vector-instances,
+    witherable,
+
+executable pgenie-gen-demo
+  import: executable
+  hs-source-dirs: demo
+  main-is: Main.hs
+  build-depends:
+    aeson,
+    base,
+    bytestring,
+    containers,
+    data-has,
+    hashable,
+    hspec,
+    lawful-conversions,
+    megaparsec,
+    mtl,
+    pgenie-gen,
+    profunctors,
+    quickcheck-instances,
+    text,
+    text-builder,
+    text-builder-lawful-conversions,
+    time,
+    tuple,
+    uuid,
+    vector,
+    vector-instances,
+    witherable,
