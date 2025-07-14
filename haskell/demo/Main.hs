@@ -31,7 +31,7 @@ main = do
     Text.putStrLn "---"
 
 location :: PGenieGen.Location
-location = PGenieGen.LocationPath "./dhall/DemoAdapter"
+location = PGenieGen.LocationPath "./dhall/Adapters/HasqlV1"
 
 configJson :: Aeson.Value
 configJson =
