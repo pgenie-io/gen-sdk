@@ -3,13 +3,16 @@ let Prelude = ./Prelude.dhall
 let Project = ./ProjectModel.dhall
 
 let Warning =
-      < UnsupportedType : { value : Project.Value, query : Project.Query } 
-      | Other : Text >
+      < UnsupportedType : { value : Project.Value, query : Project.Query }
+      | Other : Text
+      >
 
 let File = { path : Text, content : Text }
 
 let Result =
-      < Failure : Text | Success : { warnings : List Warning, files : List File } >
+      < Failure : Text
+      | Success : { warnings : List Warning, files : List File }
+      >
 
 let Generate
     : Type -> Type

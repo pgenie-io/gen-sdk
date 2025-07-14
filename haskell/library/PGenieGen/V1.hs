@@ -1,5 +1,15 @@
 -- | Integration with generator adapters that conform to the standard of version 1.
-module PGenieGen.V1 where
+module PGenieGen.V1
+  ( Input,
+    Result (..),
+    SuccessResult (..),
+    Warning (..),
+    UnsupportedType (..),
+    File (..),
+    Location (..),
+    load,
+  )
+where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
@@ -44,7 +54,7 @@ data UnsupportedType = UnsupportedType
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
 
 data File = File
-  { path :: FilePath,
+  { path :: Text,
     content :: Text
   }
   deriving stock (Generic, Show, Eq)
