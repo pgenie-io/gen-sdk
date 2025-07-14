@@ -1,0 +1,52 @@
+flowchart LR
+
+%% In this diagram we leave layer UI behind the scenes.
+%% We only study its structure and internal dependencies.
+%% 
+%% - Subgraphs are systems
+%% - Nodes are components
+%% - Subgraphs are components as well
+
+HasqlGen --> GenSdk
+
+%% The general adapter lib
+subgraph GenSdk
+  Project[Project Model]
+  GenSdk/Gen[Adapter Interface]
+  GenSdk/Gen --> Project
+end
+
+subgraph HasqlGen
+  HasqlGen/Adapter[Adapter]
+  HasqlGen/Adapter --> Mapping
+  Mapping --> Template
+
+  %% The mapping process is staged.
+  %% Essentially it's the computation stages.
+  subgraph Mapping
+    Mapping/ProjectMetadata[Project Metadata]
+    Mapping/Modules[Modules]
+    Mapping/CabalFile[Cabal File]
+    Mapping/CabalFile --> Mapping/Modules
+    Mapping/Modules --> Mapping/ProjectMetadata
+  end
+
+  subgraph Template
+    subgraph Algebras
+      Module
+      File
+      Module --> File
+    end
+    subgraph Modules
+      Statement
+      Statements
+      Statements --> Statement
+    end
+    subgraph Files
+      Cabal
+    end
+    Modules --> Algebras
+    Files --> Algebras
+  end
+
+end
