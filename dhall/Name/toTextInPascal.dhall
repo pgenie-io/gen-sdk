@@ -1,11 +1,14 @@
 let Self = ./Type.dhall
 
-let Prelude = ../Prelude.dhall
+let Prelude = ./Prelude.dhall
 
-let Segment = ./Segment/package.dhall
+let Word = ./Word/package.dhall
+
+let WordOrNumber = ./WordOrNumber/package.dhall
 
 in  \(self : Self) ->
-      let segments =
-            Prelude.List.map Segment.Type Text Segment.toTextInUpper self
-
-      in  Prelude.Text.concat segments
+          Word.toTextInUpper self.head
+      ++  Prelude.Text.concatMap
+            WordOrNumber.Type
+            WordOrNumber.toTextInUpper
+            self.tail

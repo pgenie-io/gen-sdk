@@ -1,6 +1,6 @@
-let Project = ../../../ProjectModel.dhall
+let Project = ../../../../ProjectModel.dhall
 
-let Name = ../../../StrictName/package.dhall
+let Name = ../../../../Name/package.dhall
 
 let Input = { projectNamespace : Text, query : Project.Query }
 

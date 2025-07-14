@@ -12,26 +12,16 @@ HasqlGen --> GenSdk
 %% The general adapter lib
 subgraph GenSdk
   Project[Project Model]
-  GenSdk/Gen[Adapter Interface]
-  GenSdk/Gen --> Project
+  AdapterInterface[Adapter Interface]
+  AdapterInterface --> Project
 end
 
 subgraph HasqlGen
-  HasqlGen/Adapter[Adapter]
-  HasqlGen/Adapter --> Mapping
-  Mapping --> Template
-
-  %% The mapping process is staged.
-  %% Essentially it's the computation stages.
-  subgraph Mapping
-    Mapping/ProjectMetadata[Project Metadata]
-    Mapping/Modules[Modules]
-    Mapping/CabalFile[Cabal File]
-    Mapping/CabalFile --> Mapping/Modules
-    Mapping/Modules --> Mapping/ProjectMetadata
-  end
-
-  subgraph Template
+  Adapter --> Generate
+  Adapter --> Config
+  Generate --> Config
+  
+  subgraph Generate
     subgraph Algebras
       Module
       File
@@ -47,6 +37,8 @@ subgraph HasqlGen
     end
     Modules --> Algebras
     Files --> Algebras
+    Package --> Modules
+    Package --> Files
   end
-
 end
+

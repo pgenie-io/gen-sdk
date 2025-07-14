@@ -2,7 +2,7 @@ let Prelude = ./Prelude.dhall
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let Name = ./StrictName/Type.dhall
+let Name = ./Name/Type.dhall
 
 let Primitive =
       < Bool
