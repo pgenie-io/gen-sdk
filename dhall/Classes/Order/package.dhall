@@ -1,17 +1,8 @@
 let Prelude = ../Prelude.dhall
 
-let Equality = ../Equality/package.dhall
+let Order = ./Type.dhall
 
-let Order =
-      \(A : Type) ->
-        { equality : Equality.Equality A, lessThan : A -> A -> Bool }
-
-let equal =
-      \(A : Type) ->
-      \(order : Order A) ->
-      \(x : A) ->
-      \(y : A) ->
-        order.equality.equal x y
+let equal = ./equal.dhall
 
 let notEqual =
       \(A : Type) ->
@@ -27,12 +18,7 @@ let lessThan =
       \(y : A) ->
         order.lessThan x y
 
-let lessThanOrEqual =
-      \(A : Type) ->
-      \(order : Order A) ->
-      \(x : A) ->
-      \(y : A) ->
-        lessThan A order x y || equal A order x y
+let lessThanOrEqual = ./lessThanOrEqual.dhall
 
 let greaterThan =
       \(A : Type) ->
@@ -41,12 +27,7 @@ let greaterThan =
       \(y : A) ->
         Prelude.Bool.not (lessThanOrEqual A order x y)
 
-let greaterThanOrEqual =
-      \(A : Type) ->
-      \(order : Order A) ->
-      \(x : A) ->
-      \(y : A) ->
-        Prelude.Bool.not (lessThan A order x y || equal A order x y)
+let greaterThanOrEqual = ./greaterThanOrEqual.dhall
 
 let Comparison = < Smaller | Equal | Greater >
 
@@ -61,6 +42,10 @@ let compare =
         then  Comparison.Equal
         else  Comparison.Greater
 
+let insertIntoDedupedSortedList = ./insertIntoDedupedSortedList.dhall
+
+let dedupAndSortList = ./dedupAndSortList.dhall
+
 in  { Order
     , equal
     , notEqual
@@ -70,4 +55,6 @@ in  { Order
     , greaterThanOrEqual
     , Comparison
     , compare
+    , insertIntoDedupedSortedList
+    , dedupAndSortList
     }
