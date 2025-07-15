@@ -1,37 +1,37 @@
--- A demonstration of an adapter.
-let Prelude =
-      https://prelude.dhall-lang.org/v23.1.0/package.dhall
-        sha256:931cbfae9d746c4611b07633ab1e547637ab4ba138b16bf65ef1b9ad66a60b7f
+let Prelude = ../../Prelude.dhall
 
-let Gen = ../Gen.dhall
+let Modules = ../Modules/package.dhall
 
-let Project = Gen.Project
+let Files = ../Files/package.dhall
 
-let Name = ../StrictName/package.dhall
+let Algebras = ../Algebras/package.dhall
 
-let Algebras = ./Algebras/package.dhall
+let Sdk = ../../../../package.dhall
+
+let Name = Sdk.Name
+
+let Project = Sdk.Project
+
+let Algebras = ../Algebras/package.dhall
 
 let Module = Algebras.Module.Type
 
-let Config = ./Config.dhall
+let Input = Sdk.Project.Project
 
-let Modules = ./Gen/Modules/package.dhall
+let Output = List Sdk.Gen.File
 
-let Files = ./Gen/Files/package.dhall
-
-let generate
-    : Gen.Generate Config
-    = \(config : Config) ->
-      \(project : Project.Project) ->
+let compile
+    : Input -> Output
+    = \(project : Input) ->
         let packageName = Name.toTextInKebab project.name
 
         let projectNamespace = Name.toTextInPascal project.name
 
         let statementModules =
               Prelude.List.map
-                Project.Query
+                Sdk.Project.Query
                 Modules.Statement.Output
-                ( \(query : Project.Query) ->
+                ( \(query : Sdk.Project.Query) ->
                     Modules.Statement.compile { projectNamespace, query }
                 )
                 project.queries
@@ -43,9 +43,9 @@ let generate
                 }
 
         let files
-            : List Gen.File
+            : List Sdk.Gen.File
             = let moduleFiles
-                  : List Gen.File
+                  : List Sdk.Gen.File
                   = let moduleFile =
                           \(x : Module) ->
                             { path = x.path, content = x.content }
@@ -55,22 +55,22 @@ let generate
                     let statementFiles =
                           Prelude.List.map
                             Module
-                            Gen.File
+                            Sdk.Gen.File
                             moduleFile
                             statementModules
 
                     let unprefixed = [ statementsFile ] # statementFiles
 
                     in  Prelude.List.map
-                          Gen.File
-                          Gen.File
-                          ( \(x : Gen.File) ->
+                          Sdk.Gen.File
+                          Sdk.Gen.File
+                          ( \(x : Sdk.Gen.File) ->
                               x // { path = "library/${x.path}" }
                           )
                           unprefixed
 
               let cabalFile
-                  : Gen.File
+                  : Sdk.Gen.File
                   = let publicModules = [ statementsModule.namespace ]
 
                     let privateModules =
@@ -80,12 +80,19 @@ let generate
                             (\(x : Module) -> x.namespace)
                             statementModules
 
-                    let input = { packageName, publicModules, privateModules }
+                    let version = "0"
+
+                    let input =
+                          { packageName
+                          , version
+                          , publicModules
+                          , privateModules
+                          }
 
                     in  Files.Cabal.compile input
 
               in  [ cabalFile ] # moduleFiles
 
-        in  Gen.Result.Success { warnings = [] : List Gen.Warning, files }
+        in  files
 
-in  Gen.Gen Config generate
+in  { Input, compile }

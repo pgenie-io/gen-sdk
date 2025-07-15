@@ -2,6 +2,7 @@ let Prelude = ../../Prelude.dhall
 
 let Input =
       { packageName : Text
+      , version : Text
       , publicModules : List Text
       , privateModules : List Text
       }
@@ -11,18 +12,16 @@ let Output = { path : Text, content : Text }
 let compile
     : Input -> Output
     = \(input : Input) ->
-        let packageName = input.packageName
-
         let publicModules = Prelude.Text.concatSep "\n" input.publicModules
 
         let privateModules = Prelude.Text.concatSep "\n" input.privateModules
 
-        let path = "${packageName}.cabal"
+        let path = "${input.packageName}.cabal"
 
         let content =
               ''
-              name: ${packageName}
-              version: 0
+              name: ${input.packageName}
+              version: ${input.version}
 
               library
                 default-language: Haskell2010

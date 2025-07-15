@@ -1,8 +1,10 @@
-let Prelude = ../../../Prelude.dhall
+let Prelude = ../../Prelude.dhall
 
-let Project = ../../../ProjectModel.dhall
+let Sdk = ../../../../package.dhall
 
-let Name = ../../../StrictName/package.dhall
+let Project = Sdk.Project
+
+let Name = Sdk.Name
 
 let Statement = ./Statement.dhall
 
