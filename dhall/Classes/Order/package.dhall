@@ -42,6 +42,29 @@ let compare =
         then  Comparison.Equal
         else  Comparison.Greater
 
+let compareList =
+      \(A : Type) ->
+      \(order : Order A) ->
+      \(left : List A) ->
+      \(right : List A) ->
+        let leftLength = Prelude.List.length A left
+
+        let rightLength = Prelude.List.length A right
+
+        in  Comparison.Equal
+
+let compareNonEmpty =
+      \(A : Type) ->
+      \(order : Order A) ->
+      \(left : Prelude.NonEmpty.Type A) ->
+      \(right : Prelude.NonEmpty.Type A) ->
+        merge
+          { Equal = compareList A order left.tail right.tail
+          , Smaller = Comparison.Smaller
+          , Greater = Comparison.Greater
+          }
+          (compare A order left.head right.head)
+
 let insertIntoDedupedSortedList = ./insertIntoDedupedSortedList.dhall
 
 let dedupAndSortList = ./dedupAndSortList.dhall
@@ -55,6 +78,8 @@ in  { Order
     , greaterThanOrEqual
     , Comparison
     , compare
+    , compareList
+    , compareNonEmpty
     , insertIntoDedupedSortedList
     , dedupAndSortList
     }

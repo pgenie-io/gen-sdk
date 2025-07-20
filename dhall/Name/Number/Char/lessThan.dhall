@@ -1,4 +1,4 @@
--- Function checking whether the second digit is less than the first.
+-- Function checking whether the first digit is less than the second.
 let Self = ./Type.dhall
 
 in  \(left : Self) ->
@@ -17,7 +17,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , One =
             merge
               { Zero = False
@@ -31,7 +31,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Two =
             merge
               { Zero = False
@@ -45,7 +45,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Three =
             merge
               { Zero = False
@@ -59,7 +59,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Four =
             merge
               { Zero = False
@@ -73,7 +73,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Five =
             merge
               { Zero = False
@@ -87,7 +87,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Six =
             merge
               { Zero = False
@@ -101,7 +101,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Seven =
             merge
               { Zero = False
@@ -115,7 +115,7 @@ in  \(left : Self) ->
               , Eight = True
               , Nine = True
               }
-              left
+              right
         , Eight =
             merge
               { Zero = False
@@ -129,7 +129,7 @@ in  \(left : Self) ->
               , Eight = False
               , Nine = True
               }
-              left
+              right
         , Nine =
             merge
               { Zero = False
@@ -143,6 +143,6 @@ in  \(left : Self) ->
               , Eight = False
               , Nine = False
               }
-              left
+              right
         }
-        right
+        left

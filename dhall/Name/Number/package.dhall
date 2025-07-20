@@ -1,1 +1,1 @@
-{ Type = ./Type.dhall, toText = ./toText.dhall }
+{ Type = ./Type.dhall, toText = ./toText.dhall, compare = ./compare.dhall }
