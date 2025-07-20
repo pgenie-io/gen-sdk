@@ -1,6 +1,6 @@
 let Prelude = ../Prelude.dhall
 
-let Equality = \(A : Type) -> { equal : A -> A -> Bool }
+let Equality = ./Type.dhall
 
 let equal =
       \(A : Type) ->
@@ -16,4 +16,6 @@ let notEqual =
       \(y : A) ->
         Prelude.Bool.not (equal A equality x y)
 
-in  { Equality, equal, notEqual }
+let PreludeInstances = ./PreludeInstances/package.dhall
+
+in  { Equality, equal, notEqual, PreludeInstances }
