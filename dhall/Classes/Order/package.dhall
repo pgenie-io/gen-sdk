@@ -2,6 +2,8 @@ let Prelude = ../Prelude.dhall
 
 let Order = ./Type.dhall
 
+let PreludeInstances = ./PreludeInstances/package.dhall
+
 let equal = ./equal.dhall
 
 let notEqual =
