@@ -1,6 +1,6 @@
 let Self = ./Type.dhall
 
-let Handler = ./Handler/package.dhall Bool False
+let Handler = ./Handler.dhall Bool False
 
 in  \(left : Self) ->
     \(right : Self) ->

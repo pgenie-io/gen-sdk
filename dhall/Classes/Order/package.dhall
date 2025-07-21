@@ -1,6 +1,7 @@
 { Type = ./Type.dhall
 , PreludeInstances = ./PreludeInstances/package.dhall
 , Comparison = ./Comparison.dhall
+, ComparisonHandler = ./ComparisonHandler.dhall
 , toEquality = ./toEquality.dhall
 , equal = ./equal.dhall
 , notEqual = ./notEqual.dhall
