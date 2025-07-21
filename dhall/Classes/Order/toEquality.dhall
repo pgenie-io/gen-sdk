@@ -7,4 +7,4 @@ let Equality = ../Equality/package.dhall
 
 in  \(A : Type) ->
     \(order : Order A) ->
-      { equal = ./equal.dhall A order } : Equality.Equality A
+      { equal = ./equal.dhall A order } : Equality.Type A

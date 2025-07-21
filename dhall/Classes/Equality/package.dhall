@@ -1,11 +1,5 @@
-let Prelude = ../Prelude.dhall
-
-let Equality = ./Type.dhall
-
-let equal = ./equal.dhall
-
-let notEqual = ./notEqual.dhall
-
-let PreludeInstances = ./PreludeInstances/package.dhall
-
-in  { Equality, equal, notEqual, PreludeInstances }
+{ Type = ./Type.dhall
+, equal = ./equal.dhall
+, notEqual = ./notEqual.dhall
+, PreludeInstances = ./PreludeInstances/package.dhall
+}
