@@ -1,147 +1,19 @@
 let Self = ./Type.dhall
 
+let Handler = ./Handler/package.dhall Bool False
+
 in  \(left : Self) ->
     \(right : Self) ->
       merge
-        { Zero =
-            merge
-              { Zero = True
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , One =
-            merge
-              { Zero = False
-              , One = True
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Two =
-            merge
-              { Zero = False
-              , One = False
-              , Two = True
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Three =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = True
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Four =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = True
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Five =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = True
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Six =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = True
-              , Seven = False
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Seven =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = True
-              , Eight = False
-              , Nine = False
-              }
-              right
-        , Eight =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = True
-              , Nine = False
-              }
-              right
-        , Nine =
-            merge
-              { Zero = False
-              , One = False
-              , Two = False
-              , Three = False
-              , Four = False
-              , Five = False
-              , Six = False
-              , Seven = False
-              , Eight = False
-              , Nine = True
-              }
-              right
+        { Zero = merge Handler::{ Zero = True } right
+        , One = merge Handler::{ One = True } right
+        , Two = merge Handler::{ Two = True } right
+        , Three = merge Handler::{ Three = True } right
+        , Four = merge Handler::{ Four = True } right
+        , Five = merge Handler::{ Five = True } right
+        , Six = merge Handler::{ Six = True } right
+        , Seven = merge Handler::{ Seven = True } right
+        , Eight = merge Handler::{ Eight = True } right
+        , Nine = merge Handler::{ Nine = True } right
         }
         left
