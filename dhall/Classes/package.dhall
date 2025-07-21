@@ -1,1 +1,4 @@
-{ Equality = ./Equality/package.dhall, Order = ./Order/package.dhall, Arbitrary = ./Arbitrary/package.dhall }
+{ Equality = ./Equality/package.dhall
+, Order = ./Order/package.dhall
+, Arbitrary = ./Arbitrary/package.dhall
+}
