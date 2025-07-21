@@ -2,19 +2,9 @@ let Prelude = ../Prelude.dhall
 
 let Equality = ./Type.dhall
 
-let equal =
-      \(A : Type) ->
-      \(equality : Equality A) ->
-      \(x : A) ->
-      \(y : A) ->
-        equality.equal x y
+let equal = ./equal.dhall
 
-let notEqual =
-      \(A : Type) ->
-      \(equality : Equality A) ->
-      \(x : A) ->
-      \(y : A) ->
-        Prelude.Bool.not (equal A equality x y)
+let notEqual = ./notEqual.dhall
 
 let PreludeInstances = ./PreludeInstances/package.dhall
 

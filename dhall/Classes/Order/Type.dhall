@@ -1,3 +1,1 @@
-let Equality = ../Equality/package.dhall
-
-in  \(A : Type) -> { equality : Equality.Equality A, lessThan : A -> A -> Bool }
+\(A : Type) -> { compare : A -> A -> ./Comparison.dhall }

@@ -1,12 +1,15 @@
+-- Assuming that the input list is already sorted and deduplicated,
+-- inserts a new element into the list if it is not already present,
+-- maintaining the sorted order.
 let Prelude = ../Prelude.dhall
 
 let Order = ./Type.dhall
 
 let equal = ./equal.dhall
 
-let lessThanOrEqual = ./lessThanOrEqual.dhall
+let lessThanEqual = ./lessThanEqual.dhall
 
-let greaterThanOrEqual = ./greaterThanOrEqual.dhall
+let greaterThanEqual = ./greaterThanEqual.dhall
 
 in  \(A : Type) ->
       let State
@@ -24,7 +27,7 @@ in  \(A : Type) ->
                 = \(element : A) ->
                   \(state : State) ->
                     if        state.inserted
-                          ||  greaterThanOrEqual A order newElement element
+                          ||  greaterThanEqual A order newElement element
                     then  state // { list = [ element ] # state.list }
                     else  { inserted = True
                           , list = [ element, newElement ] # state.list

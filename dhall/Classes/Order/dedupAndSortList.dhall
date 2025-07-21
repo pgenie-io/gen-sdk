@@ -1,3 +1,4 @@
+-- Dedupes and sorts a list of elements of type `A` based on the provided `Order`.
 let Prelude = ../Prelude.dhall
 
 let Order = ./Type.dhall
