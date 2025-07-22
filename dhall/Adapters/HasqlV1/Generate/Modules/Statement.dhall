@@ -1,4 +1,4 @@
-let Project = ../../../../ProjectModel.dhall
+let Project = ../../../../Project.dhall
 
 let Name = ../../../../Name/package.dhall
 

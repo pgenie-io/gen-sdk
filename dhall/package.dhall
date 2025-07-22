@@ -1,1 +1,1 @@
-{ Gen = ./Gen.dhall, Project = ./ProjectModel.dhall }
+{ Gen = ./Gen.dhall, Project = ./Project.dhall }

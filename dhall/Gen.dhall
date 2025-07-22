@@ -1,6 +1,6 @@
 let Prelude = ./Prelude.dhall
 
-let Project = ./ProjectModel.dhall
+let Project = ./Project.dhall
 
 let Warning =
       < UnsupportedType : { value : Project.Value, query : Project.Query }
