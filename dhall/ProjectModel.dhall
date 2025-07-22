@@ -1,8 +1,10 @@
 let Prelude = ./Prelude.dhall
 
+let CodegenKit = ./CodegenKit.dhall
+
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let Name = ./Name/Type.dhall
+let Name = CodegenKit.Structures.Name.Type
 
 let Primitive =
       < Bool

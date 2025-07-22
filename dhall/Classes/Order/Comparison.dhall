@@ -1,1 +1,0 @@
-< Smaller | Equal | Greater >
