@@ -103,4 +103,5 @@ in  { Project
     , Field
     , QueryFragment
     , Query
+    , ResultRowsCategory
     }
