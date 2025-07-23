@@ -4,7 +4,7 @@ let CodegenKit = ./CodegenKit.dhall
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let Name = CodegenKit.Structures.Name.Type
+let Name = CodegenKit.Name.Type
 
 let Primitive =
       < Bool
