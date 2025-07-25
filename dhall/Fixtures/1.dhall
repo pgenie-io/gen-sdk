@@ -1,9 +1,3 @@
-let Prelude = ../Prelude.dhall
-
-let Lude = ../Lude.dhall
-
-let CodegenKit = ../CodegenKit.dhall
-
 let Model = ../Project.dhall
 
 let names = ./1/names.dhall

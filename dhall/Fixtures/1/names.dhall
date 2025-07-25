@@ -2,6 +2,8 @@ let Lude = ../../Lude.dhall
 
 let CodegenKit = ../../CodegenKit.dhall
 
+let LatinChar = Lude.Structures.LatinChar
+
 let Latin = Lude.Structures.LatinChar.Type
 
 let Name = CodegenKit.Name
@@ -58,73 +60,71 @@ let y = Latin.Y
 
 let z = Latin.Z
 
-let concat = Name.concat
+let name
+    : List (List LatinChar.Type) -> Name.Type
+    = ../Helpers/name.dhall
 
-let word = Name.word
-
-in  { albumCount = concat (word a [ l, b, u, m ]) [ word c [ o, u, n, t ] ]
-    , albumId = concat (word a [ l, b, u, m ]) [ word i [ d ] ]
-    , albumTitle = concat (word a [ l, b, u, m ]) [ word t [ i, t, l, e ] ]
-    , albumType = concat (word a [ l, b, u, m ]) [ word t [ y, p, e ] ]
-    , artist = word a [ r, t, i, s, t ]
-    , artistId = concat (word a [ r, t, i, s, t ]) [ word i [ d ] ]
-    , artistName = concat (word a [ r, t, i, s, t ]) [ word n [ a, m, e ] ]
-    , catalogue = word c [ a, t, a, l, o, g, u, e ]
-    , compilation = word c [ o, m, p, i, l, a, t, i, o, n ]
-    , createPlaylist =
-        concat (word c [ r, e, a, t, e ]) [ word p [ l, a, y, l, i, s, t ] ]
-    , createdAt = concat (word c [ r, e, a, t, e, d ]) [ word a [ t ] ]
-    , description = word d [ e, s, c, r, i, p, t, i, o, n ]
-    , duration = word d [ u, r, a, t, i, o, n ]
-    , ep = word e [ p ]
-    , genre = word g [ e, n, r, e ]
+in  { albumCount = name [ [ a, l, b, u, m ], [ c, o, u, n, t ] ]
+    , albumId = name [ [ a, l, b, u, m ], [ i, d ] ]
+    , albumTitle = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
+    , albumType = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
+    , artist = name [ [ a, r, t, i, s, t ] ]
+    , artistId = name [ [ a, r, t, i, s, t ], [ i, d ] ]
+    , artistName = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
+    , catalogue = name [ [ c, a, t, a, l, o, g, u, e ] ]
+    , compilation = name [ [ c, o, m, p, i, l, a, t, i, o, n ] ]
+    , createPlaylist = name [ [ c, r, e, a, t, e ], [ p, l, a, y, l, i, s, t ] ]
+    , createdAt = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
+    , description = name [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
+    , duration = name [ [ d, u, r, a, t, i, o, n ] ]
+    , ep = name [ [ e, p ] ]
+    , genre = name [ [ g, e, n, r, e ] ]
     , getAlbumsByArtist =
-        concat
-          (word g [ e, t ])
-          [ word a [ l, b, u, m, s ], word b [ y ], word a [ r, t, i, s, t ] ]
+        name
+          [ [ g, e, t ], [ a, l, b, u, m, s ], [ b, y ], [ a, r, t, i, s, t ] ]
     , getArtistsWithTrackCount =
-        concat
-          (word g [ e, t ])
-          [ word a [ r, t, i, s, t, s ]
-          , word w [ i, t, h ]
-          , word t [ r, a, c, k ]
-          , word c [ o, u, n, t ]
+        name
+          [ [ g, e, t ]
+          , [ a, r, t, i, s, t, s ]
+          , [ w, i, t, h ]
+          , [ t, r, a, c, k ]
+          , [ c, o, u, n, t ]
           ]
     , getTopTracksByPlayCount =
-        concat
-          (word g [ e, t ])
-          [ word t [ o, p ]
-          , word t [ r, a, c, k, s ]
-          , word b [ y ]
-          , word p [ l, a, y ]
-          , word c [ o, u, n, t ]
+        name
+          [ [ g, e, t ]
+          , [ t, o, p ]
+          , [ t, r, a, c, k, s ]
+          , [ b, y ]
+          , [ p, l, a, y ]
+          , [ c, o, u, n, t ]
           ]
     , getTrackDetails =
-        concat
-          (word g [ e, t ])
-          [ word t [ r, a, c, k ], word d [ e, t, a, i, l, s ] ]
-    , id = word i [ d ]
-    , limit = word l [ i, m, i, t ]
-    , live = word l [ i, v, e ]
-    , music = word m [ u, s, i, c ]
-    , musicCatalogue =
-        concat (word m [ u, s, i, c ]) [ word c [ a, t, a, l, o, g, u, e ] ]
-    , name = word n [ a, m, e ]
-    , playCount = concat (word p [ l, a, y ]) [ word c [ o, u, n, t ] ]
-    , playlist = word p [ l, a, y, l, i, s, t ]
-    , releaseYear = concat (word r [ e, l, e, a, s, e ]) [ word y [ e, a, r ] ]
-    , searchTerm = concat (word s [ e, a, r, c, h ]) [ word t [ e, r, m ] ]
+        name [ [ g, e, t ], [ t, r, a, c, k ], [ d, e, t, a, i, l, s ] ]
+    , id = name [ [ i, d ] ]
+    , limit = name [ [ l, i, m, i, t ] ]
+    , live = name [ [ l, i, v, e ] ]
+    , music = name [ [ m, u, s, i, c ] ]
+    , musicCatalogue = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
+    , name = name [ [ n, a, m, e ] ]
+    , playCount = name [ [ p, l, a, y ], [ c, o, u, n, t ] ]
+    , playlist = name [ [ p, l, a, y, l, i, s, t ] ]
+    , releaseYear = name [ [ r, e, l, e, a, s, e ], [ y, e, a, r ] ]
+    , searchTerm = name [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
     , searchTracksByTitle =
-        concat
-          (word s [ e, a, r, c, h ])
-          [ word t [ r, a, c, k, s ], word b [ y ], word t [ i, t, l, e ] ]
-    , single = word s [ i, n, g, l, e ]
-    , soundtrack = word s [ o, u, n, d, t, r, a, c, k ]
-    , studio = word s [ t, u, d, i, o ]
-    , title = word t [ i, t, l, e ]
-    , track = word t [ r, a, c, k ]
-    , trackCount = concat (word t [ r, a, c, k ]) [ word c [ o, u, n, t ] ]
-    , trackId = concat (word t [ r, a, c, k ]) [ word i [ d ] ]
-    , trackNumber = concat (word t [ r, a, c, k ]) [ word n [ u, m, b, e, r ] ]
-    , userId = concat (word u [ s, e, r ]) [ word i [ d ] ]
+        name
+          [ [ s, e, a, r, c, h ]
+          , [ t, r, a, c, k, s ]
+          , [ b, y ]
+          , [ t, i, t, l, e ]
+          ]
+    , single = name [ [ s, i, n, g, l, e ] ]
+    , soundtrack = name [ [ s, o, u, n, d, t, r, a, c, k ] ]
+    , studio = name [ [ s, t, u, d, i, o ] ]
+    , title = name [ [ t, i, t, l, e ] ]
+    , track = name [ [ t, r, a, c, k ] ]
+    , trackCount = name [ [ t, r, a, c, k ], [ c, o, u, n, t ] ]
+    , trackId = name [ [ t, r, a, c, k ], [ i, d ] ]
+    , trackNumber = name [ [ t, r, a, c, k ], [ n, u, m, b, e, r ] ]
+    , userId = name [ [ u, s, e, r ], [ i, d ] ]
     }
