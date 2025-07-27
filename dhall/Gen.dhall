@@ -2,15 +2,14 @@ let Prelude = ./Prelude.dhall
 
 let Project = ./Project.dhall
 
+let UnsupportedType = { value : Project.Value, query : Project.Query }
+
 let Warning =
       < StatementSkipped :
           { name : Project.Name
           , srcPath : Text
           , dueTo :
-              < UnsupportedType :
-                  { value : Project.Value, query : Project.Query }
-              | GeneratorFailure : Text
-              >
+              < UnsupportedType : UnsupportedType | GeneratorFailure : Text >
           }
       | GeneratorWarning : Text
       >
@@ -69,4 +68,12 @@ let Result/concat
     = \(input : List Result) ->
         Prelude.List.fold Result input Result Result/prepend Result/empty
 
-in  { Project, Warning, File, Result, Generate, Gen, Result/concat }
+in  { Project
+    , UnsupportedType
+    , Warning
+    , File
+    , Result
+    , Generate
+    , Gen
+    , Result/concat
+    }
