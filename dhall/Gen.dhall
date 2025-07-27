@@ -3,8 +3,16 @@ let Prelude = ./Prelude.dhall
 let Project = ./Project.dhall
 
 let Warning =
-      < UnsupportedType : { value : Project.Value, query : Project.Query }
-      | Other : Text
+      < StatementSkipped :
+          { name : Project.Name
+          , srcPath : Text
+          , dueTo :
+              < UnsupportedType :
+                  { value : Project.Value, query : Project.Query }
+              | GeneratorFailure : Text
+              >
+          }
+      | GeneratorWarning : Text
       >
 
 let File = { path : Text, content : Text }
