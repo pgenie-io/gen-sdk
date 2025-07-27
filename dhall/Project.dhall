@@ -101,7 +101,8 @@ in  { Project
     , CustomTypeDefinition
     , CustomType
     , Field
+    , ResultRowsCategory
+    , ResultRows
     , QueryFragment
     , Query
-    , ResultRowsCategory
     }
