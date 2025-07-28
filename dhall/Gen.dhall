@@ -2,15 +2,22 @@ let Prelude = ./Prelude.dhall
 
 let Project = ./Project.dhall
 
-let UnsupportedType = { value : Project.Value, query : Project.Query }
+let ValueError =
+      < UnsupportedPrimitive : Project.Primitive
+      | UnsupportedDimensionality : Natural
+      | Custom : Text
+      >
+
+let FieldError = { name : Project.Name, dueTo : ValueError }
+
+let QueryError =
+      < Param : FieldError
+      | ResultColumn : FieldError
+      | GeneratorFailure : Text
+      >
 
 let Warning =
-      < StatementSkipped :
-          { name : Project.Name
-          , srcPath : Text
-          , dueTo :
-              < UnsupportedType : UnsupportedType | GeneratorFailure : Text >
-          }
+      < QuerySkipped : { query : Project.Query, dueTo : QueryError }
       | GeneratorWarning : Text
       >
 
@@ -69,8 +76,10 @@ let Result/concat
         Prelude.List.fold Result input Result Result/prepend Result/empty
 
 in  { Project
-    , UnsupportedType
     , Warning
+    , ValueError
+    , FieldError
+    , QueryError
     , File
     , Result
     , Generate
