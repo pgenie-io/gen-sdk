@@ -89,48 +89,49 @@ let Project =
       , queries : List Query
       }
 
-let Primitive/toText =
-      \(primitive : Primitive) ->
-        merge
-          { Bool = "bool"
-          , Bytea = "bytea"
-          , Char = "char"
-          , Cidr = "cidr"
-          , Date = "date"
-          , Datemultirange = "datemultirange"
-          , Daterange = "daterange"
-          , Float4 = "float4"
-          , Float8 = "float8"
-          , Inet = "inet"
-          , Int2 = "int2"
-          , Int4 = "int4"
-          , Int4multirange = "int4multirange"
-          , Int4range = "int4range"
-          , Int8 = "int8"
-          , Int8multirange = "int8multirange"
-          , Int8range = "int8range"
-          , Interval = "interval"
-          , Json = "json"
-          , Jsonb = "jsonb"
-          , Macaddr = "macaddr"
-          , Macaddr8 = "macaddr8"
-          , Money = "money"
-          , Numeric = "numeric"
-          , Nummultirange = "nummultirange"
-          , Numrange = "numrange"
-          , Text = "text"
-          , Time = "time"
-          , Timestamp = "timestamp"
-          , Timestamptz = "timestamptz"
-          , Timetz = "timetz"
-          , Tsmultirange = "tsmultirange"
-          , Tsrange = "tsrange"
-          , Tstzmultirange = "tstzmultirange"
-          , Tstzrange = "tstzrange"
-          , Uuid = "uuid"
-          , Xml = "xml"
-          }
-          primitive
+let Primitive/toText
+    : Primitive -> Text
+    = let handler =
+            { Bool = "bool"
+            , Bytea = "bytea"
+            , Char = "char"
+            , Cidr = "cidr"
+            , Date = "date"
+            , Datemultirange = "datemultirange"
+            , Daterange = "daterange"
+            , Float4 = "float4"
+            , Float8 = "float8"
+            , Inet = "inet"
+            , Int2 = "int2"
+            , Int4 = "int4"
+            , Int4multirange = "int4multirange"
+            , Int4range = "int4range"
+            , Int8 = "int8"
+            , Int8multirange = "int8multirange"
+            , Int8range = "int8range"
+            , Interval = "interval"
+            , Json = "json"
+            , Jsonb = "jsonb"
+            , Macaddr = "macaddr"
+            , Macaddr8 = "macaddr8"
+            , Money = "money"
+            , Numeric = "numeric"
+            , Nummultirange = "nummultirange"
+            , Numrange = "numrange"
+            , Text = "text"
+            , Time = "time"
+            , Timestamp = "timestamp"
+            , Timestamptz = "timestamptz"
+            , Timetz = "timetz"
+            , Tsmultirange = "tsmultirange"
+            , Tsrange = "tsrange"
+            , Tstzmultirange = "tstzmultirange"
+            , Tstzrange = "tstzrange"
+            , Uuid = "uuid"
+            , Xml = "xml"
+            }
+
+      in  \(primitive : Primitive) -> merge handler primitive
 
 in  { Project
     , Version
