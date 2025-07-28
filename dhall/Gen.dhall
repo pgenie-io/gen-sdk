@@ -52,6 +52,10 @@ let Result/concat
     = \(input : List Result) ->
         Prelude.List.fold Result input Result Result/prepend Result/empty
 
+let Result/fromFiles
+    : List File -> Result
+    = \(files : List File) -> { warnings = Prelude.List.empty Warning, files }
+
 in  { Project
     , Warning
     , ValueError
@@ -62,4 +66,5 @@ in  { Project
     , Gen
     , Result
     , Result/concat
+    , Result/fromFiles
     }
