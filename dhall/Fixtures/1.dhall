@@ -83,6 +83,43 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
                 , { name = name [ [ s, i, n, g, l, e ] ], pgName = "single" }
                 ]
           }
+        , { name = name [ [ t, r, a, c, k ], [ m, e, t, a, d, a, t, a ] ]
+          , pgName = "track_metadata"
+          , definition =
+              Model.CustomTypeDefinition.Composite
+                [ { name = name [ [ t, i, t, l, e ] ]
+                  , pgName = "title"
+                  , definition =
+                    { isNullable = False
+                    , dimensional =
+                      { dimensionality = 0
+                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
+                      }
+                    }
+                  }
+                , { name = name [ [ m, e, t, a, d, a, t, a ] ]
+                  , pgName = "metadata"
+                  , definition =
+                    { isNullable = True
+                    , dimensional =
+                      { dimensionality = 0
+                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
+                      }
+                    }
+                  }
+                , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
+                  , pgName = "created_at"
+                  , definition =
+                    { isNullable = False
+                    , dimensional =
+                      { dimensionality = 0
+                      , scalar =
+                          Model.Scalar.Primitive Model.Primitive.Timestamp
+                      }
+                    }
+                  }
+                ]
+          }
         ]
       , queries =
         [ { name =
@@ -626,6 +663,140 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
                 ORDER BY play_count DESC
                 LIMIT ''
             , Model.QueryFragment.Var (name [ [ l, i, m, i, t ] ])
+            ]
+          }
+        , { name =
+              name
+                [ [ g, e, t ]
+                , [ t, r, a, c, k ]
+                , [ m, e, t, a, d, a, t, a ]
+                , [ x, m, l ]
+                ]
+          , srcPath = "queries/get_track_metadata_xml.sql"
+          , params =
+            [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
+              , value =
+                { isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
+                  }
+                }
+              }
+            ]
+          , result = Some
+            { category = Model.ResultRowsCategory.Single
+            , row =
+              { head =
+                { name = name [ [ i, d ] ]
+                , value =
+                  { isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
+                    }
+                  }
+                }
+              , tail =
+                [ { name = name [ [ m, e, t, a, d, a, t, a ] ]
+                  , value =
+                    { isNullable = True
+                    , dimensional =
+                      { dimensionality = 0
+                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
+                      }
+                    }
+                  }
+                , { name = name [ [ c, u, s, t, o, m ], [ t, a, g, s ] ]
+                  , value =
+                    { isNullable = True
+                    , dimensional =
+                      { dimensionality = 1
+                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          , fragments =
+            [ Model.QueryFragment.Sql
+                ''
+                SELECT 
+                    t.id,
+                    t.metadata_xml as metadata,
+                    t.custom_tags_xml_array as custom_tags
+                FROM tracks t
+                WHERE t.id = ''
+            , Model.QueryFragment.Var (name [ [ t, r, a, c, k ], [ i, d ] ])
+            ]
+          }
+        , { name =
+              name
+                [ [ s, e, a, r, c, h ]
+                , [ t, r, a, c, k, s ]
+                , [ b, y ]
+                , [ x, m, l ]
+                , [ m, e, t, a, d, a, t, a ]
+                ]
+          , srcPath = "queries/search_tracks_by_xml_metadata.sql"
+          , params =
+            [ { name = name [ [ x, m, l ], [ q, u, e, r, y ] ]
+              , value =
+                { isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Xml
+                  }
+                }
+              }
+            ]
+          , result = Some
+            { category = Model.ResultRowsCategory.Multiple
+            , row =
+              { head =
+                { name = name [ [ i, d ] ]
+                , value =
+                  { isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
+                    }
+                  }
+                }
+              , tail =
+                [ { name = name [ [ t, i, t, l, e ] ]
+                  , value =
+                    { isNullable = False
+                    , dimensional =
+                      { dimensionality = 0
+                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
+                      }
+                    }
+                  }
+                , { name = name [ [ m, e, t, a, d, a, t, a ] ]
+                  , value =
+                    { isNullable = True
+                    , dimensional =
+                      { dimensionality = 0
+                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          , fragments =
+            [ Model.QueryFragment.Sql
+                ''
+                SELECT 
+                    t.id,
+                    t.title,
+                    t.metadata_xml as metadata
+                FROM tracks t
+                WHERE xpath_exists(''
+            , Model.QueryFragment.Var (name [ [ x, m, l ], [ q, u, e, r, y ] ])
+            , Model.QueryFragment.Sql ", t.metadata_xml) ORDER BY t.title"
             ]
           }
         ]
