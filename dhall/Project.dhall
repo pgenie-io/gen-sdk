@@ -50,22 +50,18 @@ let Scalar = < Primitive : Primitive | Custom : Name >
 
 let Dimensional = { dimensionality : Natural, scalar : Scalar }
 
-let Value = { isNullable : Bool, dimensional : Dimensional }
+let Field = { name : Name, isNullable : Bool, dimensional : Dimensional }
 
-let CompositeField = { name : Name, pgName : Text, definition : Value }
-
-let EnumVariant = { name : Name, pgName : Text }
+let EnumVariant = { name : Name, rawName : Text }
 
 let CustomTypeDefinition =
-      < Composite : List CompositeField
+      < Composite : List Field
       | Enum : List EnumVariant
       | Domain : Dimensional
       >
 
 let CustomType =
-      { name : Name, pgName : Text, definition : CustomTypeDefinition }
-
-let Field = { name : Name, value : Value }
+      { name : Name, rawName : Text, definition : CustomTypeDefinition }
 
 let ResultRowsCategory = < Optional | Single | Multiple >
 
@@ -140,8 +136,6 @@ in  { Project
     , Primitive/toText
     , Scalar
     , Dimensional
-    , Value
-    , CompositeField
     , EnumVariant
     , CustomTypeDefinition
     , CustomType

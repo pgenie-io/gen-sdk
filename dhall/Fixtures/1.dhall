@@ -68,54 +68,44 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
       , version = { major = 1, minor = 0, patch = 0 }
       , customTypes =
         [ { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
-          , pgName = "album_type"
+          , rawName = "album_type"
           , definition =
               Model.CustomTypeDefinition.Enum
-                [ { name = name [ [ s, t, u, d, i, o ] ], pgName = "studio" }
-                , { name = name [ [ l, i, v, e ] ], pgName = "live" }
+                [ { name = name [ [ s, t, u, d, i, o ] ], rawName = "studio" }
+                , { name = name [ [ l, i, v, e ] ], rawName = "live" }
                 , { name = name [ [ c, o, m, p, i, l, a, t, i, o, n ] ]
-                  , pgName = "compilation"
+                  , rawName = "compilation"
                   }
                 , { name = name [ [ s, o, u, n, d, t, r, a, c, k ] ]
-                  , pgName = "soundtrack"
+                  , rawName = "soundtrack"
                   }
-                , { name = name [ [ e, p ] ], pgName = "ep" }
-                , { name = name [ [ s, i, n, g, l, e ] ], pgName = "single" }
+                , { name = name [ [ e, p ] ], rawName = "ep" }
+                , { name = name [ [ s, i, n, g, l, e ] ], rawName = "single" }
                 ]
           }
         , { name = name [ [ t, r, a, c, k ], [ m, e, t, a, d, a, t, a ] ]
-          , pgName = "track_metadata"
+          , rawName = "track_metadata"
           , definition =
               Model.CustomTypeDefinition.Composite
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , definition =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , pgName = "metadata"
-                  , definition =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
-                  , pgName = "created_at"
-                  , definition =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar =
-                          Model.Scalar.Primitive Model.Primitive.Timestamp
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Timestamp
                     }
                   }
                 ]
@@ -132,12 +122,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_albums_by_artist.sql"
           , params =
             [ { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
             ]
@@ -146,42 +134,34 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ r, e, l, e, a, s, e ], [ y, e, a, r ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar =
-                          Model.Scalar.Custom
-                            (name [ [ a, l, b, u, m ], [ t, y, p, e ] ])
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar =
+                        Model.Scalar.Custom
+                          (name [ [ a, l, b, u, m ], [ t, y, p, e ] ])
                     }
                   }
                 ]
@@ -211,12 +191,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/search_tracks_by_title.sql"
           , params =
             [ { name = name [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Text
                 }
               }
             ]
@@ -225,49 +203,39 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ d, u, r, a, t, i, o, n ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 ]
@@ -297,12 +265,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_track_details.sql"
           , params =
             [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
             ]
@@ -311,85 +277,67 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
+                  }
+                }
+              , tail =
+                [ { name = name [ [ t, i, t, l, e ] ]
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
+                    }
+                  }
+                , { name = name [ [ d, u, r, a, t, i, o, n ] ]
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
+                    }
+                  }
+                , { name = name [ [ t, r, a, c, k ], [ n, u, m, b, e, r ] ]
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
+                    }
+                  }
+                , { name = name [ [ a, l, b, u, m ], [ i, d ] ]
+                  , isNullable = False
                   , dimensional =
                     { dimensionality = 0
                     , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                     }
                   }
-                }
-              , tail =
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
-                    }
-                  }
-                , { name = name [ [ d, u, r, a, t, i, o, n ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
-                    }
-                  }
-                , { name = name [ [ t, r, a, c, k ], [ n, u, m, b, e, r ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ i, d ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                      }
-                    }
-                  }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ g, e, n, r, e ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 ]
@@ -431,40 +379,32 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ n, a, m, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ t, r, a, c, k ], [ c, o, u, n, t ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ c, o, u, n, t ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 ]
@@ -489,30 +429,24 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/create_playlist.sql"
           , params =
             [ { name = name [ [ n, a, m, e ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Text
                 }
               }
             , { name = name [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
-              , value =
-                { isNullable = True
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                  }
+              , isNullable = True
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Text
                 }
               }
             , { name = name [ [ u, s, e, r ], [ i, d ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
             ]
@@ -521,32 +455,25 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ n, a, m, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar =
-                          Model.Scalar.Primitive Model.Primitive.Timestamp
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Timestamp
                     }
                   }
                 ]
@@ -581,12 +508,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_top_tracks_by_play_count.sql"
           , params =
             [ { name = name [ [ l, i, m, i, t ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                 }
               }
             ]
@@ -595,49 +520,39 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ p, l, a, y ], [ c, o, u, n, t ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 ]
@@ -675,12 +590,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_track_metadata_xml.sql"
           , params =
             [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
             ]
@@ -689,31 +602,25 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
                 , { name = name [ [ c, u, s, t, o, m ], [ t, a, g, s ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 1
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 1
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
                 ]
@@ -742,12 +649,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/search_tracks_by_xml_metadata.sql"
           , params =
             [ { name = name [ [ x, m, l ], [ q, u, e, r, y ] ]
-              , value =
-                { isNullable = False
-                , dimensional =
-                  { dimensionality = 0
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                  }
+              , isNullable = False
+              , dimensional =
+                { dimensionality = 0
+                , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                 }
               }
             ]
@@ -756,31 +661,25 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
-                , value =
-                  { isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
+                , isNullable = False
+                , dimensional =
+                  { dimensionality = 0
+                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , value =
-                    { isNullable = False
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                      }
+                  , isNullable = False
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , value =
-                    { isNullable = True
-                    , dimensional =
-                      { dimensionality = 0
-                      , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                      }
+                  , isNullable = True
+                  , dimensional =
+                    { dimensionality = 0
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
                 ]
