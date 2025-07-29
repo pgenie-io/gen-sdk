@@ -2,22 +2,15 @@ let Prelude = ./Prelude.dhall
 
 let Project = ./Project.dhall
 
-let ValueError =
-      < UnsupportedPrimitive : Project.Primitive
-      | UnsupportedDimensionality : Natural
-      | Custom : Text
-      >
-
-let FieldError = { name : Project.Name, dueTo : ValueError }
-
-let QueryError =
-      < Param : FieldError
-      | ResultColumn : FieldError
-      | GeneratorFailure : Text
-      >
+let Error =
+      { path : List Text
+      , -- What happened
+        description : Text
+      , input : Text
+      }
 
 let Warning =
-      < QuerySkipped : { query : Project.Query, dueTo : QueryError }
+      < QuerySkipped : { query : Project.Query, dueTo : Error }
       | GeneratorWarning : Text
       >
 
@@ -58,9 +51,7 @@ let Result/fromFiles
 
 in  { Project
     , Warning
-    , ValueError
-    , FieldError
-    , QueryError
+    , Error
     , File
     , Generate
     , Gen
