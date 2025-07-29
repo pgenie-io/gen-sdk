@@ -48,17 +48,16 @@ let Primitive =
 
 let Scalar = < Primitive : Primitive | Custom : Name >
 
-let Dimensional = { dimensionality : Natural, scalar : Scalar }
+let ArraySettings = { dimensionality : Natural, elementIsNullable : Bool }
 
-let Field = { name : Name, isNullable : Bool, dimensional : Dimensional }
+let Value = { arraySettings : Optional ArraySettings, scalar : Scalar }
+
+let Member = { name : Name, rawName : Text, isNullable : Bool, value : Value }
 
 let EnumVariant = { name : Name, rawName : Text }
 
 let CustomTypeDefinition =
-      < Composite : List Field
-      | Enum : List EnumVariant
-      | Domain : Dimensional
-      >
+      < Composite : List Member | Enum : List EnumVariant | Domain : Value >
 
 let CustomType =
       { name : Name, rawName : Text, definition : CustomTypeDefinition }
@@ -66,14 +65,14 @@ let CustomType =
 let ResultRowsCategory = < Optional | Single | Multiple >
 
 let ResultRows =
-      { category : ResultRowsCategory, row : Prelude.NonEmpty.Type Field }
+      { category : ResultRowsCategory, row : Prelude.NonEmpty.Type Member }
 
 let QueryFragment = < Sql : Text | Var : Name >
 
 let Query =
       { name : Name
       , srcPath : Text
-      , params : List Field
+      , params : List Member
       , result : Optional ResultRows
       , fragments : List QueryFragment
       }
@@ -135,11 +134,12 @@ in  { Project
     , Primitive
     , Primitive/toText
     , Scalar
-    , Dimensional
+    , ArraySettings
+    , Value
     , EnumVariant
     , CustomTypeDefinition
     , CustomType
-    , Field
+    , Member
     , ResultRowsCategory
     , ResultRows
     , QueryFragment

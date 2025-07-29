@@ -88,23 +88,26 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , definition =
               Model.CustomTypeDefinition.Composite
                 [ { name = name [ [ t, i, t, l, e ] ]
+                  , rawName = "title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ m, e, t, a, d, a, t, a ] ]
+                  , rawName = "metadata"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
+                  , rawName = "created_at"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Timestamp
                     }
                   }
@@ -122,9 +125,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_albums_by_artist.sql"
           , params =
             [ { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
+              , rawName = "artist_id"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
@@ -134,31 +138,35 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
+                  , rawName = "title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ r, e, l, e, a, s, e ], [ y, e, a, r ] ]
+                  , rawName = "release_year"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
+                  , rawName = "album_type"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar =
                         Model.Scalar.Custom
                           (name [ [ a, l, b, u, m ], [ t, y, p, e ] ])
@@ -191,9 +199,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/search_tracks_by_title.sql"
           , params =
             [ { name = name [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
+              , rawName = "search_term"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Text
                 }
               }
@@ -203,38 +212,43 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
+                  , rawName = "title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ d, u, r, a, t, i, o, n ] ]
+                  , rawName = "duration_seconds"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
+                  , rawName = "album_title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
+                  , rawName = "artist_name"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
@@ -265,9 +279,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_track_details.sql"
           , params =
             [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
+              , rawName = "track_id"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
@@ -277,66 +292,75 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
+                  , rawName = "title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ d, u, r, a, t, i, o, n ] ]
+                  , rawName = "duration_seconds"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ t, r, a, c, k ], [ n, u, m, b, e, r ] ]
+                  , rawName = "track_number"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ i, d ] ]
+                  , rawName = "album_id"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
+                  , rawName = "album_title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
+                  , rawName = "artist_id"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
+                  , rawName = "artist_name"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ g, e, n, r, e ] ]
+                  , rawName = "genre"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
@@ -373,37 +397,41 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
                 , [ c, o, u, n, t ]
                 ]
           , srcPath = "queries/get_artists_with_track_count.sql"
-          , params = [] : List Model.Field
+          , params = [] : List Model.Member
           , result = Some
             { category = Model.ResultRowsCategory.Multiple
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ n, a, m, e ] ]
+                  , rawName = "name"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ t, r, a, c, k ], [ c, o, u, n, t ] ]
+                  , rawName = "track_count"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ c, o, u, n, t ] ]
+                  , rawName = "album_count"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
@@ -429,23 +457,26 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/create_playlist.sql"
           , params =
             [ { name = name [ [ n, a, m, e ] ]
+              , rawName = "name"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Text
                 }
               }
             , { name = name [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
+              , rawName = "description"
               , isNullable = True
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Text
                 }
               }
             , { name = name [ [ u, s, e, r ], [ i, d ] ]
+              , rawName = "user_id"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
@@ -455,24 +486,27 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ n, a, m, e ] ]
+                  , rawName = "name"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
+                  , rawName = "created_at"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Timestamp
                     }
                   }
@@ -508,9 +542,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_top_tracks_by_play_count.sql"
           , params =
             [ { name = name [ [ l, i, m, i, t ] ]
+              , rawName = "limit"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                 }
               }
@@ -520,38 +555,43 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
+                  , rawName = "title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
+                  , rawName = "artist_name"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
+                  , rawName = "album_title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ p, l, a, y ], [ c, o, u, n, t ] ]
+                  , rawName = "play_count"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Int4
                     }
                   }
@@ -590,9 +630,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_track_metadata_xml.sql"
           , params =
             [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
+              , rawName = "track_id"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                 }
               }
@@ -602,24 +643,28 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ m, e, t, a, d, a, t, a ] ]
+                  , rawName = "metadata"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
                 , { name = name [ [ c, u, s, t, o, m ], [ t, a, g, s ] ]
+                  , rawName = "custom_tags"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 1
+                  , value =
+                    { arraySettings = Some
+                      { dimensionality = 1, elementIsNullable = True }
                     , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
@@ -649,9 +694,10 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/search_tracks_by_xml_metadata.sql"
           , params =
             [ { name = name [ [ x, m, l ], [ q, u, e, r, y ] ]
+              , rawName = "xml_query"
               , isNullable = False
-              , dimensional =
-                { dimensionality = 0
+              , value =
+                { arraySettings = None Model.ArraySettings
                 , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                 }
               }
@@ -661,24 +707,27 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
             , row =
               { head =
                 { name = name [ [ i, d ] ]
+                , rawName = "id"
                 , isNullable = False
-                , dimensional =
-                  { dimensionality = 0
+                , value =
+                  { arraySettings = None Model.ArraySettings
                   , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
                   }
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
+                  , rawName = "title"
                   , isNullable = False
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Text
                     }
                   }
                 , { name = name [ [ m, e, t, a, d, a, t, a ] ]
+                  , rawName = "metadata"
                   , isNullable = True
-                  , dimensional =
-                    { dimensionality = 0
+                  , value =
+                    { arraySettings = None Model.ArraySettings
                     , scalar = Model.Scalar.Primitive Model.Primitive.Xml
                     }
                   }
