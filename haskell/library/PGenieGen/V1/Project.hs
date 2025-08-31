@@ -199,19 +199,19 @@ data Field = Field
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
 -- | Category of result rows
-data ResultRowsCategory
+data ResultRowsCardinality
   = ResultRowsCategoryOptional
   | ResultRowsCategorySingle
   | ResultRowsCategoryMultiple
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "ResultRowsCategory") ResultRowsCategory)
+    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "ResultRowsCardinality") ResultRowsCardinality)
 
--- | Result rows with category and row structure
+-- | Result rows with cardinality and row structure
 data ResultRows = ResultRows
-  { category :: ResultRowsCategory,
-    row :: NonEmpty Field
+  { cardinality :: ResultRowsCardinality,
+    columns :: NonEmpty Field
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)

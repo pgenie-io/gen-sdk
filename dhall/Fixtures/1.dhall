@@ -134,8 +134,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Multiple
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Multiple
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -208,8 +208,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Multiple
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Multiple
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -288,8 +288,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Single
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Single
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -399,8 +399,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
           , srcPath = "queries/get_artists_with_track_count.sql"
           , params = [] : List Model.Member
           , result = Some
-            { category = Model.ResultRowsCategory.Multiple
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Multiple
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -482,8 +482,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Single
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Single
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -551,8 +551,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Multiple
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Multiple
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -639,8 +639,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Single
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Single
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"
@@ -703,8 +703,8 @@ in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
               }
             ]
           , result = Some
-            { category = Model.ResultRowsCategory.Multiple
-            , row =
+            { cardinality = Model.ResultRowsCardinality.Multiple
+            , columns =
               { head =
                 { name = name [ [ i, d ] ]
                 , rawName = "id"

@@ -89,8 +89,8 @@ input =
     userResult :: Project.ResultRows
     userResult =
       Project.ResultRows
-        { category = Project.ResultRowsCategoryOptional,
-          row =
+        { cardinality = Project.ResultRowsCategoryOptional,
+          columns =
             NonEmpty.fromList
               [ Project.Field
                   { name = textName "id",

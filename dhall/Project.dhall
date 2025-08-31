@@ -62,10 +62,10 @@ let CustomTypeDefinition =
 let CustomType =
       { name : Name, rawName : Text, definition : CustomTypeDefinition }
 
-let ResultRowsCategory = < Optional | Single | Multiple >
+let ResultRowsCardinality = < Optional | Single | Multiple >
 
 let ResultRows =
-      { category : ResultRowsCategory, row : Prelude.NonEmpty.Type Member }
+      { cardinality : ResultRowsCardinality, columns : Prelude.NonEmpty.Type Member }
 
 let QueryFragment = < Sql : Text | Var : Name >
 
@@ -140,7 +140,7 @@ in  { Project
     , CustomTypeDefinition
     , CustomType
     , Member
-    , ResultRowsCategory
+    , ResultRowsCardinality
     , ResultRows
     , QueryFragment
     , Query
