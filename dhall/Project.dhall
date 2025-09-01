@@ -84,7 +84,8 @@ let Query =
       }
 
 let Project =
-      { name : Name
+      { owner : Name
+      , name : Name
       , version : Version
       , customTypes : List CustomType
       , queries : List Query

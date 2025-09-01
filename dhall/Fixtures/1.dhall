@@ -64,7 +64,8 @@ let name
     : List (List LatinChar.Type) -> Name.Type
     = ./Helpers/name.dhall
 
-in    { name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
+in    { owner = name [ [ p, g, e, n, i, e ] ]
+      , name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
       , version = { major = 1, minor = 0, patch = 0 }
       , customTypes =
         [ { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
