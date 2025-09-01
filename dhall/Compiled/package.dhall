@@ -14,4 +14,5 @@
 , message = ./message.dhall
 , report = ./report.dhall
 , nest = ./nest.dhall
+, toPlainText = ./toPlainText.dhall
 }
