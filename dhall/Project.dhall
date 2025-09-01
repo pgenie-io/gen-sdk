@@ -65,16 +65,22 @@ let CustomType =
 let ResultRowsCardinality = < Optional | Single | Multiple >
 
 let ResultRows =
-      { cardinality : ResultRowsCardinality, columns : Prelude.NonEmpty.Type Member }
+      { cardinality : ResultRowsCardinality
+      , columns : Prelude.NonEmpty.Type Member
+      }
+
+let Result = Optional ResultRows
 
 let QueryFragment = < Sql : Text | Var : Name >
+
+let QueryFragments = List QueryFragment
 
 let Query =
       { name : Name
       , srcPath : Text
       , params : List Member
-      , result : Optional ResultRows
-      , fragments : List QueryFragment
+      , result : Result
+      , fragments : QueryFragments
       }
 
 let Project =
@@ -142,6 +148,8 @@ in  { Project
     , Member
     , ResultRowsCardinality
     , ResultRows
+    , Result
     , QueryFragment
+    , QueryFragments
     , Query
     }
