@@ -54,4 +54,4 @@ in  \(charLists : List (List LatinChar.Type)) ->
               }
               unconsing
 
-      in  name
+      in  name : Name.Type

@@ -1,1 +1,1 @@
-{name = ./name.dhall}
+{name = ./name.dhall, varQueryFragment = ./varQueryFragment.dhall}

@@ -64,6 +64,10 @@ let name
     : List (List LatinChar.Type) -> Name.Type
     = ./Helpers/name.dhall
 
+let varQueryFragment
+    : Natural -> List (List LatinChar.Type) -> Model.QueryFragment
+    = ./Helpers/varQueryFragment.dhall
+
 in    { owner = name [ [ p, g, e, n, i, e ] ]
       , name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
       , version = { major = 1, minor = 0, patch = 0 }
@@ -186,7 +190,7 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                     a.album_type
                 FROM albums a
                 WHERE a.artist_id = ''
-            , Model.QueryFragment.Var (name [ [ a, r, t, i, s, t ], [ i, d ] ])
+            , varQueryFragment 0 [ [ a, r, t, i, s, t ], [ i, d ] ]
             , Model.QueryFragment.Sql " ORDER BY a.release_year DESC"
             ]
           }
@@ -269,8 +273,7 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                 JOIN albums a ON t.album_id = a.id
                 JOIN artists ar ON a.artist_id = ar.id
                 WHERE t.title ILIKE '%' || ''
-            , Model.QueryFragment.Var
-                (name [ [ s, e, a, r, c, h ], [ t, e, r, m ] ])
+            , varQueryFragment 0 [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
             , Model.QueryFragment.Sql
                 " || '%' ORDER BY ar.name, a.title, t.track_number"
             ]
@@ -386,7 +389,7 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                 JOIN artists ar ON a.artist_id = ar.id
                 LEFT JOIN genres g ON t.genre_id = g.id
                 WHERE t.id = ''
-            , Model.QueryFragment.Var (name [ [ t, r, a, c, k ], [ i, d ] ])
+            , varQueryFragment 0 [ [ t, r, a, c, k ], [ i, d ] ]
             ]
           }
         , { name =
@@ -519,12 +522,11 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                 ''
                 INSERT INTO playlists (name, description, user_id, created_at)
                 VALUES (''
-            , Model.QueryFragment.Var (name [ [ n, a, m, e ] ])
+            , varQueryFragment 1 [ [ n, a, m, e ] ]
             , Model.QueryFragment.Sql ", "
-            , Model.QueryFragment.Var
-                (name [ [ d, e, s, c, r, i, p, t, i, o, n ] ])
+            , varQueryFragment 2 [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
             , Model.QueryFragment.Sql ", "
-            , Model.QueryFragment.Var (name [ [ u, s, e, r ], [ i, d ] ])
+            , varQueryFragment 0 [ [ u, s, e, r ], [ i, d ] ]
             , Model.QueryFragment.Sql
                 ''
                 , NOW())
@@ -618,7 +620,7 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                 ) p ON t.id = p.track_id
                 ORDER BY play_count DESC
                 LIMIT ''
-            , Model.QueryFragment.Var (name [ [ l, i, m, i, t ] ])
+            , varQueryFragment 0 [ [ l, i, m, i, t ] ]
             ]
           }
         , { name =
@@ -681,7 +683,7 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                     t.custom_tags_xml_array as custom_tags
                 FROM tracks t
                 WHERE t.id = ''
-            , Model.QueryFragment.Var (name [ [ t, r, a, c, k ], [ i, d ] ])
+            , varQueryFragment 0 [ [ t, r, a, c, k ], [ i, d ] ]
             ]
           }
         , { name =
@@ -744,7 +746,7 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                     t.metadata_xml as metadata
                 FROM tracks t
                 WHERE xpath_exists(''
-            , Model.QueryFragment.Var (name [ [ x, m, l ], [ q, u, e, r, y ] ])
+            , varQueryFragment 0 [ [ x, m, l ], [ q, u, e, r, y ] ]
             , Model.QueryFragment.Sql ", t.metadata_xml) ORDER BY t.title"
             ]
           }
