@@ -68,7 +68,7 @@ let varQueryFragment
     : Natural -> List (List LatinChar.Type) -> Model.QueryFragment
     = ./Helpers/varQueryFragment.dhall
 
-in    { owner = name [ [ p, g, e, n, i, e ] ]
+in    { owner = name [ [ d, e, m, o ] ]
       , name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
       , version = { major = 1, minor = 0, patch = 0 }
       , customTypes =
@@ -104,8 +104,9 @@ in    { owner = name [ [ p, g, e, n, i, e ] ]
                   , rawName = "metadata"
                   , isNullable = True
                   , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
+                    { arraySettings = Some
+                      { dimensionality = 1, elementIsNullable = True }
+                    , scalar = Model.Scalar.Primitive Model.Primitive.Jsonb
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]

@@ -1,3 +1,4 @@
+-- | The codegen API model. Used as input to generators.
 let Prelude = ./Prelude.dhall
 
 let CodegenKit = ./CodegenKit.dhall
