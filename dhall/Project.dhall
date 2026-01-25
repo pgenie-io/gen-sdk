@@ -53,9 +53,9 @@ let ArraySettings = { dimensionality : Natural, elementIsNullable : Bool }
 
 let Value = { arraySettings : Optional ArraySettings, scalar : Scalar }
 
-let Member = { name : Name, rawName : Text, isNullable : Bool, value : Value }
+let Member = { name : Name, pgName : Text, isNullable : Bool, value : Value }
 
-let EnumVariant = { name : Name, rawName : Text }
+let EnumVariant = { name : Name, pgName : Text }
 
 let CustomTypeDefinition =
       < Composite : List Member | Enum : List EnumVariant | Domain : Value >
@@ -63,7 +63,7 @@ let CustomTypeDefinition =
 let CustomType =
       { name : Name
       , pgSchemaName : Text
-      , rawName : Text
+      , pgName : Text
       , definition : CustomTypeDefinition
       }
 

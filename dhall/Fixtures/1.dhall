@@ -76,28 +76,28 @@ in    { owner = name [ [ d, e, m, o ] ]
       , customTypes =
         [ { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
           , pgSchemaName
-          , rawName = "album_type"
+          , pgName = "album_type"
           , definition =
               Model.CustomTypeDefinition.Enum
-                [ { name = name [ [ s, t, u, d, i, o ] ], rawName = "studio" }
-                , { name = name [ [ l, i, v, e ] ], rawName = "live" }
+                [ { name = name [ [ s, t, u, d, i, o ] ], pgName = "studio" }
+                , { name = name [ [ l, i, v, e ] ], pgName = "live" }
                 , { name = name [ [ c, o, m, p, i, l, a, t, i, o, n ] ]
-                  , rawName = "compilation"
+                  , pgName = "compilation"
                   }
                 , { name = name [ [ s, o, u, n, d, t, r, a, c, k ] ]
-                  , rawName = "soundtrack"
+                  , pgName = "soundtrack"
                   }
-                , { name = name [ [ e, p ] ], rawName = "ep" }
-                , { name = name [ [ s, i, n, g, l, e ] ], rawName = "single" }
+                , { name = name [ [ e, p ] ], pgName = "ep" }
+                , { name = name [ [ s, i, n, g, l, e ] ], pgName = "single" }
                 ]
           }
         , { name = name [ [ t, r, a, c, k ], [ m, e, t, a, d, a, t, a ] ]
           , pgSchemaName
-          , rawName = "track_metadata"
+          , pgName = "track_metadata"
           , definition =
               Model.CustomTypeDefinition.Composite
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , rawName = "title"
+                  , pgName = "title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -105,7 +105,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , rawName = "metadata"
+                  , pgName = "metadata"
                   , isNullable = True
                   , value =
                     { arraySettings = Some
@@ -114,7 +114,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
-                  , rawName = "created_at"
+                  , pgName = "created_at"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -135,7 +135,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/get_albums_by_artist.sql"
           , params =
             [ { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
-              , rawName = "artist_id"
+              , pgName = "artist_id"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -148,7 +148,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -157,7 +157,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , rawName = "title"
+                  , pgName = "title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -165,7 +165,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ r, e, l, e, a, s, e ], [ y, e, a, r ] ]
-                  , rawName = "release_year"
+                  , pgName = "release_year"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -173,7 +173,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
-                  , rawName = "album_type"
+                  , pgName = "album_type"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -209,7 +209,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/search_tracks_by_title.sql"
           , params =
             [ { name = name [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
-              , rawName = "search_term"
+              , pgName = "search_term"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -222,7 +222,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -231,7 +231,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , rawName = "title"
+                  , pgName = "title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -239,7 +239,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ d, u, r, a, t, i, o, n ] ]
-                  , rawName = "duration_seconds"
+                  , pgName = "duration_seconds"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -247,7 +247,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , rawName = "album_title"
+                  , pgName = "album_title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -255,7 +255,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , rawName = "artist_name"
+                  , pgName = "artist_name"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -288,7 +288,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/get_track_details.sql"
           , params =
             [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
-              , rawName = "track_id"
+              , pgName = "track_id"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -301,7 +301,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -310,7 +310,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , rawName = "title"
+                  , pgName = "title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -318,7 +318,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ d, u, r, a, t, i, o, n ] ]
-                  , rawName = "duration_seconds"
+                  , pgName = "duration_seconds"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -326,7 +326,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ t, r, a, c, k ], [ n, u, m, b, e, r ] ]
-                  , rawName = "track_number"
+                  , pgName = "track_number"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -334,7 +334,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ i, d ] ]
-                  , rawName = "album_id"
+                  , pgName = "album_id"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -342,7 +342,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , rawName = "album_title"
+                  , pgName = "album_title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -350,7 +350,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
-                  , rawName = "artist_id"
+                  , pgName = "artist_id"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -358,7 +358,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , rawName = "artist_name"
+                  , pgName = "artist_name"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -366,7 +366,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ g, e, n, r, e ] ]
-                  , rawName = "genre"
+                  , pgName = "genre"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -412,7 +412,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -421,7 +421,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ n, a, m, e ] ]
-                  , rawName = "name"
+                  , pgName = "name"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -429,7 +429,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ t, r, a, c, k ], [ c, o, u, n, t ] ]
-                  , rawName = "track_count"
+                  , pgName = "track_count"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -437,7 +437,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ c, o, u, n, t ] ]
-                  , rawName = "album_count"
+                  , pgName = "album_count"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -466,7 +466,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/create_playlist.sql"
           , params =
             [ { name = name [ [ n, a, m, e ] ]
-              , rawName = "name"
+              , pgName = "name"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -474,7 +474,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               }
             , { name = name [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
-              , rawName = "description"
+              , pgName = "description"
               , isNullable = True
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -482,7 +482,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               }
             , { name = name [ [ u, s, e, r ], [ i, d ] ]
-              , rawName = "user_id"
+              , pgName = "user_id"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -495,7 +495,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -504,7 +504,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ n, a, m, e ] ]
-                  , rawName = "name"
+                  , pgName = "name"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -512,7 +512,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
-                  , rawName = "created_at"
+                  , pgName = "created_at"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -550,7 +550,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/get_top_tracks_by_play_count.sql"
           , params =
             [ { name = name [ [ l, i, m, i, t ] ]
-              , rawName = "limit"
+              , pgName = "limit"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -563,7 +563,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -572,7 +572,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , rawName = "title"
+                  , pgName = "title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -580,7 +580,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , rawName = "artist_name"
+                  , pgName = "artist_name"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -588,7 +588,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , rawName = "album_title"
+                  , pgName = "album_title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -596,7 +596,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ p, l, a, y ], [ c, o, u, n, t ] ]
-                  , rawName = "play_count"
+                  , pgName = "play_count"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -638,7 +638,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/get_track_metadata_xml.sql"
           , params =
             [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
-              , rawName = "track_id"
+              , pgName = "track_id"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -651,7 +651,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -660,7 +660,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , rawName = "metadata"
+                  , pgName = "metadata"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -668,7 +668,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ c, u, s, t, o, m ], [ t, a, g, s ] ]
-                  , rawName = "custom_tags"
+                  , pgName = "custom_tags"
                   , isNullable = True
                   , value =
                     { arraySettings = Some
@@ -702,7 +702,7 @@ in    { owner = name [ [ d, e, m, o ] ]
           , srcPath = "queries/search_tracks_by_xml_metadata.sql"
           , params =
             [ { name = name [ [ x, m, l ], [ q, u, e, r, y ] ]
-              , rawName = "xml_query"
+              , pgName = "xml_query"
               , isNullable = False
               , value =
                 { arraySettings = None Model.ArraySettings
@@ -715,7 +715,7 @@ in    { owner = name [ [ d, e, m, o ] ]
             , columns =
               { head =
                 { name = name [ [ i, d ] ]
-                , rawName = "id"
+                , pgName = "id"
                 , isNullable = False
                 , value =
                   { arraySettings = None Model.ArraySettings
@@ -724,7 +724,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 }
               , tail =
                 [ { name = name [ [ t, i, t, l, e ] ]
-                  , rawName = "title"
+                  , pgName = "title"
                   , isNullable = False
                   , value =
                     { arraySettings = None Model.ArraySettings
@@ -732,7 +732,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                     }
                   }
                 , { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , rawName = "metadata"
+                  , pgName = "metadata"
                   , isNullable = True
                   , value =
                     { arraySettings = None Model.ArraySettings
