@@ -61,7 +61,11 @@ let CustomTypeDefinition =
       < Composite : List Member | Enum : List EnumVariant | Domain : Value >
 
 let CustomType =
-      { name : Name, rawName : Text, definition : CustomTypeDefinition }
+      { name : Name
+      , pgSchemaName : Text
+      , rawName : Text
+      , definition : CustomTypeDefinition
+      }
 
 let ResultRowsCardinality = < Optional | Single | Multiple >
 
