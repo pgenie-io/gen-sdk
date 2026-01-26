@@ -2,9 +2,10 @@ let Prelude = ../../Prelude.dhall
 
 let Report = ./Type.dhall
 
-in  \(report : Report) ->
+in  \(level : Text) ->
+    \(report : Report) ->
       ''
-      - Warning: ${report.message}
+      - ${level}: ${report.message}
         Context: ${Prelude.Text.concatMap
                      Text
                      (\(segment : Text) -> "\n" ++ "    - " ++ segment)

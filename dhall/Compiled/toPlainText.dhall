@@ -5,14 +5,27 @@ let Compiled = ./Type.dhall
 let Report = ./Report/package.dhall
 
 in  \(compiled : Compiled Text) ->
-          Prelude.Text.concatMapSep
-            "\n"
-            Report.Type
-            Report.toPlainText
-            compiled.reports
-      ++  Prelude.Optional.fold
-            Text
-            compiled.result
-            Text
-            (\(a : Text) -> "\n" ++ a)
-            ""
+      merge
+        { Some =
+            \(ok : Text) ->
+                  ''
+                  OK!
+                  ''
+              ++  Prelude.Text.concatMapSep
+                    "\n"
+                    Report.Type
+                    (Report.toPlainText "Warning")
+                    compiled.reports
+              ++  "\n"
+              ++  ok
+        , None =
+                ''
+                ERROR!
+                ''
+            ++  Prelude.Text.concatMapSep
+                  "\n"
+                  Report.Type
+                  (Report.toPlainText "Error")
+                  compiled.reports
+        }
+        compiled.result
