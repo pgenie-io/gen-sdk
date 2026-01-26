@@ -21,3 +21,4 @@ in  \(compiled : Compiled Text) ->
               compiled.reports
         }
         compiled.result
+      : Text
