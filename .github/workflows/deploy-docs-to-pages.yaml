@@ -1,10 +1,8 @@
 name: Deploy Dhall Documentation to GitHub Pages
 
 on:
-  # Trigger on pushes to main or master branch
   push:
-    branches: [ main, master ]
-  # Allow manual triggering
+    branches: [main, master]
   workflow_dispatch:
 
 permissions:
@@ -13,9 +11,9 @@ permissions:
   id-token: write
 
 jobs:
-  build-docs:
+  deploy-dhall-docs:
     uses: nikita-volkov/deploy-dhall-docs-to-github-pages.github-actions-workflow/.github/workflows/main.yaml@v1
     with:
-      input: src
-      package-name: typeclasses
+      input: dhall
+      package-name: gen-sdk
     secrets: inherit
