@@ -4,10 +4,11 @@ let Compiled = ./Type.dhall
 
 let Report = ./Report/package.dhall
 
-in  \(compiled : Compiled Text) ->
+in  \(Result : Type) ->
+    \(compiled : Compiled Result) ->
       merge
         { Some =
-            \(ok : Text) ->
+            \(ok : Result) ->
               Prelude.Text.concatMapSep
                 "\n"
                 Report.Type
