@@ -1,3 +1,4 @@
+-- Function for constructing Generator modules.
 let Project = ./Project.dhall
 
 let Compiled = ./Compiled/package.dhall
