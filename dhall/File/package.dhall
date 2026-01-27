@@ -1,1 +1,4 @@
-{ Type = ./Type.dhall, toPlainText = ./toPlainText.dhall }
+{ Type = ./Type.dhall
+, toPlainText = ./toPlainText.dhall
+, toMapEntry = ./toMapEntry.dhall
+}
