@@ -89,6 +89,7 @@ library
   exposed-modules:
     PGenieGen.V1
     PGenieGen.V1.Project
+    PGenieGen.V1.Report
 
   other-modules:
     PGenieGen.Dhall.Deriving

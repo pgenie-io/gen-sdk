@@ -8,24 +8,34 @@ import Data.Text (Text)
 import Data.Text.IO qualified as Text
 import PGenieGen.V1 qualified as PGenieGen
 import PGenieGen.V1.Project qualified as Project
+import PGenieGen.V1.Report qualified as Report
 import System.Exit
+import TextBuilder qualified
 import Prelude
 
 main :: IO ()
 main = do
-  gen <- PGenieGen.load location configJson
+  compile <-
+    PGenieGen.load location configJson
 
-  success <- case gen input of
-    PGenieGen.ResultSuccess success -> pure success
-    PGenieGen.ResultFailure errMsg -> do
-      putStrLn "Generation failed!"
-      Text.putStrLn errMsg
-      exitFailure
+  let output =
+        compile input
 
-  forM_ success.warnings \warning -> do
-    print warning
+  files <-
+    case output.result of
+      Nothing -> do
+        putStrLn "Generation failed!"
+        forM_ output.reports \report -> do
+          Text.putStrLn (Report.toErrorYamlText report)
+        exitFailure
+      Just files -> do
+        putStrLn "Generation succeeded!"
+        forM_ output.reports \report -> do
+          Text.putStrLn (Report.toWarningYamlText report)
 
-  forM_ success.files \(PGenieGen.File path content) -> do
+        pure files
+
+  forM_ files \(PGenieGen.File path content) -> do
     Text.putStrLn (path <> ":")
     Text.putStrLn content
     Text.putStrLn "---"
@@ -67,7 +77,16 @@ input =
           srcPath = "queries/get_user.sql",
           params = [userIdParam],
           result = Just userResult,
-          fragments = [Project.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ", Project.QueryFragmentVar (textName "user_id")]
+          fragments =
+            [ Project.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
+              Project.QueryFragmentVar
+                ( Project.MkQueryFragmentVar
+                    { name = textName "user_id",
+                      rawName = "user_id",
+                      paramIndex = 1
+                    }
+                )
+            ]
         }
 
     -- Parameter for user ID
@@ -79,7 +98,7 @@ input =
           isNullable = False,
           value =
             Project.Value
-              { dimensionality = 0,
+              { arraySettings = Nothing,
                 scalar = Project.ScalarPrimitive Project.PrimitiveInt4
               }
         }
@@ -88,7 +107,7 @@ input =
     userResult :: Project.ResultRows
     userResult =
       Project.ResultRows
-        { cardinality = Project.ResultRowsCategoryOptional,
+        { cardinality = Project.ResultRowsCardinalityOptional,
           columns =
             NonEmpty.fromList
               [ Project.Member
@@ -97,7 +116,7 @@ input =
                     isNullable = False,
                     value =
                       Project.Value
-                        { dimensionality = 0,
+                        { arraySettings = Nothing,
                           scalar = Project.ScalarPrimitive Project.PrimitiveInt4
                         }
                   },
@@ -107,7 +126,7 @@ input =
                     isNullable = False,
                     value =
                       Project.Value
-                        { dimensionality = 0,
+                        { arraySettings = Nothing,
                           scalar = Project.ScalarPrimitive Project.PrimitiveText
                         }
                   },
@@ -117,7 +136,7 @@ input =
                     isNullable = True,
                     value =
                       Project.Value
-                        { dimensionality = 0,
+                        { arraySettings = Nothing,
                           scalar = Project.ScalarPrimitive Project.PrimitiveText
                         }
                   }

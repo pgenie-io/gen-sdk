@@ -1,10 +1,8 @@
 -- | Integration with generator adapters that conform to the standard of version 1.
 module PGenieGen.V1
   ( Input,
-    Result (..),
-    SuccessResult (..),
-    Warning (..),
-    UnsupportedType (..),
+    Output (..),
+    Report (..),
     File (..),
     Location (..),
     load,
@@ -20,36 +18,13 @@ import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprAccessors qualified as ExprAccessors
 import PGenieGen.Prelude
 import PGenieGen.V1.Project qualified as Project
+import PGenieGen.V1.Report (Report (..))
 
 type Input = Project.Project
 
-data Result
-  = ResultFailure Text
-  | ResultSuccess SuccessResult
-  deriving stock (Generic, Show, Eq)
-  deriving
-    (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Result") Result)
-
-data SuccessResult
-  = SuccessResult
-  { warnings :: [Warning],
-    files :: [File]
-  }
-  deriving stock (Generic, Show, Eq)
-  deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
-
-data Warning
-  = WarningUnsupportedType UnsupportedType
-  | WarningOther Text
-  deriving stock (Generic, Show, Eq)
-  deriving
-    (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Warning") Warning)
-
-data UnsupportedType = UnsupportedType
-  { value :: Project.Value,
-    query :: Project.Query
+data Output = Output
+  { reports :: [Report],
+    result :: Maybe [File]
   }
   deriving stock (Generic, Show, Eq)
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
@@ -61,15 +36,13 @@ data File = File
   deriving stock (Generic, Show, Eq)
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
 
-type DhallExpr = Dhall.Core.Expr Dhall.Src.Src Void
-
 -- * Procedures
 
 data Location
   = LocationUrl Text
   | LocationPath Text
 
-load :: Location -> Aeson.Value -> IO (Input -> Result)
+load :: Location -> Aeson.Value -> IO (Input -> Output)
 load location configJson = do
   let code = case location of
         LocationUrl url -> url <> "/Gen.dhall"

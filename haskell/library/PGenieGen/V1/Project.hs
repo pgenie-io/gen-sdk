@@ -119,9 +119,17 @@ data Scalar
     (Dhall.FromDhall, Dhall.ToDhall)
     via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Scalar") Scalar)
 
--- | A dimensional type with dimensionality (array depth) and scalar type
-data Value = Value
+-- | Array settings with dimensionality and element nullability
+data ArraySettings = ArraySettings
   { dimensionality :: Natural,
+    elementIsNullable :: Bool
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
+-- | A value with optional array settings and scalar type
+data Value = Value
+  { arraySettings :: Maybe ArraySettings,
     scalar :: Scalar
   }
   deriving stock (Show, Eq, Generic)
@@ -167,9 +175,9 @@ data CustomType = CustomType
 
 -- | Category of result rows
 data ResultRowsCardinality
-  = ResultRowsCategoryOptional
-  | ResultRowsCategorySingle
-  | ResultRowsCategoryMultiple
+  = ResultRowsCardinalityOptional
+  | ResultRowsCardinalitySingle
+  | ResultRowsCardinalityMultiple
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -183,10 +191,19 @@ data ResultRows = ResultRows
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
+-- | A variable in a query fragment
+data QueryFragmentVar = MkQueryFragmentVar
+  { name :: Name,
+    rawName :: Text,
+    paramIndex :: Natural
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
 -- | A fragment of a query, either SQL text or a variable
 data QueryFragment
   = QueryFragmentSql Text
-  | QueryFragmentVar Name
+  | QueryFragmentVar QueryFragmentVar
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
