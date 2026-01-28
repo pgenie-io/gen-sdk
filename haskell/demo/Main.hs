@@ -31,7 +31,7 @@ main = do
     Text.putStrLn "---"
 
 location :: PGenieGen.Location
-location = PGenieGen.LocationPath "./dhall/Adapters/HasqlV1"
+location = PGenieGen.LocationUrl "https://raw.githubusercontent.com/pgenie-io/haskell-hasql.gen/refs/heads/master/src"
 
 configJson :: Aeson.Value
 configJson =

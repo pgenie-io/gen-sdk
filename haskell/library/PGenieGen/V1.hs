@@ -70,8 +70,11 @@ data Location
 
 load :: Location -> Aeson.Value -> IO (Input -> Result)
 load location configJson = do
+  putStrLn "Loading Config signature..."
   configSig <- loadConfigSig location
+  putStrLn "Loading Config..."
   configEncoder <- loadConfig configSig configJson
+  putStrLn "Loading Generator..."
   loadGen location configEncoder
 
 loadConfigSig :: Location -> IO DhallExpr
@@ -101,8 +104,8 @@ loadGen location configEncoder =
       "(let Gen = " <> importCode <> " in Gen.generate)"
       where
         importCode = case location of
-          LocationUrl url -> url <> "/Gen.dhall"
-          LocationPath path -> path <> "/Gen.dhall"
+          LocationUrl url -> url <> "/package.dhall"
+          LocationPath path -> path <> "/package.dhall"
     decoder =
       Dhall.function configEncoder Dhall.auto
         & fmap ($ ())
