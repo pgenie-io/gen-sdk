@@ -68,14 +68,14 @@ let varQueryFragment
     : Natural -> List (List LatinChar.Type) -> Model.QueryFragment
     = ./Helpers/varQueryFragment.dhall
 
-let pgSchemaName = "music_catalogue"
+let pgSchema = "music_catalogue"
 
 in    { owner = name [ [ d, e, m, o ] ]
       , name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
       , version = { major = 1, minor = 0, patch = 0 }
       , customTypes =
         [ { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
-          , pgSchemaName
+          , pgSchema
           , pgName = "album_type"
           , definition =
               Model.CustomTypeDefinition.Enum
@@ -92,7 +92,7 @@ in    { owner = name [ [ d, e, m, o ] ]
                 ]
           }
         , { name = name [ [ t, r, a, c, k ], [ m, e, t, a, d, a, t, a ] ]
-          , pgSchemaName
+          , pgSchema
           , pgName = "track_metadata"
           , definition =
               Model.CustomTypeDefinition.Composite

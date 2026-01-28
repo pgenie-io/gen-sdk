@@ -62,7 +62,7 @@ let CustomTypeDefinition =
 
 let CustomType =
       { name : Name
-      , pgSchemaName : Text
+      , pgSchema : Text
       , pgName : Text
       , definition : CustomTypeDefinition
       }

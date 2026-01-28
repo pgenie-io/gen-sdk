@@ -44,7 +44,8 @@ configJson =
 input :: Project.Project
 input =
   Project.Project
-    { name = textName "demo_project",
+    { owner = textName "demo",
+      name = textName "demo_project",
       version = Project.Version {major = 1, minor = 0, patch = 0},
       customTypes = [],
       queries = [exampleQuery]
@@ -70,18 +71,16 @@ input =
         }
 
     -- Parameter for user ID
-    userIdParam :: Project.Field
+    userIdParam :: Project.Member
     userIdParam =
-      Project.Field
+      Project.Member
         { name = textName "user_id",
+          pgName = "user_id",
+          isNullable = False,
           value =
             Project.Value
-              { isNullable = False,
-                dimensional =
-                  Project.Dimensional
-                    { dimensionality = 0,
-                      scalar = Project.ScalarPrimitive Project.PrimitiveInt4
-                    }
+              { dimensionality = 0,
+                scalar = Project.ScalarPrimitive Project.PrimitiveInt4
               }
         }
 
@@ -92,40 +91,34 @@ input =
         { cardinality = Project.ResultRowsCategoryOptional,
           columns =
             NonEmpty.fromList
-              [ Project.Field
+              [ Project.Member
                   { name = textName "id",
+                    pgName = "id",
+                    isNullable = False,
                     value =
                       Project.Value
-                        { isNullable = False,
-                          dimensional =
-                            Project.Dimensional
-                              { dimensionality = 0,
-                                scalar = Project.ScalarPrimitive Project.PrimitiveInt4
-                              }
+                        { dimensionality = 0,
+                          scalar = Project.ScalarPrimitive Project.PrimitiveInt4
                         }
                   },
-                Project.Field
+                Project.Member
                   { name = textName "name",
+                    pgName = "name",
+                    isNullable = False,
                     value =
                       Project.Value
-                        { isNullable = False,
-                          dimensional =
-                            Project.Dimensional
-                              { dimensionality = 0,
-                                scalar = Project.ScalarPrimitive Project.PrimitiveText
-                              }
+                        { dimensionality = 0,
+                          scalar = Project.ScalarPrimitive Project.PrimitiveText
                         }
                   },
-                Project.Field
+                Project.Member
                   { name = textName "email",
+                    pgName = "email",
+                    isNullable = True,
                     value =
                       Project.Value
-                        { isNullable = True,
-                          dimensional =
-                            Project.Dimensional
-                              { dimensionality = 0,
-                                scalar = Project.ScalarPrimitive Project.PrimitiveText
-                              }
+                        { dimensionality = 0,
+                          scalar = Project.ScalarPrimitive Project.PrimitiveText
                         }
                   }
               ]
