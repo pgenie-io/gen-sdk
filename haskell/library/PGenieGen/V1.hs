@@ -17,6 +17,7 @@ import Dhall.Core qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
+import PGenieGen.Dhall.ExprAccessors qualified as ExprAccessors
 import PGenieGen.Prelude
 import PGenieGen.V1.Project qualified as Project
 
@@ -70,42 +71,45 @@ data Location
 
 load :: Location -> Aeson.Value -> IO (Input -> Result)
 load location configJson = do
-  putStrLn "Loading Config signature..."
-  configSig <- loadConfigSig location
-  putStrLn "Loading Config..."
-  configEncoder <- loadConfig configSig configJson
-  putStrLn "Loading Generator..."
-  loadGen location configEncoder
+  let code = case location of
+        LocationUrl url -> url <> "/Gen.dhall"
+        LocationPath path -> "./" <> path <> "/Gen.dhall"
 
-loadConfigSig :: Location -> IO DhallExpr
-loadConfigSig location =
-  Dhall.inputExpr code
-  where
-    code = case location of
-      LocationUrl url -> url <> "/Config.dhall"
-      LocationPath path -> path <> "/Config.dhall"
+  putStrLn ("Loading generator code from: " <> to code)
 
-loadConfig :: DhallExpr -> Aeson.Value -> IO (Dhall.Encoder ())
-loadConfig configSig json = do
-  case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configSig json of
-    Left err -> throwIO $ userError $ "Failed to load config: " <> show err
-    Right configVal ->
-      pure
+  genExpr <- Dhall.inputExpr code
+
+  configTypeExpr <- case ExprAccessors.recordField "Config" genExpr of
+    Nothing -> do
+      putStrLn "Could not find 'Config' field in the loaded generator code"
+      exitFailure
+    Just expr -> pure expr
+
+  configValExpr <- case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configTypeExpr configJson of
+    Left err -> do
+      putStrLn ("Config does not conform to the expected schema:\n" <> show err)
+      exitFailure
+    Right configVal -> pure configVal
+
+  compileExpr <- case ExprAccessors.recordField "compile" genExpr of
+    Nothing -> do
+      putStrLn "Could not find 'compile' field in the loaded generator code"
+      exitFailure
+    Just expr -> pure expr
+
+  let configEncoder =
         Dhall.Encoder
-          { embed = const configVal,
-            declared = configSig
+          { embed = const configValExpr,
+            declared = configTypeExpr
           }
+      decoder =
+        fmap
+          ($ ())
+          ( Dhall.function
+              configEncoder
+              Dhall.auto
+          )
 
-loadGen :: Location -> Dhall.Encoder () -> IO (Input -> Result)
-loadGen location configEncoder =
-  Dhall.input decoder code
-  where
-    code =
-      "(let Gen = " <> importCode <> " in Gen.generate)"
-      where
-        importCode = case location of
-          LocationUrl url -> url <> "/package.dhall"
-          LocationPath path -> path <> "/package.dhall"
-    decoder =
-      Dhall.function configEncoder Dhall.auto
-        & fmap ($ ())
+  Dhall.expectWithSettings Dhall.defaultInputSettings decoder compileExpr
+
+  Dhall.rawInput decoder compileExpr

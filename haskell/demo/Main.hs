@@ -31,13 +31,13 @@ main = do
     Text.putStrLn "---"
 
 location :: PGenieGen.Location
-location = PGenieGen.LocationUrl "https://raw.githubusercontent.com/pgenie-io/haskell-hasql.gen/refs/heads/master/src"
+location = PGenieGen.LocationPath "./haskell/demo"
 
 configJson :: Aeson.Value
 configJson =
   [aesonQQ| 
     {
-      "hasqlVersionOverride": "1.9.1.2"
+      "foo": "Foo!"
     } 
   |]
 
