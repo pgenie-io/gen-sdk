@@ -1,9 +1,7 @@
 -- | Integration with generator adapters that conform to the standard of version 1.
 module PGenieGen.V1
   ( Input,
-    Output (..),
-    Report (..),
-    File (..),
+    Output,
     Location (..),
     load,
   )
@@ -18,24 +16,12 @@ import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
+import PGenieGen.V1.Output qualified as Output
 import PGenieGen.V1.Project qualified as Project
-import PGenieGen.V1.Report (Report (..))
 
 type Input = Project.Project
 
-data Output = Output
-  { reports :: [Report],
-    result :: Maybe [File]
-  }
-  deriving stock (Generic, Show, Eq)
-  deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
-
-data File = File
-  { path :: Text,
-    content :: Text
-  }
-  deriving stock (Generic, Show, Eq)
-  deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
+type Output = Output.Output
 
 -- * Procedures
 

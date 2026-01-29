@@ -7,8 +7,9 @@ import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text)
 import Data.Text.IO qualified as Text
 import PGenieGen.V1 qualified as PGenieGen
+import PGenieGen.V1.Output qualified as Output
+import PGenieGen.V1.Output.Report qualified as Output.Report
 import PGenieGen.V1.Project qualified as Project
-import PGenieGen.V1.Report qualified as Report
 import System.Exit
 import Test.Hspec
 import TextBuilder qualified
@@ -29,18 +30,18 @@ main = hspec do
           Nothing -> do
             putStrLn "Generation failed!"
             forM_ output.reports \report -> do
-              Text.putStrLn (Report.toErrorYamlText report)
+              Text.putStrLn (Output.Report.toErrorYamlText report)
             exitFailure
           Just files -> do
             putStrLn "Generation succeeded!"
             forM_ output.reports \report -> do
-              Text.putStrLn (Report.toWarningYamlText report)
+              Text.putStrLn (Output.Report.toWarningYamlText report)
 
             pure files
 
       shouldBe
         files
-        [ PGenieGen.File
+        [ Output.File
             { path = "output.yaml",
               content =
                 "config:\n\

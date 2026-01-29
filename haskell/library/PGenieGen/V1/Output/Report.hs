@@ -1,4 +1,4 @@
-module PGenieGen.V1.Report where
+module PGenieGen.V1.Output.Report where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified

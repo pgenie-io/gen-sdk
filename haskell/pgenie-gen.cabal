@@ -89,8 +89,9 @@ library
   hs-source-dirs: library
   exposed-modules:
     PGenieGen.V1
+    PGenieGen.V1.Output
+    PGenieGen.V1.Output.Report
     PGenieGen.V1.Project
-    PGenieGen.V1.Report
 
   other-modules:
     PGenieGen.Dhall.Deriving
