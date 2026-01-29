@@ -9,6 +9,7 @@ module PGenieGen.V1
   )
 where
 
+import AlgebraicPath qualified as Path
 import Data.Aeson qualified as Aeson
 import Dhall qualified
 import Dhall.Core qualified
@@ -40,13 +41,13 @@ data File = File
 
 data Location
   = LocationUrl Text
-  | LocationPath Text
+  | LocationPath Path
 
 load :: Location -> Aeson.Value -> IO (Input -> Output)
 load location configJson = do
   let code = case location of
         LocationUrl url -> url <> "/Gen.dhall"
-        LocationPath path -> "./" <> path <> "/Gen.dhall"
+        LocationPath path -> Path.toText (path <> "Gen.dhall")
 
   putStrLn ("Loading generator code from: " <> to code)
 

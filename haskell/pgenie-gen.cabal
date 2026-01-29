@@ -102,6 +102,7 @@ library
   build-depends:
     QuickCheck,
     aeson,
+    algebraic-path ^>=0.1,
     base,
     bytestring,
     containers,
