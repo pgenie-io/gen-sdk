@@ -16,6 +16,7 @@ import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
+import PGenieGen.V1.Contract qualified as Contract
 import PGenieGen.V1.Input qualified as Project
 import PGenieGen.V1.Output qualified as Output
 
@@ -38,6 +39,27 @@ load location configJson = do
   putStrLn ("Loading generator code from: " <> to code)
 
   genExpr <- Dhall.inputExpr code
+
+  contractVersionExpr <- case ExprViews.recordField "contractVersion" genExpr of
+    Nothing -> do
+      putStrLn "Could not find 'contractVersion' field in the loaded generator code"
+      exitFailure
+    Just expr -> pure expr
+
+  Contract.ContractVersion major minor <- do
+    let decoder = Dhall.auto @Contract.ContractVersion
+
+    Dhall.expectWithSettings Dhall.defaultInputSettings decoder contractVersionExpr
+
+    Dhall.rawInput decoder contractVersionExpr
+
+  when (major /= 1) do
+    putStrLn ("Incompatible contract major version: " <> show major <> ". Expected 1.")
+    exitFailure
+
+  when (minor > 0) do
+    putStrLn ("Incompatible contract minor version: " <> show minor <> ". Expected 0 or lower.")
+    exitFailure
 
   configTypeExpr <- case ExprViews.recordField "Config" genExpr of
     Nothing -> do
