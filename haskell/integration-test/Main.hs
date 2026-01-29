@@ -10,35 +10,44 @@ import PGenieGen.V1 qualified as PGenieGen
 import PGenieGen.V1.Project qualified as Project
 import PGenieGen.V1.Report qualified as Report
 import System.Exit
+import Test.Hspec
 import TextBuilder qualified
 import Prelude
 
 main :: IO ()
-main = do
-  compile <-
-    PGenieGen.load location configJson
+main = hspec do
+  describe "" do
+    it "" do
+      compile <-
+        PGenieGen.load location configJson
 
-  let output =
-        compile input
+      let output =
+            compile input
 
-  files <-
-    case output.result of
-      Nothing -> do
-        putStrLn "Generation failed!"
-        forM_ output.reports \report -> do
-          Text.putStrLn (Report.toErrorYamlText report)
-        exitFailure
-      Just files -> do
-        putStrLn "Generation succeeded!"
-        forM_ output.reports \report -> do
-          Text.putStrLn (Report.toWarningYamlText report)
+      files <-
+        case output.result of
+          Nothing -> do
+            putStrLn "Generation failed!"
+            forM_ output.reports \report -> do
+              Text.putStrLn (Report.toErrorYamlText report)
+            exitFailure
+          Just files -> do
+            putStrLn "Generation succeeded!"
+            forM_ output.reports \report -> do
+              Text.putStrLn (Report.toWarningYamlText report)
 
-        pure files
+            pure files
 
-  forM_ files \(PGenieGen.File path content) -> do
-    Text.putStrLn (path <> ":")
-    Text.putStrLn content
-    Text.putStrLn "---"
+      shouldBe
+        files
+        [ PGenieGen.File
+            { path = "output.yaml",
+              content =
+                "config:\n\
+                \  foo: Foo!\n\
+                \  bar: null\n"
+            }
+        ]
 
 location :: PGenieGen.Location
 location = PGenieGen.LocationPath "./integration-test"
