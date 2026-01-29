@@ -16,8 +16,8 @@ import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
+import PGenieGen.V1.Input qualified as Project
 import PGenieGen.V1.Output qualified as Output
-import PGenieGen.V1.Project qualified as Project
 
 type Input = Project.Project
 
