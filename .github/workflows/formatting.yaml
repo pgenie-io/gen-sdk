@@ -1,0 +1,33 @@
+name: Formatting
+
+on:
+  push:
+    branches: [main, master]
+
+# Prevent overlapping publishes on rapid pushes
+concurrency:
+  group: main-maintenance
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the source
+        uses: actions/checkout@v4
+
+      - name: Format Cabal
+        uses: nikita-volkov/cabal-gild.github-action@v2
+
+      - name: Format haskell
+        uses: nikita-volkov/ormolu.github-action@v3
+
+      - name: Commit the changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Format
