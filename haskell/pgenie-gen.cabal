@@ -1,8 +1,7 @@
 cabal-version: 3.4
 name: pgenie-gen
 version: 0
-category:
-synopsis:
+synopsis: SDK
 description:
 homepage: https://github.com/nikita-volkov/pgenie-gen
 bug-reports: https://github.com/nikita-volkov/pgenie-gen/issues
@@ -11,6 +10,8 @@ maintainer: Nikita Volkov <nikita.y.volkov@mail.ru>
 copyright: (c) 2025, Nikita Volkov
 license: GPL-3.0-or-later
 license-file: LICENSE
+extra-source-files:
+  integration-test/Gen.dhall
 
 source-repository head
   type: git
@@ -89,9 +90,11 @@ library
   exposed-modules:
     PGenieGen.V1
     PGenieGen.V1.Project
+    PGenieGen.V1.Report
 
   other-modules:
     PGenieGen.Dhall.Deriving
+    PGenieGen.Dhall.ExprViews
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.FromDhall
     PGenieGen.Dhall.Orphans.ToDhall
@@ -100,15 +103,16 @@ library
   build-depends:
     QuickCheck,
     aeson,
+    algebraic-path ^>=0.1,
     base,
     bytestring,
     containers,
     data-has,
-    dhall ^>=1.42.2,
+    dhall ^>=1.42.3,
     dhall-json ^>=1.7.2,
     hashable,
     hspec,
-    lawful-conversions,
+    lawful-conversions ^>=0.3.1,
     megaparsec,
     mtl,
     profunctors,
@@ -123,25 +127,24 @@ library
     vector-instances,
     witherable,
 
-executable pgenie-gen-demo
-  import: executable
-  hs-source-dirs: demo
+test-suite integration-test
+  import: test
+  type: exitcode-stdio-1.0
+  hs-source-dirs: integration-test
   main-is: Main.hs
+  other-modules:
   build-depends:
     aeson,
-    base,
-    bytestring,
     containers,
     data-has,
     hashable,
-    hspec,
+    hspec >=2.11 && <3,
     lawful-conversions,
     megaparsec,
-    mtl,
     pgenie-gen,
     profunctors,
     quickcheck-instances,
-    text,
+    rerebase,
     text-builder,
     text-builder-lawful-conversions,
     time,

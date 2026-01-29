@@ -49,29 +49,10 @@ data WordChar
     (Dhall.FromDhall, Dhall.ToDhall)
     via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "WordChar") WordChar)
 
--- | A number is a non-empty list of digit characters
-type Number = NonEmpty NumberChar
-
-data NumberChar
-  = NumberCharZero
-  | NumberCharOne
-  | NumberCharTwo
-  | NumberCharThree
-  | NumberCharFour
-  | NumberCharFive
-  | NumberCharSix
-  | NumberCharSeven
-  | NumberCharEight
-  | NumberCharNine
-  deriving stock (Show, Eq, Generic)
-  deriving
-    (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "NumberChar") NumberChar)
-
 -- | Either a word or a number
 data WordOrNumber
   = WordOrNumberWord Word
-  | WordOrNumberNumber Number
+  | WordOrNumberNumber Natural
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -138,27 +119,28 @@ data Scalar
     (Dhall.FromDhall, Dhall.ToDhall)
     via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Scalar") Scalar)
 
--- | A dimensional type with dimensionality (array depth) and scalar type
-data Dimensional = Dimensional
+-- | Array settings with dimensionality and element nullability
+data ArraySettings = ArraySettings
   { dimensionality :: Natural,
+    elementIsNullable :: Bool
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
+-- | A value with optional array settings and scalar type
+data Value = Value
+  { arraySettings :: Maybe ArraySettings,
     scalar :: Scalar
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
--- | A value with nullable flag and dimensional type
-data Value = Value
-  { isNullable :: Bool,
-    dimensional :: Dimensional
-  }
-  deriving stock (Show, Eq, Generic)
-  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
-
--- | A field in a composite type
-data CompositeField = CompositeField
+-- | A field in a composite type or query parameter
+data Member = Member
   { name :: Name,
     pgName :: Text,
-    definition :: Value
+    isNullable :: Bool,
+    value :: Value
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
@@ -173,9 +155,9 @@ data EnumVariant = EnumVariant
 
 -- | Definition of a custom type
 data CustomTypeDefinition
-  = CustomTypeDefinitionComposite [CompositeField]
+  = CustomTypeDefinitionComposite [Member]
   | CustomTypeDefinitionEnum [EnumVariant]
-  | CustomTypeDefinitionDomain Dimensional
+  | CustomTypeDefinitionDomain Value
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -184,25 +166,18 @@ data CustomTypeDefinition
 -- | A custom type with name, PostgreSQL name, and definition
 data CustomType = CustomType
   { name :: Name,
+    pgSchema :: Text,
     pgName :: Text,
     definition :: CustomTypeDefinition
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
--- | A field with name and type
-data Field = Field
-  { name :: Name,
-    value :: Value
-  }
-  deriving stock (Show, Eq, Generic)
-  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
-
 -- | Category of result rows
 data ResultRowsCardinality
-  = ResultRowsCategoryOptional
-  | ResultRowsCategorySingle
-  | ResultRowsCategoryMultiple
+  = ResultRowsCardinalityOptional
+  | ResultRowsCardinalitySingle
+  | ResultRowsCardinalityMultiple
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -211,7 +186,16 @@ data ResultRowsCardinality
 -- | Result rows with cardinality and row structure
 data ResultRows = ResultRows
   { cardinality :: ResultRowsCardinality,
-    columns :: NonEmpty Field
+    columns :: NonEmpty Member
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
+-- | A variable in a query fragment
+data QueryFragmentVar = MkQueryFragmentVar
+  { name :: Name,
+    rawName :: Text,
+    paramIndex :: Natural
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
@@ -219,7 +203,7 @@ data ResultRows = ResultRows
 -- | A fragment of a query, either SQL text or a variable
 data QueryFragment
   = QueryFragmentSql Text
-  | QueryFragmentVar Name
+  | QueryFragmentVar QueryFragmentVar
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -229,7 +213,7 @@ data QueryFragment
 data Query = Query
   { name :: Name,
     srcPath :: Text,
-    params :: [Field],
+    params :: [Member],
     result :: Maybe ResultRows,
     fragments :: [QueryFragment]
   }
@@ -238,7 +222,8 @@ data Query = Query
 
 -- | A project with name, version, custom types, and queries
 data Project = Project
-  { name :: Name,
+  { owner :: Name,
+    name :: Name,
     version :: Version,
     customTypes :: [CustomType],
     queries :: [Query]

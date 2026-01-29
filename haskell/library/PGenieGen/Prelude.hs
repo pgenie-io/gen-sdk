@@ -3,6 +3,7 @@ module PGenieGen.Prelude
   )
 where
 
+import AlgebraicPath as Exports (Path)
 import Control.Applicative as Exports hiding (WrappedArrow (..))
 import Control.Arrow as Exports hiding (first, second)
 import Control.Category as Exports
@@ -72,7 +73,7 @@ import GHC.Conc as Exports hiding (threadWaitRead, threadWaitReadSTM, threadWait
 import GHC.Exts as Exports (groupWith, inline, lazy, sortWith)
 import GHC.Generics as Exports (Generic)
 import GHC.IO.Exception as Exports
-import LawfulConversions as Exports (Is, IsMany (..), IsSome (..), onto)
+import LawfulConversions as Exports
 import Numeric as Exports
 import Numeric.Natural as Exports (Natural)
 import System.Environment as Exports

@@ -1,54 +1,31 @@
 -- | Integration with generator adapters that conform to the standard of version 1.
 module PGenieGen.V1
   ( Input,
-    Result (..),
-    SuccessResult (..),
-    Warning (..),
-    UnsupportedType (..),
+    Output (..),
+    Report (..),
     File (..),
     Location (..),
     load,
   )
 where
 
+import AlgebraicPath qualified as Path
 import Data.Aeson qualified as Aeson
 import Dhall qualified
 import Dhall.Core qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
+import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
 import PGenieGen.V1.Project qualified as Project
+import PGenieGen.V1.Report (Report (..))
 
 type Input = Project.Project
 
-data Result
-  = ResultFailure Text
-  | ResultSuccess SuccessResult
-  deriving stock (Generic, Show, Eq)
-  deriving
-    (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Result") Result)
-
-data SuccessResult
-  = SuccessResult
-  { warnings :: [Warning],
-    files :: [File]
-  }
-  deriving stock (Generic, Show, Eq)
-  deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
-
-data Warning
-  = WarningUnsupportedType UnsupportedType
-  | WarningOther Text
-  deriving stock (Generic, Show, Eq)
-  deriving
-    (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Warning") Warning)
-
-data UnsupportedType = UnsupportedType
-  { value :: Project.Value,
-    query :: Project.Query
+data Output = Output
+  { reports :: [Report],
+    result :: Maybe [File]
   }
   deriving stock (Generic, Show, Eq)
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
@@ -60,49 +37,53 @@ data File = File
   deriving stock (Generic, Show, Eq)
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
 
-type DhallExpr = Dhall.Core.Expr Dhall.Src.Src Void
-
 -- * Procedures
 
 data Location
   = LocationUrl Text
-  | LocationPath Text
+  | LocationPath Path
 
-load :: Location -> Aeson.Value -> IO (Input -> Result)
+load :: Location -> Aeson.Value -> IO (Input -> Output)
 load location configJson = do
-  configSig <- loadConfigSig location
-  configEncoder <- loadConfig configSig configJson
-  loadGen location configEncoder
+  let code = case location of
+        LocationUrl url -> url <> "/Gen.dhall"
+        LocationPath path -> Path.toText (path <> "Gen.dhall")
 
-loadConfigSig :: Location -> IO DhallExpr
-loadConfigSig location =
-  Dhall.inputExpr code
-  where
-    code = case location of
-      LocationUrl url -> url <> "/Config.dhall"
-      LocationPath path -> path <> "/Config.dhall"
+  putStrLn ("Loading generator code from: " <> to code)
 
-loadConfig :: DhallExpr -> Aeson.Value -> IO (Dhall.Encoder ())
-loadConfig configSig json = do
-  case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configSig json of
-    Left err -> throwIO $ userError $ "Failed to load config: " <> show err
-    Right configVal ->
-      pure
+  genExpr <- Dhall.inputExpr code
+
+  configTypeExpr <- case ExprViews.recordField "Config" genExpr of
+    Nothing -> do
+      putStrLn "Could not find 'Config' field in the loaded generator code"
+      exitFailure
+    Just expr -> pure expr
+
+  configValExpr <- case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configTypeExpr configJson of
+    Left err -> do
+      putStrLn ("Config does not conform to the expected schema:\n" <> show err)
+      exitFailure
+    Right configVal -> pure configVal
+
+  compileExpr <- case ExprViews.recordField "compile" genExpr of
+    Nothing -> do
+      putStrLn "Could not find 'compile' field in the loaded generator code"
+      exitFailure
+    Just expr -> pure expr
+
+  let configEncoder =
         Dhall.Encoder
-          { embed = const configVal,
-            declared = configSig
+          { embed = const configValExpr,
+            declared = configTypeExpr
           }
+      decoder =
+        fmap
+          ($ ())
+          ( Dhall.function
+              configEncoder
+              Dhall.auto
+          )
 
-loadGen :: Location -> Dhall.Encoder () -> IO (Input -> Result)
-loadGen location configEncoder =
-  Dhall.input decoder code
-  where
-    code =
-      "(let Gen = " <> importCode <> " in Gen.generate)"
-      where
-        importCode = case location of
-          LocationUrl url -> url <> "/Gen.dhall"
-          LocationPath path -> path <> "/Gen.dhall"
-    decoder =
-      Dhall.function configEncoder Dhall.auto
-        & fmap ($ ())
+  Dhall.expectWithSettings Dhall.defaultInputSettings decoder compileExpr
+
+  Dhall.rawInput decoder compileExpr
