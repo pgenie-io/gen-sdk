@@ -7,8 +7,9 @@ import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text)
 import Data.Text.IO qualified as Text
 import PGenieGen.V1 qualified as PGenieGen
-import PGenieGen.V1.Project qualified as Project
-import PGenieGen.V1.Report qualified as Report
+import PGenieGen.V1.Input qualified as Input
+import PGenieGen.V1.Output qualified as Output
+import PGenieGen.V1.Output.Report qualified as Output.Report
 import System.Exit
 import Test.Hspec
 import TextBuilder qualified
@@ -29,18 +30,18 @@ main = hspec do
           Nothing -> do
             putStrLn "Generation failed!"
             forM_ output.reports \report -> do
-              Text.putStrLn (Report.toErrorYamlText report)
+              Text.putStrLn (Output.Report.toErrorYamlText report)
             exitFailure
           Just files -> do
             putStrLn "Generation succeeded!"
             forM_ output.reports \report -> do
-              Text.putStrLn (Report.toWarningYamlText report)
+              Text.putStrLn (Output.Report.toWarningYamlText report)
 
             pure files
 
       shouldBe
         files
-        [ PGenieGen.File
+        [ Output.File
             { path = "output.yaml",
               content =
                 "config:\n\
@@ -60,36 +61,36 @@ configJson =
     } 
   |]
 
-input :: Project.Project
+input :: Input.Project
 input =
-  Project.Project
+  Input.Project
     { owner = textName "demo",
       name = textName "demo_project",
-      version = Project.Version {major = 1, minor = 0, patch = 0},
+      version = Input.Version {major = 1, minor = 0, patch = 0},
       customTypes = [],
       queries = [exampleQuery]
     }
   where
     -- Helper function to create a simple name from text
-    textName :: Text -> Project.Name
+    textName :: Text -> Input.Name
     textName _text =
-      Project.Name
-        { head = NonEmpty.fromList [Project.WordCharA, Project.WordCharB],
+      Input.Name
+        { head = NonEmpty.fromList [Input.WordCharA, Input.WordCharB],
           tail = []
         }
 
     -- Example query
-    exampleQuery :: Project.Query
+    exampleQuery :: Input.Query
     exampleQuery =
-      Project.Query
+      Input.Query
         { name = textName "get_user",
           srcPath = "queries/get_user.sql",
           params = [userIdParam],
           result = Just userResult,
           fragments =
-            [ Project.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
-              Project.QueryFragmentVar
-                ( Project.MkQueryFragmentVar
+            [ Input.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
+              Input.QueryFragmentVar
+                ( Input.MkQueryFragmentVar
                     { name = textName "user_id",
                       rawName = "user_id",
                       paramIndex = 1
@@ -99,54 +100,54 @@ input =
         }
 
     -- Parameter for user ID
-    userIdParam :: Project.Member
+    userIdParam :: Input.Member
     userIdParam =
-      Project.Member
+      Input.Member
         { name = textName "user_id",
           pgName = "user_id",
           isNullable = False,
           value =
-            Project.Value
+            Input.Value
               { arraySettings = Nothing,
-                scalar = Project.ScalarPrimitive Project.PrimitiveInt4
+                scalar = Input.ScalarPrimitive Input.PrimitiveInt4
               }
         }
 
     -- Result structure for user query
-    userResult :: Project.ResultRows
+    userResult :: Input.ResultRows
     userResult =
-      Project.ResultRows
-        { cardinality = Project.ResultRowsCardinalityOptional,
+      Input.ResultRows
+        { cardinality = Input.ResultRowsCardinalityOptional,
           columns =
             NonEmpty.fromList
-              [ Project.Member
+              [ Input.Member
                   { name = textName "id",
                     pgName = "id",
                     isNullable = False,
                     value =
-                      Project.Value
+                      Input.Value
                         { arraySettings = Nothing,
-                          scalar = Project.ScalarPrimitive Project.PrimitiveInt4
+                          scalar = Input.ScalarPrimitive Input.PrimitiveInt4
                         }
                   },
-                Project.Member
+                Input.Member
                   { name = textName "name",
                     pgName = "name",
                     isNullable = False,
                     value =
-                      Project.Value
+                      Input.Value
                         { arraySettings = Nothing,
-                          scalar = Project.ScalarPrimitive Project.PrimitiveText
+                          scalar = Input.ScalarPrimitive Input.PrimitiveText
                         }
                   },
-                Project.Member
+                Input.Member
                   { name = textName "email",
                     pgName = "email",
                     isNullable = True,
                     value =
-                      Project.Value
+                      Input.Value
                         { arraySettings = Nothing,
-                          scalar = Project.ScalarPrimitive Project.PrimitiveText
+                          scalar = Input.ScalarPrimitive Input.PrimitiveText
                         }
                   }
               ]
