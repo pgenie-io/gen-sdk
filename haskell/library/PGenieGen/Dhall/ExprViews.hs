@@ -1,4 +1,4 @@
-module PGenieGen.Dhall.ExprAccessors where
+module PGenieGen.Dhall.ExprViews where
 
 import Dhall.Core
 import Dhall.Map qualified as Map

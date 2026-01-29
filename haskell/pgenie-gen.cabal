@@ -93,7 +93,7 @@ library
 
   other-modules:
     PGenieGen.Dhall.Deriving
-    PGenieGen.Dhall.ExprAccessors
+    PGenieGen.Dhall.ExprViews
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.FromDhall
     PGenieGen.Dhall.Orphans.ToDhall

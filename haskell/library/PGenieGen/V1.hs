@@ -15,7 +15,7 @@ import Dhall.Core qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
-import PGenieGen.Dhall.ExprAccessors qualified as ExprAccessors
+import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
 import PGenieGen.V1.Project qualified as Project
 import PGenieGen.V1.Report (Report (..))
@@ -52,7 +52,7 @@ load location configJson = do
 
   genExpr <- Dhall.inputExpr code
 
-  configTypeExpr <- case ExprAccessors.recordField "Config" genExpr of
+  configTypeExpr <- case ExprViews.recordField "Config" genExpr of
     Nothing -> do
       putStrLn "Could not find 'Config' field in the loaded generator code"
       exitFailure
@@ -64,7 +64,7 @@ load location configJson = do
       exitFailure
     Right configVal -> pure configVal
 
-  compileExpr <- case ExprAccessors.recordField "compile" genExpr of
+  compileExpr <- case ExprViews.recordField "compile" genExpr of
     Nothing -> do
       putStrLn "Could not find 'compile' field in the loaded generator code"
       exitFailure

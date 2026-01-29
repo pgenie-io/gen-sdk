@@ -6,7 +6,7 @@ import Dhall.Core qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
-import PGenieGen.Dhall.ExprAccessors qualified as ExprAccessors
+import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
 import PGenieGen.V1.Project qualified as Project
 import TextBuilder qualified
