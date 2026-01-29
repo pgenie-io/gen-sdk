@@ -1,4 +1,4 @@
-module PGenieGen.V1.Input where
+module PGenieGen.Input where
 
 import Dhall qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving

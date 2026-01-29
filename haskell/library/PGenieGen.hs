@@ -1,5 +1,5 @@
--- | Integration with generator adapters that conform to the standard of version 1.
-module PGenieGen.V1
+-- | Integration with generator adapters.
+module PGenieGen
   ( Input,
     Output,
     Location (..),
@@ -16,9 +16,9 @@ import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
-import PGenieGen.V1.Contract qualified as Contract
-import PGenieGen.V1.Input qualified as Project
-import PGenieGen.V1.Output qualified as Output
+import PGenieGen.Contract qualified as Contract
+import PGenieGen.Input qualified as Project
+import PGenieGen.Output qualified as Output
 
 type Input = Project.Project
 

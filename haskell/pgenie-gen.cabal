@@ -88,11 +88,11 @@ library
   import: base
   hs-source-dirs: library
   exposed-modules:
-    PGenieGen.V1
-    PGenieGen.V1.Contract
-    PGenieGen.V1.Input
-    PGenieGen.V1.Output
-    PGenieGen.V1.Output.Report
+    PGenieGen
+    PGenieGen.Contract
+    PGenieGen.Input
+    PGenieGen.Output
+    PGenieGen.Output.Report
 
   other-modules:
     PGenieGen.Dhall.Deriving

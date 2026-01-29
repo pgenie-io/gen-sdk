@@ -1,4 +1,4 @@
-module PGenieGen.V1.Output.Report where
+module PGenieGen.Output.Report where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
@@ -8,7 +8,7 @@ import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Prelude
-import PGenieGen.V1.Input qualified as Project
+import PGenieGen.Input qualified as Project
 import TextBuilder qualified
 
 data Report = Report

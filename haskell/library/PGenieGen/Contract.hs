@@ -1,4 +1,4 @@
-module PGenieGen.V1.Contract where
+module PGenieGen.Contract where
 
 import Dhall qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving

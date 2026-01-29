@@ -6,10 +6,10 @@ import Data.Aeson.QQ.Simple (aesonQQ)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text)
 import Data.Text.IO qualified as Text
-import PGenieGen.V1 qualified as PGenieGen
-import PGenieGen.V1.Input qualified as Input
-import PGenieGen.V1.Output qualified as Output
-import PGenieGen.V1.Output.Report qualified as Output.Report
+import PGenieGen qualified as PGenieGen
+import PGenieGen.Input qualified as Input
+import PGenieGen.Output qualified as Output
+import PGenieGen.Output.Report qualified as Output.Report
 import System.Exit
 import Test.Hspec
 import TextBuilder qualified
