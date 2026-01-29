@@ -41,7 +41,7 @@ main = do
     Text.putStrLn "---"
 
 location :: PGenieGen.Location
-location = PGenieGen.LocationPath "./haskell/demo"
+location = PGenieGen.LocationPath "./integration-test"
 
 configJson :: Aeson.Value
 configJson =

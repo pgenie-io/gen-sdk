@@ -1,8 +1,7 @@
 cabal-version: 3.4
 name: pgenie-gen
 version: 0
-category:
-synopsis:
+synopsis: SDK
 description:
 homepage: https://github.com/nikita-volkov/pgenie-gen
 bug-reports: https://github.com/nikita-volkov/pgenie-gen/issues
@@ -11,6 +10,8 @@ maintainer: Nikita Volkov <nikita.y.volkov@mail.ru>
 copyright: (c) 2025, Nikita Volkov
 license: GPL-3.0-or-later
 license-file: LICENSE
+extra-source-files:
+  integration-test/Gen.dhall
 
 source-repository head
   type: git
@@ -126,10 +127,12 @@ library
     vector-instances,
     witherable,
 
-executable pgenie-gen-demo
-  import: executable
-  hs-source-dirs: demo
+test-suite integration-test
+  import: test
+  type: exitcode-stdio-1.0
+  hs-source-dirs: integration-test
   main-is: Main.hs
+  other-modules:
   build-depends:
     aeson,
     base,
@@ -137,7 +140,7 @@ executable pgenie-gen-demo
     containers,
     data-has,
     hashable,
-    hspec,
+    hspec >=2.11 && <3,
     lawful-conversions,
     megaparsec,
     mtl,
