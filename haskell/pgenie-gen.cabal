@@ -95,10 +95,12 @@ library
     PGenieGen.Output.Report
 
   other-modules:
+    PGenieGen.Dhall.Decode
     PGenieGen.Dhall.Deriving
     PGenieGen.Dhall.ExprViews
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.NonEmpty
+    PGenieGen.Dhall.Orphans.Path
     PGenieGen.Prelude
 
   build-depends:
@@ -116,6 +118,7 @@ library
     lawful-conversions ^>=0.3.1,
     megaparsec,
     mtl,
+    prettyprinter,
     profunctors,
     quickcheck-instances,
     text,
