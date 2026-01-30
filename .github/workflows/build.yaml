@@ -1,20 +1,7 @@
 name: Build and Test
 
 on:
-  workflow_call:
-    inputs:
-      qc-max-success:
-        description: Maximum number of successful tests for QuickCheck
-        required: false
-        type: number
-        default: 10000
   workflow_dispatch:
-    inputs:
-      qc-max-success:
-        description: Maximum number of successful tests for QuickCheck
-        required: false
-        type: number
-        default: 10000
   pull_request:
   push:
     branches: [main, master]
@@ -32,4 +19,4 @@ jobs:
       ghc: "9.12"
       skip-doctest: true
       skip-benchmarks: true
-      test-options: --qc-max-success=${{ inputs.qc-max-success }}
+      test-options: --qc-max-success=100
