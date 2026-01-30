@@ -16,42 +16,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Dhall
-        run: |
-          # Download and install Dhall version 1.42.1
-          DHALL_VERSION="1.42.1"
-          DHALL_SHA256="c7b141e66ef9c0e3cc7fb6e595115ac05c8e1c87cc04f7ae3fcc12e3ce88f6a6"
-
-          wget -q "https://github.com/dhall-lang/dhall-haskell/releases/download/${DHALL_VERSION}/dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2"
-
-          # Verify checksum
-          echo "${DHALL_SHA256}  dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2" | sha256sum -c -
-
-          tar -xjf "dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2"
-          sudo mv bin/dhall /usr/local/bin/
-          dhall --version
-
-      - name: Resolve Dhall package
-        run: |
-          if ! dhall resolve --file dhall/package.dhall > package.dhall; then
-            echo "Error: Failed to resolve Dhall package"
-            exit 1
-          fi
-
-          # Verify the frozen file was created and is not empty
-          if [ ! -s package.dhall ]; then
-            echo "Error: Frozen package file is empty or was not created"
-            exit 1
-          fi
-
-          echo "✓ Successfully resolved Dhall package"
-          echo "Frozen file size: $(wc -c < package.dhall) bytes"
+      - name: Resolve Dhall
+        id: resolve
+        uses: nikita-volkov/dhall-resolve.github-action@master
+        with:
+          file: dhall/package.dhall
 
       - name: Upload frozen package artifact
         uses: actions/upload-artifact@v4
         with:
           name: dhall-frozen-package
-          path: package.dhall
+          path: ${{ steps.resolve.outputs.path }}
           retention-days: 1
 
   deploy:
