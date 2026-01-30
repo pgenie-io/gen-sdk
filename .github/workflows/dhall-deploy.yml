@@ -1,0 +1,66 @@
+name: Deploy Dhall Package
+
+on:
+  workflow_run:
+    workflows: ["Build and Freeze Dhall Package"]
+    types:
+      - completed
+    branches: [main, master]
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # Only run if the build workflow succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper versioning
+
+      - name: Download frozen package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dhall-frozen-package
+          path: artifacts
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate version tag
+        id: version
+        run: |
+          # Generate version based on date and commit SHA
+          VERSION="dhall-$(date +'%Y.%m.%d')-$(git rev-parse --short HEAD)"
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Generated version tag: ${VERSION}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Dhall Package ${{ steps.version.outputs.tag }}"
+          body: |
+            ## Dhall Frozen Package Release
+            
+            This release contains the frozen Dhall package with all remote imports resolved.
+            
+            **Commit**: ${{ github.event.workflow_run.head_sha }}
+            **Workflow Run**: ${{ github.event.workflow_run.html_url }}
+            
+            The frozen package is CORS-compliant and self-contained, suitable for direct use without network dependencies.
+          files: |
+            artifacts/package.dhall.frozen
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deployment Summary
+        run: |
+          echo "✓ Successfully deployed Dhall frozen package"
+          echo "Release Tag: ${{ steps.version.outputs.tag }}"
+          echo "Artifact: package.dhall.frozen"

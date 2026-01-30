@@ -1,0 +1,40 @@
+name: Build and Freeze Dhall Package
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-freeze:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Dhall
+        run: |
+          # Download and install the latest stable Dhall release
+          DHALL_VERSION="1.42.1"
+          wget -q "https://github.com/dhall-lang/dhall-haskell/releases/download/${DHALL_VERSION}/dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2"
+          tar -xjf "dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2"
+          sudo mv bin/dhall /usr/local/bin/
+          dhall --version
+
+      - name: Resolve Dhall package
+        run: |
+          dhall resolve --file dhall/package.dhall > dhall/package.dhall.frozen
+          echo "✓ Successfully resolved Dhall package"
+          echo "Frozen file size: $(wc -c < dhall/package.dhall.frozen) bytes"
+
+      - name: Upload frozen package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dhall-frozen-package
+          path: dhall/package.dhall.frozen
+          retention-days: 90
