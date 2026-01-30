@@ -55,8 +55,8 @@ jobs:
         with:
           path: combined-site
 
-      - name: Add index page
-        run: cp docs-index.html combined-site/index.html
+      - name: Add index page and icons
+        run: cp -r pages/* combined-site/
 
       - name: Upload to Pages
         uses: actions/upload-pages-artifact@v4

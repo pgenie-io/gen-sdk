@@ -12,13 +12,13 @@
 !/README.md
 !/CHANGELOG.md
 !*.dhall
-!/docs-index.html
 
 # Unignore subtrees:
 !/.github/
 !/design/
 !/dhall/
 !/haskell/
+!/pages/
 
 # Ignore noise:
 .DS_Store
