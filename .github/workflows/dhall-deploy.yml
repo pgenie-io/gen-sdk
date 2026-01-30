@@ -1,5 +1,8 @@
 name: Deploy Dhall Package
 
+# NOTE: This workflow is triggered by the "Build and Freeze Dhall Package" workflow.
+# The workflow name reference below must exactly match the name in dhall-build.yml.
+# If you rename dhall-build.yml's workflow name, update this reference accordingly.
 on:
   workflow_run:
     workflows: ["Build and Freeze Dhall Package"]
@@ -23,18 +26,20 @@ jobs:
           fetch-depth: 0  # Fetch all history for proper versioning
 
       - name: Download frozen package artifact
-        uses: actions/download-artifact@v4
+        uses: dawidd6/action-download-artifact@v3
         with:
           name: dhall-frozen-package
           path: artifacts
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: dhall-build.yml
+          run_id: ${{ github.event.workflow_run.id }}
 
       - name: Generate version tag
         id: version
         run: |
-          # Generate version based on date and commit SHA
-          VERSION="dhall-$(date +'%Y.%m.%d')-$(git rev-parse --short HEAD)"
+          # Generate version based on date, time, and commit SHA for uniqueness
+          TIMESTAMP=$(date +'%Y.%m.%d-%H%M%S')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="dhall-${TIMESTAMP}-${SHORT_SHA}"
           echo "tag=${VERSION}" >> $GITHUB_OUTPUT
           echo "Generated version tag: ${VERSION}"
 
