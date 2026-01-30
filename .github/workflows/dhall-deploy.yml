@@ -58,7 +58,7 @@ jobs:
             
             The frozen package is CORS-compliant and self-contained, suitable for direct use without network dependencies.
           files: |
-            artifacts/package.dhall.frozen
+            artifacts/package.dhall
           draft: false
           prerelease: false
         env:
@@ -68,4 +68,4 @@ jobs:
         run: |
           echo "✓ Successfully deployed Dhall frozen package"
           echo "Release Tag: ${{ steps.version.outputs.tag }}"
-          echo "Artifact: package.dhall.frozen"
+          echo "Artifact: package.dhall"

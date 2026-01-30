@@ -34,23 +34,23 @@ jobs:
 
       - name: Resolve Dhall package
         run: |
-          if ! dhall resolve --file dhall/package.dhall > dhall/package.dhall.frozen; then
+          if ! dhall resolve --file dhall/package.dhall > package.dhall; then
             echo "Error: Failed to resolve Dhall package"
             exit 1
           fi
           
           # Verify the frozen file was created and is not empty
-          if [ ! -s dhall/package.dhall.frozen ]; then
+          if [ ! -s package.dhall ]; then
             echo "Error: Frozen package file is empty or was not created"
             exit 1
           fi
           
           echo "✓ Successfully resolved Dhall package"
-          echo "Frozen file size: $(wc -c < dhall/package.dhall.frozen) bytes"
+          echo "Frozen file size: $(wc -c < package.dhall) bytes"
 
       - name: Upload frozen package artifact
         uses: actions/upload-artifact@v4
         with:
           name: dhall-frozen-package
-          path: dhall/package.dhall.frozen
-          retention-days: 90
+          path: package.dhall
+          retention-days: 1
