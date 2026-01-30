@@ -18,6 +18,7 @@
 !/design/
 !/dhall/
 !/haskell/
+!/pages/
 
 # Ignore noise:
 .DS_Store
