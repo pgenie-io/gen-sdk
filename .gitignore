@@ -12,6 +12,7 @@
 !/README.md
 !/CHANGELOG.md
 !*.dhall
+!/docs-index.html
 
 # Unignore subtrees:
 !/.github/
