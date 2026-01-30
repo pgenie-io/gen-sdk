@@ -25,7 +25,7 @@ data Output = Output
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
 
 data File = File
-  { path :: Text,
+  { path :: Path,
     content :: Text
   }
   deriving stock (Generic, Show, Eq)

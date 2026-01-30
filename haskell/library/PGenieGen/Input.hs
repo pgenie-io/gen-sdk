@@ -212,7 +212,7 @@ data QueryFragment
 -- | A query with name, source path, parameters, result, and fragments
 data Query = Query
   { name :: Name,
-    srcPath :: Text,
+    srcPath :: Path,
     params :: [Member],
     result :: Maybe ResultRows,
     fragments :: [QueryFragment]
