@@ -1,0 +1,107 @@
+name: Build and Deploy Dhall Package
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Dhall
+        run: |
+          # Download and install Dhall version 1.42.1
+          DHALL_VERSION="1.42.1"
+          DHALL_SHA256="c7b141e66ef9c0e3cc7fb6e595115ac05c8e1c87cc04f7ae3fcc12e3ce88f6a6"
+
+          wget -q "https://github.com/dhall-lang/dhall-haskell/releases/download/${DHALL_VERSION}/dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2"
+
+          # Verify checksum
+          echo "${DHALL_SHA256}  dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2" | sha256sum -c -
+
+          tar -xjf "dhall-${DHALL_VERSION}-x86_64-linux.tar.bz2"
+          sudo mv bin/dhall /usr/local/bin/
+          dhall --version
+
+      - name: Resolve Dhall package
+        run: |
+          if ! dhall resolve --file dhall/package.dhall > package.dhall; then
+            echo "Error: Failed to resolve Dhall package"
+            exit 1
+          fi
+
+          # Verify the frozen file was created and is not empty
+          if [ ! -s package.dhall ]; then
+            echo "Error: Frozen package file is empty or was not created"
+            exit 1
+          fi
+
+          echo "✓ Successfully resolved Dhall package"
+          echo "Frozen file size: $(wc -c < package.dhall) bytes"
+
+      - name: Upload frozen package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dhall-frozen-package
+          path: package.dhall
+          retention-days: 1
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for proper versioning
+
+      - name: Download frozen package artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dhall-frozen-package
+          path: artifacts
+
+      - name: Generate version tag
+        id: version
+        run: |
+          # Generate version based on date, time, and commit SHA for uniqueness
+          TIMESTAMP=$(date +'%Y.%m.%d-%H%M%S')
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          VERSION="dhall-${TIMESTAMP}-${SHORT_SHA}"
+          echo "tag=${VERSION}" >> $GITHUB_OUTPUT
+          echo "Generated version tag: ${VERSION}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: "Dhall Package ${{ steps.version.outputs.tag }}"
+          body: |
+            ## Dhall Frozen Package Release
+
+            This release contains the frozen Dhall package with all remote imports resolved.
+
+            **Commit**: ${{ github.sha }}
+            **Workflow Run**: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            The frozen package is CORS-compliant and self-contained, suitable for direct use without network dependencies.
+          files: |
+            artifacts/package.dhall
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deployment Summary
+        run: |
+          echo "✓ Successfully deployed Dhall frozen package"
+          echo "Release Tag: ${{ steps.version.outputs.tag }}"
+          echo "Artifact: package.dhall"
