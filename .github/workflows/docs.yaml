@@ -23,7 +23,7 @@ jobs:
 
       - name: Generate Documentation
         id: generate
-        uses: nikita-volkov/dhall-docs.github-action@master
+        uses: nikita-volkov/dhall-docs.github-action@v1
         with:
           input: dhall
           package-name: gen-sdk
