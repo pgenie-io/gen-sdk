@@ -11,6 +11,7 @@
 !/LICENSE
 !/README.md
 !/CHANGELOG.md
+!/IMPLEMENTATION_SUMMARY.md
 !*.dhall
 
 # Unignore subtrees:
