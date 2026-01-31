@@ -90,6 +90,7 @@ library
   exposed-modules:
     PGenieGen
     PGenieGen.Contract
+    PGenieGen.Dhall.TH
     PGenieGen.Input
     PGenieGen.Output
     PGenieGen.Output.Report
@@ -121,6 +122,7 @@ library
     prettyprinter,
     profunctors,
     quickcheck-instances,
+    template-haskell,
     text,
     text-builder,
     text-builder-lawful-conversions,
