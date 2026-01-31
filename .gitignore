@@ -17,6 +17,8 @@
 !/.github/
 !/design/
 !/dhall/
+!/docs/
+!/examples/
 !/haskell/
 !/pages/
 
