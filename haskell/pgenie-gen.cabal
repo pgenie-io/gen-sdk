@@ -93,6 +93,7 @@ library
     PGenieGen.Input
     PGenieGen.Output
     PGenieGen.Output.Report
+    PGenieGen.TH
 
   other-modules:
     PGenieGen.Dhall.Decode
