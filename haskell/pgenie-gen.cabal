@@ -101,6 +101,7 @@ library
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.NonEmpty
     PGenieGen.Dhall.Orphans.Path
+    PGenieGen.Dhall.TH
     PGenieGen.Prelude
 
   build-depends:
@@ -121,6 +122,7 @@ library
     prettyprinter,
     profunctors,
     quickcheck-instances,
+    template-haskell,
     text,
     text-builder,
     text-builder-lawful-conversions,
@@ -167,12 +169,12 @@ executable bundling-experiment
     containers,
     data-has,
     dhall,
-    prettyprinter,
     hashable,
     hspec >=2.11 && <3,
     lawful-conversions,
     megaparsec,
     pgenie-gen,
+    prettyprinter,
     profunctors,
     quickcheck-instances,
     rerebase,
