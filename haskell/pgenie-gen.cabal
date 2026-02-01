@@ -157,3 +157,30 @@ test-suite integration-test
     vector,
     vector-instances,
     witherable,
+
+executable bundling-experiment
+  import: executable
+  hs-source-dirs: bundling-experiment
+  main-is: Main.hs
+  build-depends:
+    aeson,
+    containers,
+    data-has,
+    dhall,
+    prettyprinter,
+    hashable,
+    hspec >=2.11 && <3,
+    lawful-conversions,
+    megaparsec,
+    pgenie-gen,
+    profunctors,
+    quickcheck-instances,
+    rerebase,
+    text-builder,
+    text-builder-lawful-conversions,
+    time,
+    tuple,
+    uuid,
+    vector,
+    vector-instances,
+    witherable,
