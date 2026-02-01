@@ -6,30 +6,130 @@ import Data.Aeson.QQ.Simple (aesonQQ)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text)
 import Data.Text.IO qualified as Text.IO
-import Dhall.Pretty qualified
 import Dhall.Core qualified
+import Dhall.Pretty qualified
 import Dhall.TH qualified
+import LawfulConversions
 import PGenieGen qualified as PGenieGen
 import PGenieGen.Input qualified as Input
 import PGenieGen.Output qualified as Output
 import PGenieGen.Output.Report qualified as Output.Report
+import PGenieGen.TH qualified
+import Prettyprinter qualified as Pp
+import Prettyprinter.Render.Text qualified as Pp
 import System.Exit
 import Test.Hspec
 import TextBuilder qualified
 import Prelude
-import Prettyprinter qualified as Pp
-import Prettyprinter.Render.Text qualified as Pp
 
 main :: IO ()
 main = do
-  Text.IO.putStrLn renderedExpr
+  fn <- case compiler configJson of
+    Left err -> do
+      putStrLn ("Compilation failed: " <> to err)
+      exitFailure
+    Right fn -> pure fn
+  print (fn input)
 
-renderedExpr :: Text
-renderedExpr =
-  Pp.renderStrict (Pp.layoutPretty Pp.defaultLayoutOptions (Dhall.Pretty.prettyExpr expr))
+compiler :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
+compiler = $$(PGenieGen.TH.compiler (PGenieGen.TH.LocationPath "./bundling-experiment"))
 
-expr :: Dhall.Core.Expr s Void
-expr =
-  [Dhall.TH.dhall|
-    ./bundling-experiment/Gen.dhall
+configJson :: Aeson.Value
+configJson =
+  [aesonQQ| 
+    {
+      "foo": "Foo!"
+    } 
   |]
+
+input :: Input.Project
+input =
+  Input.Project
+    { owner = textName "demo",
+      name = textName "demo_project",
+      version = Input.Version {major = 1, minor = 0, patch = 0},
+      customTypes = [],
+      queries = [exampleQuery]
+    }
+  where
+    -- Helper function to create a simple name from text
+    textName :: Text -> Input.Name
+    textName _text =
+      Input.Name
+        { head = NonEmpty.fromList [Input.WordCharA, Input.WordCharB],
+          tail = []
+        }
+
+    -- Example query
+    exampleQuery :: Input.Query
+    exampleQuery =
+      Input.Query
+        { name = textName "get_user",
+          srcPath = "queries/get_user.sql",
+          params = [userIdParam],
+          result = Just userResult,
+          fragments =
+            [ Input.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
+              Input.QueryFragmentVar
+                ( Input.MkQueryFragmentVar
+                    { name = textName "user_id",
+                      rawName = "user_id",
+                      paramIndex = 1
+                    }
+                )
+            ]
+        }
+
+    -- Parameter for user ID
+    userIdParam :: Input.Member
+    userIdParam =
+      Input.Member
+        { name = textName "user_id",
+          pgName = "user_id",
+          isNullable = False,
+          value =
+            Input.Value
+              { arraySettings = Nothing,
+                scalar = Input.ScalarPrimitive Input.PrimitiveInt4
+              }
+        }
+
+    -- Result structure for user query
+    userResult :: Input.ResultRows
+    userResult =
+      Input.ResultRows
+        { cardinality = Input.ResultRowsCardinalityOptional,
+          columns =
+            NonEmpty.fromList
+              [ Input.Member
+                  { name = textName "id",
+                    pgName = "id",
+                    isNullable = False,
+                    value =
+                      Input.Value
+                        { arraySettings = Nothing,
+                          scalar = Input.ScalarPrimitive Input.PrimitiveInt4
+                        }
+                  },
+                Input.Member
+                  { name = textName "name",
+                    pgName = "name",
+                    isNullable = False,
+                    value =
+                      Input.Value
+                        { arraySettings = Nothing,
+                          scalar = Input.ScalarPrimitive Input.PrimitiveText
+                        }
+                  },
+                Input.Member
+                  { name = textName "email",
+                    pgName = "email",
+                    isNullable = True,
+                    value =
+                      Input.Value
+                        { arraySettings = Nothing,
+                          scalar = Input.ScalarPrimitive Input.PrimitiveText
+                        }
+                  }
+              ]
+        }

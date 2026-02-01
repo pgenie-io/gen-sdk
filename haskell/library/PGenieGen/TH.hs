@@ -21,10 +21,10 @@ data Location
   | LocationPath Path
 
 -- | Executes a Dhall expression at compile time and constructs a Haskell value at compile time.
-genFunc ::
+compiler ::
   Location ->
-  TH.Q (TH.TExp (Aeson.Value -> Either Text (Input.Project -> Output.Output)))
-genFunc location = do
+  TH.Code TH.Q (Aeson.Value -> Either Text (Input.Project -> Output.Output))
+compiler location = TH.Code do
   let code = case location of
         LocationUrl url -> url <> "/Gen.dhall"
         LocationPath path -> Path.toText (path <> "Gen.dhall")
@@ -89,6 +89,6 @@ genFunc location = do
                       Dhall.auto
                   )
            in case Dhall.rawInput decoder compileExpr of
-                Nothing -> undefined
+                Nothing -> Left "Failed to decode the 'compile' function from the generator code."
                 Just compileFunc -> Right compileFunc
     ||]
