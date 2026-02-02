@@ -1,7 +1,6 @@
 module PGenieGen.Contract where
 
 import Dhall qualified
-import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.Orphans ()
 import PGenieGen.Prelude
 
