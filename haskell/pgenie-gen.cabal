@@ -9,7 +9,7 @@ author: Nikita Volkov <nikita.y.volkov@mail.ru>
 maintainer: Nikita Volkov <nikita.y.volkov@mail.ru>
 copyright: (c) 2025, Nikita Volkov
 license: GPL-3.0-or-later
-license-file: LICENSE
+license-file: ../LICENSE
 extra-source-files:
   integration-test/Gen.dhall
 
@@ -90,11 +90,11 @@ library
   exposed-modules:
     PGenieGen
     PGenieGen.Contract
+    PGenieGen.Fixtures.Project1
     PGenieGen.Input
     PGenieGen.Output
     PGenieGen.Output.Report
     PGenieGen.TH
-    PGenieGen.Fixtures.Project1
 
   other-modules:
     PGenieGen.Dhall.Decode
@@ -161,21 +161,21 @@ test-suite integration-test
     vector-instances,
     witherable,
 
-executable bundling-experiment
-  import: executable
-  hs-source-dirs: bundling-experiment
+test-suite bundling-test
+  import: test
+  type: exitcode-stdio-1.0
+  hs-source-dirs: bundling-test
   main-is: Main.hs
+  other-modules:
   build-depends:
     aeson,
     containers,
     data-has,
-    dhall,
     hashable,
     hspec >=2.11 && <3,
     lawful-conversions,
     megaparsec,
     pgenie-gen,
-    prettyprinter,
     profunctors,
     quickcheck-instances,
     rerebase,
