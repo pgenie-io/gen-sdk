@@ -1,10 +1,7 @@
 module PGenieGen.Static where
 
-import AlgebraicPath qualified as Path
 import Data.Aeson qualified as Aeson
-import Data.Text.IO qualified as Text.IO
 import Dhall qualified
-import Dhall.Core qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Language.Haskell.TH.Syntax qualified as TH
 import PGenieGen.Contract qualified as Contract
