@@ -102,7 +102,6 @@ library
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.NonEmpty
     PGenieGen.Dhall.Orphans.Path
-    PGenieGen.Dhall.TH
     PGenieGen.Prelude
 
   build-depends:

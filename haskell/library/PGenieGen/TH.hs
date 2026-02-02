@@ -11,7 +11,6 @@ import Dhall.TH qualified
 import Language.Haskell.TH.Syntax qualified as TH
 import PGenieGen.Contract qualified as Contract
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
-import PGenieGen.Dhall.TH qualified as Dhall.TH
 import PGenieGen.Input qualified as Input
 import PGenieGen.Output qualified as Output
 import PGenieGen.Prelude
