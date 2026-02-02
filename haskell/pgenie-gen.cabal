@@ -94,6 +94,7 @@ library
     PGenieGen.Output
     PGenieGen.Output.Report
     PGenieGen.TH
+    PGenieGen.Fixtures.Project1
 
   other-modules:
     PGenieGen.Dhall.Decode
