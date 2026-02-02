@@ -8,8 +8,6 @@ bug-reports: https://github.com/nikita-volkov/pgenie-gen/issues
 author: Nikita Volkov <nikita.y.volkov@mail.ru>
 maintainer: Nikita Volkov <nikita.y.volkov@mail.ru>
 copyright: (c) 2025, Nikita Volkov
-license: GPL-3.0-or-later
-license-file: LICENSE
 extra-source-files:
   integration-test/Gen.dhall
 
@@ -89,19 +87,24 @@ library
   hs-source-dirs: library
   exposed-modules:
     PGenieGen
-    PGenieGen.Contract
-    PGenieGen.Input
-    PGenieGen.Output
-    PGenieGen.Output.Report
+    PGenieGen.Fixtures.Project1
+    PGenieGen.Model.Input
+    PGenieGen.Model.Output
+    PGenieGen.Model.Output.Report
 
   other-modules:
+    PGenieGen.Contract
     PGenieGen.Dhall.Decode
     PGenieGen.Dhall.Deriving
     PGenieGen.Dhall.ExprViews
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.NonEmpty
     PGenieGen.Dhall.Orphans.Path
+    PGenieGen.Dynamic
+    PGenieGen.Location
+    PGenieGen.Model
     PGenieGen.Prelude
+    PGenieGen.Static
 
   build-depends:
     QuickCheck,
@@ -121,6 +124,7 @@ library
     prettyprinter,
     profunctors,
     quickcheck-instances,
+    template-haskell,
     text,
     text-builder,
     text-builder-lawful-conversions,
@@ -135,6 +139,33 @@ test-suite integration-test
   import: test
   type: exitcode-stdio-1.0
   hs-source-dirs: integration-test
+  main-is: Main.hs
+  other-modules:
+  build-depends:
+    aeson,
+    containers,
+    data-has,
+    hashable,
+    hspec >=2.11 && <3,
+    lawful-conversions,
+    megaparsec,
+    pgenie-gen,
+    profunctors,
+    quickcheck-instances,
+    rerebase,
+    text-builder,
+    text-builder-lawful-conversions,
+    time,
+    tuple,
+    uuid,
+    vector,
+    vector-instances,
+    witherable,
+
+test-suite bundling-test
+  import: test
+  type: exitcode-stdio-1.0
+  hs-source-dirs: bundling-test
   main-is: Main.hs
   other-modules:
   build-depends:

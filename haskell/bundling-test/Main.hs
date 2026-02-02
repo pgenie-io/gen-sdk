@@ -6,6 +6,7 @@ import Data.Aeson.QQ.Simple (aesonQQ)
 import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text)
 import Data.Text.IO qualified as Text
+import LawfulConversions
 import PGenieGen qualified as PGenieGen
 import PGenieGen.Fixtures.Project1 qualified as Fixtures.Project1
 import PGenieGen.Model.Input qualified as Input
@@ -20,11 +21,12 @@ main :: IO ()
 main = hspec do
   describe "" do
     it "" do
-      compile <-
-        PGenieGen.loadDynamically location configJson
-
-      let output =
-            compile Fixtures.Project1.input
+      output <-
+        case compiler configJson of
+          Left err -> do
+            putStrLn ("Compilation failed: " <> to err)
+            exitFailure
+          Right fn -> pure (fn Fixtures.Project1.input)
 
       files <-
         case output.result of
@@ -51,8 +53,11 @@ main = hspec do
             }
         ]
 
-location :: PGenieGen.Location
-location = PGenieGen.LocationPath "./integration-test"
+compiler :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
+compiler =
+  $$( PGenieGen.loadStatically
+        (PGenieGen.LocationPath "./bundling-test")
+    )
 
 configJson :: Aeson.Value
 configJson =
