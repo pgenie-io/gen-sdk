@@ -9,10 +9,9 @@ import Data.Text.IO qualified as Text
 import LawfulConversions
 import PGenieGen qualified as PGenieGen
 import PGenieGen.Fixtures.Project1 qualified as Fixtures.Project1
-import PGenieGen.Input qualified as Input
-import PGenieGen.Output qualified as Output
-import PGenieGen.Output.Report qualified as Output.Report
-import PGenieGen.TH qualified
+import PGenieGen.Model.Input qualified as Input
+import PGenieGen.Model.Output qualified as Output
+import PGenieGen.Model.Output.Report qualified as Output.Report
 import System.Exit
 import Test.Hspec
 import TextBuilder qualified
@@ -56,8 +55,8 @@ main = hspec do
 
 compiler :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
 compiler =
-  $$( PGenieGen.TH.compiler
-        (PGenieGen.TH.LocationPath "./bundling-test")
+  $$( PGenieGen.loadStatically
+        (PGenieGen.LocationPath "./bundling-test")
     )
 
 configJson :: Aeson.Value

@@ -1,4 +1,4 @@
-module PGenieGen.Output
+module PGenieGen.Model.Output
   ( Output (..),
     Report (..),
     File (..),
@@ -12,8 +12,8 @@ import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
-import PGenieGen.Input qualified as Project
-import PGenieGen.Output.Report (Report (..))
+import PGenieGen.Model.Input qualified as Project
+import PGenieGen.Model.Output.Report (Report (..))
 import PGenieGen.Prelude
 import TextBuilder qualified
 

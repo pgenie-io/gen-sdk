@@ -1,11 +1,12 @@
 -- | Integration with generator adapters.
 module PGenieGen.Fixtures.Project1 where
 
-import PGenieGen.Input qualified as Input
-import PGenieGen.Prelude
 import Data.List.NonEmpty qualified as NonEmpty
+import PGenieGen.Model
+import PGenieGen.Model.Input qualified as Input
+import PGenieGen.Prelude
 
-input :: Input.Project
+input :: Input
 input =
   Input.Project
     { owner = textName "demo",

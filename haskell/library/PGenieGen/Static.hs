@@ -1,4 +1,4 @@
-module PGenieGen.TH where
+module PGenieGen.Static where
 
 import AlgebraicPath qualified as Path
 import Data.Aeson qualified as Aeson
@@ -11,22 +11,18 @@ import Dhall.TH qualified
 import Language.Haskell.TH.Syntax qualified as TH
 import PGenieGen.Contract qualified as Contract
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
-import PGenieGen.Input qualified as Input
-import PGenieGen.Output qualified as Output
+import PGenieGen.Location qualified as Location
+import PGenieGen.Model
+import PGenieGen.Model.Input qualified as Input
+import PGenieGen.Model.Output qualified as Output
 import PGenieGen.Prelude
 
-data Location
-  = LocationUrl Text
-  | LocationPath Path
-
 -- | Executes a Dhall expression at compile time and constructs a Haskell value at compile time.
-compiler ::
-  Location ->
-  TH.Code TH.Q (Aeson.Value -> Either Text (Input.Project -> Output.Output))
-compiler location = TH.Code do
-  let code = case location of
-        LocationUrl url -> url <> "/Gen.dhall"
-        LocationPath path -> Path.toText (path <> "Gen.dhall")
+loadStatically ::
+  Location.Location ->
+  TH.Code TH.Q (Aeson.Value -> Either Text (Input -> Output))
+loadStatically location = TH.Code do
+  let code = Location.toCode location
 
   (configTypeExpr, compileExpr) <- TH.runIO do
     putStrLn ("Loading generator code from: " <> to code)

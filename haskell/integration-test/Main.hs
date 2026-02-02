@@ -7,22 +7,21 @@ import Data.List.NonEmpty qualified as NonEmpty
 import Data.Text (Text)
 import Data.Text.IO qualified as Text
 import PGenieGen qualified as PGenieGen
-import PGenieGen.Input qualified as Input
-import PGenieGen.Output qualified as Output
-import PGenieGen.Output.Report qualified as Output.Report
 import PGenieGen.Fixtures.Project1 qualified as Fixtures.Project1
+import PGenieGen.Model.Input qualified as Input
+import PGenieGen.Model.Output qualified as Output
+import PGenieGen.Model.Output.Report qualified as Output.Report
 import System.Exit
 import Test.Hspec
 import TextBuilder qualified
 import Prelude
-
 
 main :: IO ()
 main = hspec do
   describe "" do
     it "" do
       compile <-
-        PGenieGen.load location configJson
+        PGenieGen.loadDynamically location configJson
 
       let output =
             compile Fixtures.Project1.input

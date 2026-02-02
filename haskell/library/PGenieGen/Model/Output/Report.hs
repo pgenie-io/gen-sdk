@@ -1,4 +1,4 @@
-module PGenieGen.Output.Report where
+module PGenieGen.Model.Output.Report where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
@@ -7,7 +7,7 @@ import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Dhall.Src qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
-import PGenieGen.Input qualified as Project
+import PGenieGen.Model.Input qualified as Project
 import PGenieGen.Prelude
 import TextBuilder qualified
 
