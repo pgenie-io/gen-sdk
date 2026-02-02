@@ -1,5 +1,5 @@
 packages:
   ./haskell
-  ./dhall-1.42.3
 allow-newer: 
-  , *:*
+  , *:ghc-prim
+  , dhall-json:*

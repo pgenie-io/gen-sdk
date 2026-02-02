@@ -68,15 +68,6 @@ common base
     TypeOperators
     UnboxedTuples
     ViewPatterns
-  ghc-options:
-    -Werror
-    -Wall
-    -Wincomplete-uni-patterns
-    -Wincomplete-record-updates
-    -Wredundant-constraints
-    -Wunused-packages
-    -Wno-name-shadowing
-    -Wno-redundant-constraints
 
 common executable
   import: base
