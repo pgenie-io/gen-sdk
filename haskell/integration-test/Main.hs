@@ -1,19 +1,14 @@
 module Main (main) where
 
-import Control.Monad (forM_)
 import Data.Aeson qualified as Aeson
 import Data.Aeson.QQ.Simple (aesonQQ)
-import Data.List.NonEmpty qualified as NonEmpty
-import Data.Text (Text)
 import Data.Text.IO qualified as Text
 import PGenieGen qualified as PGenieGen
 import PGenieGen.Fixtures.Project1 qualified as Fixtures.Project1
-import PGenieGen.Model.Input qualified as Input
 import PGenieGen.Model.Output qualified as Output
 import PGenieGen.Model.Output.Report qualified as Output.Report
 import System.Exit
 import Test.Hspec
-import TextBuilder qualified
 import Prelude
 
 main :: IO ()
