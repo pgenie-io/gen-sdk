@@ -23,10 +23,14 @@ in  \(compiled : Compiled Text) ->
                   ''
                   ERROR!
                   ''
-              ++  Prelude.Text.concatMapSep
+              ++  Prelude.Text.concatSep
                     "\n"
-                    Report.Type
-                    (Report.toPlainText "Error")
-                    (compiled.warnings # [ err ])
+                    (   Prelude.List.map
+                          Report.Type
+                          Text
+                          (Report.toPlainText "Warning")
+                          compiled.warnings
+                      # [ Report.toPlainText "Error" err ]
+                    )
         }
         compiled.result
