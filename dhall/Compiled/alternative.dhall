@@ -2,8 +2,10 @@ let Lude = ../Lude.dhall
 
 let Compiled = ./Type.dhall
 
+let Typeclasses = ../Typeclasses.dhall
+
 in    { applicative = ./applicative.dhall
       , empty = ./default.dhall
       , or = ./or.dhall
       }
-    : Lude.Algebras.Alternative.Type Compiled
+    : Typeclasses.Classes.Alternative.Type Compiled
