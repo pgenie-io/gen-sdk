@@ -2,7 +2,6 @@ module Main (main) where
 
 import Data.Aeson qualified as Aeson
 import Data.Aeson.QQ.Simple (aesonQQ)
-import Data.Text (Text)
 import Data.Text.IO qualified as Text
 import LawfulConversions
 import PGenieGen qualified as PGenieGen
