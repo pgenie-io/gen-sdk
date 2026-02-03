@@ -3,7 +3,6 @@ module Main (main) where
 import Data.Aeson qualified as Aeson
 import Data.Aeson.QQ.Simple (aesonQQ)
 import Data.Text.IO qualified as Text
-import LawfulConversions
 import PGenieGen qualified as PGenieGen
 import PGenieGen.Fixtures.Project1 qualified as Fixtures.Project1
 import PGenieGen.Model.Input qualified as Input
@@ -17,24 +16,30 @@ main :: IO ()
 main = hspec do
   describe "" do
     it "" do
-      output <-
-        case compiler configJson of
+      compile <-
+        case gen configJson of
           Left err -> do
-            putStrLn ("Compilation failed: " <> to err)
+            putStrLn "Failed to parse config JSON:"
+            Text.putStrLn err
             exitFailure
-          Right fn -> pure (fn Fixtures.Project1.input)
+          Right compile -> pure compile
+
+      let output =
+            compile Fixtures.Project1.input
 
       files <-
         case output.result of
-          Nothing -> do
+          Output.ResultErr report -> do
             putStrLn "Generation failed!"
-            forM_ output.reports \report -> do
-              Text.putStrLn (Output.Report.toErrorYamlText report)
+            forM_ output.warnings \warning -> do
+              Text.putStrLn (Output.Report.toWarningYamlText warning)
+
+            Text.putStrLn (Output.Report.toErrorYamlText report)
             exitFailure
-          Just files -> do
+          Output.ResultOk files -> do
             putStrLn "Generation succeeded!"
-            forM_ output.reports \report -> do
-              Text.putStrLn (Output.Report.toWarningYamlText report)
+            forM_ output.warnings \warning -> do
+              Text.putStrLn (Output.Report.toWarningYamlText warning)
 
             pure files
 
@@ -49,8 +54,8 @@ main = hspec do
             }
         ]
 
-compiler :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
-compiler =
+gen :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
+gen =
   $$( PGenieGen.bundle
         (PGenieGen.LocationPath "./bundling-test")
     )

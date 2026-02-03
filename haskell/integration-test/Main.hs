@@ -23,15 +23,17 @@ main = hspec do
 
       files <-
         case output.result of
-          Nothing -> do
+          Output.ResultErr report -> do
             putStrLn "Generation failed!"
-            forM_ output.reports \report -> do
-              Text.putStrLn (Output.Report.toErrorYamlText report)
+            forM_ output.warnings \warning -> do
+              Text.putStrLn (Output.Report.toWarningYamlText warning)
+
+            Text.putStrLn (Output.Report.toErrorYamlText report)
             exitFailure
-          Just files -> do
+          Output.ResultOk files -> do
             putStrLn "Generation succeeded!"
-            forM_ output.reports \report -> do
-              Text.putStrLn (Output.Report.toWarningYamlText report)
+            forM_ output.warnings \warning -> do
+              Text.putStrLn (Output.Report.toWarningYamlText warning)
 
             pure files
 
@@ -47,7 +49,8 @@ main = hspec do
         ]
 
 location :: PGenieGen.Location
-location = PGenieGen.LocationPath "./integration-test"
+location =
+  PGenieGen.LocationPath "./integration-test"
 
 configJson :: Aeson.Value
 configJson =

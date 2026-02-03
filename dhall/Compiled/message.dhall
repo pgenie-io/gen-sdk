@@ -2,6 +2,12 @@ let Prelude = ../Prelude.dhall
 
 let Compiled = ./Type.dhall
 
+let Report = ./Report/Type.dhall
+
+let Result = ./Result/Type.dhall
+
 in  \(A : Type) ->
     \(message : Text) ->
-      { reports = [ { path = [] : List Text, message } ], result = None A }
+      { warnings = [] : List Report
+      , result = (Result A).Err { path = [] : List Text, message }
+      }

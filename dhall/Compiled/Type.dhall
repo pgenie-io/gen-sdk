@@ -1,6 +1,9 @@
--- Possibly successful result of compilation accompanied by a list of reports.
+-- Possibly successful result of compilation accompanied by a list of warnings.
 --
 -- When the result is present, the reports can be interpreted as warnings,
 -- when absent, they indicate errors.
-\(A : Type) ->
-  { reports : List { path : List Text, message : Text }, result : Optional A }
+let Report = ./Report/Type.dhall
+
+let Result = ./Result/Type.dhall
+
+in  \(A : Type) -> { warnings : List Report, result : Result A }

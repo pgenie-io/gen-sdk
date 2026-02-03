@@ -2,12 +2,19 @@ let Prelude = ../Prelude.dhall
 
 let Compiled = ./Type.dhall
 
+let Report = ./Report/Type.dhall
+
+let Result = ./Result/Type.dhall
+
 in  \(A : Type) ->
     \(left : Compiled A) ->
     \(right : Compiled A) ->
-      Prelude.Optional.fold
-        A
+      merge
+        { Ok = \(leftResult : A) -> left
+        , Err =
+            \(err : Report) ->
+              { warnings = left.warnings # right.warnings
+              , result = right.result
+              }
+        }
         left.result
-        (Compiled A)
-        (\(leftResult : A) -> left)
-        { reports = left.reports # right.reports, result = right.result }

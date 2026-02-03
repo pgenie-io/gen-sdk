@@ -2,18 +2,23 @@ let Prelude = ../Prelude.dhall
 
 let Compiled = ./Type.dhall
 
+let Report = ./Report/Type.dhall
+
+let Result = ./Result/Type.dhall
+
 in  \(A : Type) ->
     \(B : Type) ->
     \(f : A -> Compiled B) ->
     \(a : Compiled A) ->
-        Prelude.Optional.fold
-          A
-          a.result
-          (Compiled B)
-          ( \(aResult : A) ->
+      merge
+        { Ok =
+            \(aResult : A) ->
               let b = f aResult
 
-              in  { reports = a.reports # b.reports, result = b.result }
-          )
-          { reports = a.reports, result = None B }
+              in  { warnings = a.warnings # b.warnings, result = b.result }
+        , Err =
+            \(err : Report) ->
+              { warnings = a.warnings, result = (Result B).Err err }
+        }
+        a.result
       : Compiled B

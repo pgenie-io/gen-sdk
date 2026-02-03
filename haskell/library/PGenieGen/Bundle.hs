@@ -10,7 +10,7 @@ import PGenieGen.Location qualified as Location
 import PGenieGen.Model
 import PGenieGen.Prelude
 
--- | Executes a Dhall expression at compile time and constructs a Haskell value at compile time.
+-- | Imports Dhall at compile time and constructs a typed Haskell compiler function from it.
 bundle ::
   Location.Location ->
   TH.Code TH.Q (Aeson.Value -> Either Text (Input -> Output))

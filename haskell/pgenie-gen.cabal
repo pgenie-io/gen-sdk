@@ -154,6 +154,5 @@ test-suite bundling-test
   build-depends:
     aeson,
     hspec >=2.11 && <3,
-    lawful-conversions,
     pgenie-gen,
     rerebase,

@@ -4,11 +4,13 @@ let Lude = ../Lude.dhall
 
 let Compiled = ./Type.dhall
 
+let Result = ./Result/package.dhall
+
 in  \(A : Type) ->
     \(B : Type) ->
     \(f : A -> B) ->
     \(compiled : Compiled A) ->
-        { reports = compiled.reports
-        , result = Prelude.Optional.map A B f compiled.result
+        { warnings = compiled.warnings
+        , result = Result.map A B f compiled.result
         }
       : Compiled B

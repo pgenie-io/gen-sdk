@@ -2,9 +2,11 @@ let Prelude = ../Prelude.dhall
 
 let Compiled = ./Type.dhall
 
+let Result = ./Result/package.dhall
+
 in  \(A : Type) ->
     \(a : A) ->
-        { reports = [] : List { path : List Text, message : Text }
-        , result = Some a
+        { warnings = [] : List { path : List Text, message : Text }
+        , result = Result.ok A a
         }
       : Compiled A

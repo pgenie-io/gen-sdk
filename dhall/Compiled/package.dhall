@@ -4,6 +4,7 @@
 , alternative = ./alternative.dhall
 , monad = ./monad.dhall
 , ok = ./ok.dhall
+, err = ./err.dhall
 , map = ./map.dhall
 , map2 = ./map2.dhall
 , flatMap = ./flatMap.dhall
