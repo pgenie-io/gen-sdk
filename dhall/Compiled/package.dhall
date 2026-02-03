@@ -18,5 +18,5 @@
 , toPlainText = ./toPlainText.dhall
 , toWarningsYaml = ./toWarningsYaml.dhall
 , toErrorYaml = ./toErrorYaml.dhall
-, toFiles = ./toFiles.dhall
+, toFileMap = ./toFileMap.dhall
 }

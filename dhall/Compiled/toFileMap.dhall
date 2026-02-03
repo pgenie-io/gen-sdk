@@ -6,15 +6,15 @@ let Report = ./Report/package.dhall
 
 let toWarningsYaml = ./toWarningsYaml.dhall
 
-let Files = Prelude.Map.Type Text Text
+let FileMap = Prelude.Map.Type Text Text
 
-in  \(compiledFiles : Compiled Files) ->
+in  \(compiled : Compiled FileMap) ->
       let warningsYaml
           : Optional Text
-          = toWarningsYaml Files compiledFiles
+          = toWarningsYaml FileMap compiled
 
-      let optionalToFiles
-          : Text -> Optional Text -> Files
+      let fromOptional
+          : Text -> Optional Text -> FileMap
           = \(path : Text) ->
             \(optionalContent : Optional Text) ->
               merge
@@ -24,11 +24,11 @@ in  \(compiledFiles : Compiled Files) ->
                 }
                 optionalContent
 
-      let files
-          : Files
-          =   optionalToFiles "pgenie-warnings.yaml" warningsYaml
+      let fileMap
+          : FileMap
+          =   fromOptional "pgenie-warnings.yaml" warningsYaml
             # merge
-                { Ok = \(ok : Files) -> ok
+                { Ok = \(ok : FileMap) -> ok
                 , Err =
                     \(err : Report.Type) ->
                       [ Prelude.Map.keyText
@@ -36,6 +36,6 @@ in  \(compiledFiles : Compiled Files) ->
                           (Report.toPlainText "Error" err)
                       ]
                 }
-                compiledFiles.result
+                compiled.result
 
-      in  files
+      in  fileMap
