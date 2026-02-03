@@ -2,5 +2,7 @@ let Lude = ../Lude.dhall
 
 let Compiled = ./Type.dhall
 
+let Typeclasses = ../Typeclasses.dhall
+
 in    { applicative = ./applicative.dhall, flatMap = ./flatMap.dhall }
-    : Lude.Algebras.Monad.Type Compiled
+    : Typeclasses.Classes.Monad.Type Compiled
