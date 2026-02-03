@@ -51,7 +51,7 @@ main = hspec do
 
 compiler :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
 compiler =
-  $$( PGenieGen.loadStatically
+  $$( PGenieGen.bundle
         (PGenieGen.LocationPath "./bundling-test")
     )
 

@@ -1,4 +1,4 @@
-module PGenieGen.Dynamic where
+module PGenieGen.Load where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
@@ -11,8 +11,8 @@ import PGenieGen.Prelude
 
 -- * Procedures
 
-loadDynamically :: Location.Location -> Aeson.Value -> IO (Input -> Output)
-loadDynamically location configJson = do
+load :: Location.Location -> Aeson.Value -> IO (Input -> Output)
+load location configJson = do
   let code = Location.toCode location
 
   putStrLn ("Loading generator code from: " <> to code)

@@ -3,12 +3,12 @@ module PGenieGen
   ( Input,
     Output,
     Location (..),
-    loadDynamically,
-    loadStatically,
+    load,
+    bundle,
   )
 where
 
-import PGenieGen.Dynamic
+import PGenieGen.Bundle
+import PGenieGen.Load
 import PGenieGen.Location
 import PGenieGen.Model
-import PGenieGen.Static

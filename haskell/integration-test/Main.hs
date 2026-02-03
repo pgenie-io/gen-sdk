@@ -16,7 +16,7 @@ main = hspec do
   describe "" do
     it "" do
       compile <-
-        PGenieGen.loadDynamically location configJson
+        PGenieGen.load location configJson
 
       let output =
             compile Fixtures.Project1.input

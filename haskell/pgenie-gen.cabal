@@ -93,6 +93,7 @@ library
     PGenieGen.Model.Output.Report
 
   other-modules:
+    PGenieGen.Bundle
     PGenieGen.Contract
     PGenieGen.Dhall.Decode
     PGenieGen.Dhall.Deriving
@@ -100,11 +101,10 @@ library
     PGenieGen.Dhall.Orphans
     PGenieGen.Dhall.Orphans.NonEmpty
     PGenieGen.Dhall.Orphans.Path
-    PGenieGen.Dynamic
+    PGenieGen.Load
     PGenieGen.Location
     PGenieGen.Model
     PGenieGen.Prelude
-    PGenieGen.Static
 
   build-depends:
     QuickCheck,

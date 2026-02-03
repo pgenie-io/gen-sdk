@@ -1,4 +1,4 @@
-module PGenieGen.Static where
+module PGenieGen.Bundle where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
@@ -11,10 +11,10 @@ import PGenieGen.Model
 import PGenieGen.Prelude
 
 -- | Executes a Dhall expression at compile time and constructs a Haskell value at compile time.
-loadStatically ::
+bundle ::
   Location.Location ->
   TH.Code TH.Q (Aeson.Value -> Either Text (Input -> Output))
-loadStatically location = TH.Code do
+bundle location = TH.Code do
   let code = Location.toCode location
 
   (configTypeExpr, compileExpr) <- TH.runIO do
