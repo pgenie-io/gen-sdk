@@ -16,5 +16,7 @@
 , report = ./report.dhall
 , nest = ./nest.dhall
 , toPlainText = ./toPlainText.dhall
-, toReportsText = ./toReportsText.dhall
+, toWarningsYaml = ./toWarningsYaml.dhall
+, toErrorYaml = ./toErrorYaml.dhall
+, toFiles = ./toFiles.dhall
 }
