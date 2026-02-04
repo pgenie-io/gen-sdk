@@ -1,6 +1,5 @@
 module PGenieGen.Bundle where
 
-import Data.Aeson qualified as Aeson
 import Dhall qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Language.Haskell.TH.Syntax qualified as TH
@@ -11,9 +10,7 @@ import PGenieGen.Model
 import PGenieGen.Prelude
 
 -- | Imports Dhall at compile time and constructs a typed Haskell compiler function from it.
-bundle ::
-  Location.Location ->
-  TH.Code TH.Q (Aeson.Value -> Either Text (Input -> Output))
+bundle :: Location.Location -> TH.Code TH.Q Gen
 bundle location = TH.Code do
   let code = Location.toCode location
 

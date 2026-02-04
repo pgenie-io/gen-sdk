@@ -1,6 +1,5 @@
 module PGenieGen.Load where
 
-import Data.Aeson qualified as Aeson
 import Dhall qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import PGenieGen.Contract qualified as Contract
@@ -11,8 +10,8 @@ import PGenieGen.Prelude
 
 -- * Procedures
 
-load :: Location.Location -> Aeson.Value -> IO (Input -> Output)
-load location configJson = do
+load :: Location.Location -> IO Gen
+load location = do
   let code = Location.toCode location
 
   putStrLn ("Loading generator code from: " <> to code)
@@ -46,31 +45,29 @@ load location configJson = do
       exitFailure
     Just expr -> pure expr
 
-  configValExpr <- case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configTypeExpr configJson of
-    Left err -> do
-      putStrLn ("Config does not conform to the expected schema:\n" <> show err)
-      exitFailure
-    Right configVal -> pure configVal
-
   compileExpr <- case ExprViews.recordField "compile" genExpr of
     Nothing -> do
       putStrLn "Could not find 'compile' field in the loaded generator code"
       exitFailure
     Just expr -> pure expr
 
-  let configEncoder =
-        Dhall.Encoder
-          { embed = const configValExpr,
-            declared = configTypeExpr
-          }
-      decoder =
-        fmap
-          ($ ())
-          ( Dhall.function
-              configEncoder
-              Dhall.auto
-          )
-
-  Dhall.expectWithSettings Dhall.defaultInputSettings decoder compileExpr
-
-  Dhall.rawInput decoder compileExpr
+  pure \configJson ->
+    case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configTypeExpr configJson of
+      Left err -> do
+        Left ("Config does not conform to the expected schema:\n" <> onto (show err))
+      Right configValExpr ->
+        let configEncoder =
+              Dhall.Encoder
+                { embed = const configValExpr,
+                  declared = configTypeExpr
+                }
+            decoder =
+              fmap
+                ($ ())
+                ( Dhall.function
+                    configEncoder
+                    Dhall.auto
+                )
+         in case Dhall.rawInput decoder compileExpr of
+              Nothing -> Left "Failed to decode the 'compile' function from the generator code."
+              Just compileFunc -> Right compileFunc

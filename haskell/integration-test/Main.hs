@@ -15,8 +15,16 @@ main :: IO ()
 main = hspec do
   describe "" do
     it "" do
+      gen <-
+        PGenieGen.load location
+
       compile <-
-        PGenieGen.load location configJson
+        case gen configJson of
+          Left err -> do
+            putStrLn "Failed to parse config JSON:"
+            Text.putStrLn err
+            exitFailure
+          Right compile -> pure compile
 
       let output =
             compile Fixtures.Project1.input

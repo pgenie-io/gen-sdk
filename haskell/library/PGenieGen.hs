@@ -2,6 +2,7 @@
 module PGenieGen
   ( Input,
     Output,
+    Gen,
     Location (..),
     load,
     bundle,
