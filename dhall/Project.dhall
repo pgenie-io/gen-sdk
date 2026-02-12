@@ -76,9 +76,9 @@ let ResultRows =
 
 let Result = Optional ResultRows
 
-let QueryFragmentVar = { name : Name, rawName : Text, paramIndex : Natural }
+let QueryVar = { name : Name, rawName : Text, paramIndex : Natural }
 
-let QueryFragment = < Sql : Text | Var : QueryFragmentVar >
+let QueryFragment = < Sql : Text | Var : QueryVar >
 
 let QueryFragments = List QueryFragment
 
@@ -157,7 +157,7 @@ in  { Project
     , ResultRowsCardinality
     , ResultRows
     , Result
-    , QueryFragmentVar
+    , QueryVar
     , QueryFragment
     , QueryFragments
     , Query

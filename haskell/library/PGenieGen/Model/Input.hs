@@ -192,7 +192,7 @@ data ResultRows = ResultRows
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
 -- | A variable in a query fragment
-data QueryFragmentVar = MkQueryFragmentVar
+data QueryVar = QueryVar
   { name :: Name,
     rawName :: Text,
     paramIndex :: Natural
@@ -203,7 +203,7 @@ data QueryFragmentVar = MkQueryFragmentVar
 -- | A fragment of a query, either SQL text or a variable
 data QueryFragment
   = QueryFragmentSql Text
-  | QueryFragmentVar QueryFragmentVar
+  | QueryFragmentVar QueryVar
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
