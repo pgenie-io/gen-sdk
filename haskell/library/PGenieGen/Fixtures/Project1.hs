@@ -35,7 +35,7 @@ input =
           fragments =
             [ Input.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
               Input.QueryFragmentVar
-                ( Input.QueryVar
+                ( Input.Var
                     { name = textName "user_id",
                       rawName = "user_id",
                       paramIndex = 1
