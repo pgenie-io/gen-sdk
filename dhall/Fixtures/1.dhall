@@ -70,7 +70,7 @@ let varQueryFragment
 
 let pgSchema = "music_catalogue"
 
-in    { owner = name [ [ d, e, m, o ] ]
+in    { space = name [ [ d, e, m, o ] ]
       , name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
       , version = { major = 1, minor = 0, patch = 0 }
       , customTypes =

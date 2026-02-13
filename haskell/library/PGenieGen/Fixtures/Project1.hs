@@ -9,7 +9,7 @@ import PGenieGen.Prelude
 input :: Input
 input =
   Input.Project
-    { owner = textName "demo",
+    { space = textName "demo",
       name = textName "demo_project",
       version = Input.Version {major = 1, minor = 0, patch = 0},
       customTypes = [],

@@ -91,7 +91,7 @@ let Query =
       }
 
 let Project =
-      { owner : Name
+      { space : Name
       , name : Name
       , version : Version
       , customTypes : List CustomType

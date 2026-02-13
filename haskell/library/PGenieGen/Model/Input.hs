@@ -222,7 +222,7 @@ data Query = Query
 
 -- | A project with name, version, custom types, and queries
 data Project = Project
-  { owner :: Name,
+  { space :: Name,
     name :: Name,
     version :: Version,
     customTypes :: [CustomType],
