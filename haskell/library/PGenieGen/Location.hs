@@ -9,5 +9,5 @@ data Location
 
 toCode :: Location -> Text
 toCode = \case
-  LocationUrl url -> url <> "/Gen.dhall"
-  LocationPath path -> Path.toText (path <> "Gen.dhall")
+  LocationUrl url -> url
+  LocationPath path -> Path.toText path

@@ -57,7 +57,7 @@ main = hspec do
 gen :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
 gen =
   $$( PGenieGen.bundle
-        (PGenieGen.LocationPath "./bundling-test")
+        (PGenieGen.LocationPath "./bundling-test/Gen.dhall")
     )
 
 configJson :: Aeson.Value
