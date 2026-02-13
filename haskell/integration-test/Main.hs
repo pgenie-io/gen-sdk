@@ -58,7 +58,7 @@ main = hspec do
 
 location :: PGenieGen.Location
 location =
-  PGenieGen.LocationPath "./integration-test/Gen.dhall"
+  PGenieGen.LocationPath "./integration-test/Gen.dhall" Nothing
 
 configJson :: Aeson.Value
 configJson =
