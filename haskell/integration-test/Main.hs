@@ -16,7 +16,7 @@ main = hspec do
   describe "" do
     it "" do
       gen <-
-        PGenieGen.load location
+        PGenieGen.load location Text.putStrLn
 
       compile <-
         case gen configJson of
@@ -58,7 +58,7 @@ main = hspec do
 
 location :: PGenieGen.Location
 location =
-  PGenieGen.LocationPath "./integration-test"
+  PGenieGen.LocationPath "./integration-test/Gen.dhall"
 
 configJson :: Aeson.Value
 configJson =

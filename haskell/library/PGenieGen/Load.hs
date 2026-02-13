@@ -10,17 +10,17 @@ import PGenieGen.Prelude
 
 -- * Procedures
 
-load :: Location.Location -> IO Gen
-load location = do
+load :: Location.Location -> (Text -> IO ()) -> IO Gen
+load location echo = do
   let code = Location.toCode location
 
-  putStrLn ("Loading generator code from: " <> to code)
+  echo ("Loading generator code from: " <> to code)
 
   genExpr <- Dhall.inputExpr code
 
   contractVersionExpr <- case ExprViews.recordField "contractVersion" genExpr of
     Nothing -> do
-      putStrLn "Could not find 'contractVersion' field in the loaded generator code"
+      echo "Could not find 'contractVersion' field in the loaded generator code"
       exitFailure
     Just expr -> pure expr
 
@@ -32,22 +32,22 @@ load location = do
     Dhall.rawInput decoder contractVersionExpr
 
   when (major /= 1) do
-    putStrLn ("Incompatible contract major version: " <> show major <> ". Expected 1.")
+    echo ("Incompatible contract major version: " <> onto (show major) <> ". Expected 1.")
     exitFailure
 
   when (minor > 0) do
-    putStrLn ("Incompatible contract minor version: " <> show minor <> ". Expected 0 or lower.")
+    echo ("Incompatible contract minor version: " <> onto (show minor) <> ". Expected 0 or lower.")
     exitFailure
 
   configTypeExpr <- case ExprViews.recordField "Config" genExpr of
     Nothing -> do
-      putStrLn "Could not find 'Config' field in the loaded generator code"
+      echo "Could not find 'Config' field in the loaded generator code"
       exitFailure
     Just expr -> pure expr
 
   compileExpr <- case ExprViews.recordField "compile" genExpr of
     Nothing -> do
-      putStrLn "Could not find 'compile' field in the loaded generator code"
+      echo "Could not find 'compile' field in the loaded generator code"
       exitFailure
     Just expr -> pure expr
 
