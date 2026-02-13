@@ -11,5 +11,7 @@ let ContractVersion = ./ContractVersion.dhall
 
 in  \(contractVersion : ContractVersion) ->
     \(Config : Type) ->
-    \(compile : Config -> Project.Project -> Compiled.Type (List File.Type)) ->
+    \ ( compile
+      : Optional Config -> Project.Project -> Compiled.Type (List File.Type)
+      ) ->
       { contractVersion, Config, compile }

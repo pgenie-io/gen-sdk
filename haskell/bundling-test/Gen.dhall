@@ -7,22 +7,28 @@ let Config = { foo : Text, bar : Optional Natural }
 in  Sdk.module
       { major = 1, minor = 0 }
       Config
-      ( \(config : Config) ->
+      ( \(config : Optional Config) ->
         \(project : Sdk.Project.Project) ->
           Sdk.Compiled.ok
             (List Sdk.File.Type)
             [ { path = "output.yaml"
               , content =
-                  ''
-                  config:
-                    foo: ${config.foo}
-                    bar: ${Prelude.Optional.fold
-                             Natural
-                             config.bar
-                             Text
-                             Natural/show
-                             "null"}
-                  ''
+                  merge
+                    { None = "config: null"
+                    , Some =
+                        \(config : Config) ->
+                          ''
+                          config:
+                            foo: ${config.foo}
+                            bar: ${Prelude.Optional.fold
+                                     Natural
+                                     config.bar
+                                     Text
+                                     Natural/show
+                                     "null"}
+                          ''
+                    }
+                    config
               }
             ]
       )
