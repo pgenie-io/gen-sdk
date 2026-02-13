@@ -9,6 +9,6 @@ type Input = Project.Project
 
 type Output = Output.Output
 
-type Gen = Aeson.Value -> Either Text (Input -> Output)
+type Gen = Maybe Aeson.Value -> Either Text (Input -> Output)
 
 type Compile = Input -> Output

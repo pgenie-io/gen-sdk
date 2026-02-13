@@ -17,7 +17,7 @@ main = hspec do
   describe "" do
     it "" do
       compile <-
-        case gen configJson of
+        case gen (Just configJson) of
           Left err -> do
             putStrLn "Failed to parse config JSON:"
             Text.putStrLn err
@@ -54,7 +54,7 @@ main = hspec do
             }
         ]
 
-gen :: Aeson.Value -> Either Text (Input.Project -> Output.Output)
+gen :: Maybe Aeson.Value -> Either Text (Input.Project -> Output.Output)
 gen =
   $$( PGenieGen.bundle
         (PGenieGen.LocationPath "./bundling-test/Gen.dhall")

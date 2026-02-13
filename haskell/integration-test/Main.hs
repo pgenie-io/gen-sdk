@@ -19,7 +19,7 @@ main = hspec do
         PGenieGen.load location Text.putStrLn
 
       compile <-
-        case gen configJson of
+        case gen (Just configJson) of
           Left err -> do
             putStrLn "Failed to parse config JSON:"
             Text.putStrLn err
