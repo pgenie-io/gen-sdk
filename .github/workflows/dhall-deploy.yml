@@ -11,37 +11,45 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    outputs:
+      artifact-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Resolve Dhall
         id: resolve
-        uses: nikita-volkov/dhall-resolve.github-action@master
+        uses: nikita-volkov/dhall-resolve.github-action@v1
         with:
           file: dhall/package.dhall
 
+      - run: |
+          ls -lh ${{ steps.resolve.outputs.path }}
+          echo "ls /tmp:"
+          ls -lh /tmp
+
       - name: Upload frozen package artifact
-        uses: actions/upload-artifact@v4
+        id: upload
+        uses: actions/upload-artifact@v6
         with:
-          name: dhall-frozen-package
+          name: dhall-frozen-package-${{ github.run_id }}
           path: ${{ steps.resolve.outputs.path }}
           retention-days: 1
+          if-no-files-found: error
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # Fetch all history for proper versioning
 
       - name: Download frozen package artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
-          name: dhall-frozen-package
+          artifact-ids: ${{ needs.build.outputs.artifact-id }}
           path: artifacts
 
       - name: Generate version tag
