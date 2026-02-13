@@ -4,6 +4,10 @@ module PGenieGen
     Output,
     Gen,
     Location (..),
+    locationUrl,
+    locationUrlWithHash,
+    locationPath,
+    locationPathWithHash,
     load,
     bundle,
   )
