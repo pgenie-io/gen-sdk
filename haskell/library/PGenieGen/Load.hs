@@ -64,7 +64,8 @@ load location hash echo = do
     Just expr -> pure expr
 
   -- Compute the semantic integrity hash of the loaded expression
-  let normalizedExpr = Dhall.Core.normalize genExpr
+  -- According to Dhall spec, hashes must be computed on alpha-beta-normalized expressions
+  let normalizedExpr = Dhall.Core.alphaNormalize (Dhall.Core.normalize genExpr)
       hash = Dhall.Import.hashExpressionToCode normalizedExpr
 
   let gen = \config -> do
