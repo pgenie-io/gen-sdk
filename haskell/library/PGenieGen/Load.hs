@@ -2,6 +2,7 @@ module PGenieGen.Load where
 
 import Dhall qualified
 import Dhall.Core qualified
+import Dhall.Import qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import PGenieGen.Contract qualified as Contract
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
@@ -11,7 +12,11 @@ import PGenieGen.Prelude
 
 -- * Procedures
 
-load :: Location.Location -> (Text -> IO ()) -> IO Gen
+-- | Load a Dhall generator and compute its semantic integrity hash.
+--
+-- Returns a tuple of (Gen, hash) where the hash is in the format "sha256:..."
+-- as produced by @dhall freeze@.
+load :: Location.Location -> (Text -> IO ()) -> IO (Gen, Text)
 load location echo = do
   let code = Location.toCode location
 
@@ -52,30 +57,36 @@ load location echo = do
       exitFailure
     Just expr -> pure expr
 
-  pure \config -> do
-    configValExpr <- case config of
-      Nothing ->
-        Right (Dhall.Core.App Dhall.Core.None configTypeExpr)
-      Just configJson ->
-        case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configTypeExpr configJson of
-          Left err -> do
-            Left ("Config does not conform to the expected schema:\n" <> onto (show err))
-          Right configValExpr ->
-            Right (Dhall.Core.Some configValExpr)
+  -- Compute the semantic integrity hash of the loaded expression
+  let normalizedExpr = Dhall.Core.normalize genExpr
+      hash = Dhall.Import.hashExpressionToCode normalizedExpr
 
-    let configEncoder =
-          Dhall.Encoder
-            { embed = const configValExpr,
-              declared = Dhall.Core.App Dhall.Core.Optional configTypeExpr
-            }
-        decoder =
-          fmap
-            ($ ())
-            ( Dhall.function
-                configEncoder
-                Dhall.auto
-            )
+  let gen = \config -> do
+        configValExpr <- case config of
+          Nothing ->
+            Right (Dhall.Core.App Dhall.Core.None configTypeExpr)
+          Just configJson ->
+            case Dhall.FromJson.dhallFromJSON Dhall.FromJson.defaultConversion configTypeExpr configJson of
+              Left err -> do
+                Left ("Config does not conform to the expected schema:\n" <> onto (show err))
+              Right configValExpr ->
+                Right (Dhall.Core.Some configValExpr)
 
-    case Dhall.rawInput decoder compileExpr of
-      Nothing -> Left "Failed to decode the 'compile' function from the generator code."
-      Just compileFunc -> Right compileFunc
+        let configEncoder =
+              Dhall.Encoder
+                { embed = const configValExpr,
+                  declared = Dhall.Core.App Dhall.Core.Optional configTypeExpr
+                }
+            decoder =
+              fmap
+                ($ ())
+                ( Dhall.function
+                    configEncoder
+                    Dhall.auto
+                )
+
+        case Dhall.rawInput decoder compileExpr of
+          Nothing -> Left "Failed to decode the 'compile' function from the generator code."
+          Just compileFunc -> Right compileFunc
+
+  pure (gen, hash)

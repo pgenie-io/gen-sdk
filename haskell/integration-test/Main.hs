@@ -15,8 +15,11 @@ main :: IO ()
 main = hspec do
   describe "" do
     it "" do
-      gen <-
+      (gen, hash) <-
         PGenieGen.load location Text.putStrLn
+
+      -- Print the computed hash for verification
+      putStrLn $ "Computed hash: " ++ show hash
 
       compile <-
         case gen (Just configJson) of
