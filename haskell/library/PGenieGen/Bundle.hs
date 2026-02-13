@@ -11,9 +11,9 @@ import PGenieGen.Model
 import PGenieGen.Prelude
 
 -- | Imports Dhall at compile time and constructs a typed Haskell compiler function from it.
-bundle :: Location.Location -> TH.Code TH.Q Gen
-bundle location = TH.Code do
-  let code = Location.toCode location
+bundle :: Location.Location -> Maybe Text -> TH.Code TH.Q Gen
+bundle location hash = TH.Code do
+  let code = mconcat [Location.toCode location, maybe "" (\h -> " " <> h) hash]
 
   (configTypeExpr, compileExpr) <- TH.runIO do
     putStrLn ("Loading generator code from: " <> to code)
