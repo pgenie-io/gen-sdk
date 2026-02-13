@@ -16,7 +16,7 @@ main = hspec do
   describe "" do
     it "" do
       (gen, hash) <-
-        PGenieGen.load location Text.putStrLn
+        PGenieGen.load location Nothing Text.putStrLn
 
       -- Print the computed hash for verification
       putStrLn $ "Computed hash: " ++ show hash
@@ -61,7 +61,7 @@ main = hspec do
 
 location :: PGenieGen.Location
 location =
-  PGenieGen.LocationPath "./integration-test/Gen.dhall" Nothing
+  PGenieGen.LocationPath "./integration-test/Gen.dhall"
 
 configJson :: Aeson.Value
 configJson =

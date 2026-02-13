@@ -16,9 +16,15 @@ import PGenieGen.Prelude
 --
 -- Returns a tuple of (Gen, hash) where the hash is in the format "sha256:..."
 -- as produced by @dhall freeze@.
-load :: Location.Location -> (Text -> IO ()) -> IO (Gen, Text)
-load location echo = do
-  let code = Location.toCode location
+load ::
+  Location.Location ->
+  -- | Optional integrity hash to verify and cache the loaded generator.
+  Maybe Text ->
+  (Text -> IO ()) ->
+  IO (Gen, Text)
+load location hash echo = do
+  let code =
+        mconcat [Location.toCode location, maybe "" (\h -> " " <> h) hash]
 
   echo ("Loading generator code from: " <> to code)
 
