@@ -1,5 +1,8 @@
 packages:
   ./haskell
+
 allow-newer: 
+  , *:base
   , *:ghc-prim
+  , *:template-haskell
   , dhall-json:*

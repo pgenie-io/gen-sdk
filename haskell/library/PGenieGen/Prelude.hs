@@ -76,6 +76,7 @@ import GHC.IO.Exception as Exports
 import LawfulConversions as Exports
 import Numeric as Exports
 import Numeric.Natural as Exports (Natural)
+import PGenieGen.Prelude.Path ()
 import System.Environment as Exports
 import System.Exit as Exports
 import System.IO as Exports

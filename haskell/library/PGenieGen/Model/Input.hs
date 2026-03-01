@@ -1,5 +1,6 @@
 module PGenieGen.Model.Input where
 
+import AesonDeriver qualified
 import Dhall qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.Orphans ()
@@ -230,3 +231,24 @@ data Project = Project
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
+AesonDeriver.derive
+  [ ''Version,
+    ''WordChar,
+    ''WordOrNumber,
+    ''Name,
+    ''Primitive,
+    ''Scalar,
+    ''ArraySettings,
+    ''Value,
+    ''Member,
+    ''EnumVariant,
+    ''CustomTypeDefinition,
+    ''CustomType,
+    ''ResultRowsCardinality,
+    ''ResultRows,
+    ''Var,
+    ''QueryFragment,
+    ''Query,
+    ''Project
+  ]

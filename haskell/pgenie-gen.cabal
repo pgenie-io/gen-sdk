@@ -105,6 +105,7 @@ library
     PGenieGen.Location
     PGenieGen.Model
     PGenieGen.Prelude
+    PGenieGen.Prelude.Path
 
   build-depends:
     QuickCheck,
@@ -119,6 +120,7 @@ library
     hashable,
     lawful-conversions ^>=0.3.1,
     mtl,
+    pgenie-gen:aeson-deriver,
     prettyprinter,
     profunctors,
     quickcheck-instances,
@@ -132,6 +134,17 @@ library
     vector,
     vector-instances,
     witherable,
+
+library aeson-deriver
+  import: base
+  hs-source-dirs: aeson-deriver
+  exposed-modules: AesonDeriver
+  build-depends:
+    aeson,
+    base,
+    cases,
+    template-haskell,
+    text,
 
 test-suite integration-test
   import: test
