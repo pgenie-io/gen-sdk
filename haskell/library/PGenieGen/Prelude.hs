@@ -27,7 +27,7 @@ import Data.Data as Exports
 import Data.Dynamic as Exports
 import Data.Either as Exports
 import Data.Fixed as Exports
-import Data.Foldable as Exports
+import Data.Foldable as Exports hiding (toList)
 import Data.Function as Exports hiding (id, (.))
 import Data.Functor as Exports hiding (unzip)
 import Data.Functor.Compose as Exports
@@ -73,6 +73,7 @@ import GHC.Conc as Exports hiding (threadWaitRead, threadWaitReadSTM, threadWait
 import GHC.Exts as Exports (groupWith, inline, lazy, sortWith)
 import GHC.Generics as Exports (Generic)
 import GHC.IO.Exception as Exports
+import GHC.IsList as Exports (IsList (..))
 import LawfulConversions as Exports
 import Numeric as Exports
 import Numeric.Natural as Exports (Natural)

@@ -104,8 +104,10 @@ library
     PGenieGen.Load
     PGenieGen.Location
     PGenieGen.Model
+    PGenieGen.Model.Input.Name
     PGenieGen.Model.Input.Word
     PGenieGen.Model.Input.WordChar
+    PGenieGen.Model.Input.WordOrNumber
     PGenieGen.Prelude
     PGenieGen.Prelude.Path
 
