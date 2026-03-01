@@ -186,17 +186,22 @@ in    { space = name [ [ d, e, m, o ] ]
               }
             }
           , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    a.id,
-                    a.title,
-                    a.release_year,
-                    a.album_type
-                FROM albums a
-                WHERE a.artist_id = ''
+            [ Model.QueryFragment.Sql "SELECT"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "    a.id,"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "    a.title,"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "    a.release_year,"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "    a.album_type"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "FROM albums a"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "WHERE a.artist_id = "
             , varQueryFragment 0 [ [ a, r, t, i, s, t ], [ i, d ] ]
-            , Model.QueryFragment.Sql " ORDER BY a.release_year DESC"
+            , Model.QueryFragment.Sql "\n"
+            , Model.QueryFragment.Sql "ORDER BY a.release_year DESC"
             ]
           }
         , { name =
