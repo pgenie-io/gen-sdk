@@ -20,7 +20,7 @@ input =
     textName :: Text -> Input.Name
     textName _text =
       Input.Name
-        { head = NonEmpty.fromList [Input.WordCharA, Input.WordCharB],
+        { head = Input.Word (NonEmpty.fromList [Input.WordCharA, Input.WordCharB]),
           tail = []
         }
 

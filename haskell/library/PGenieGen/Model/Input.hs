@@ -1,9 +1,16 @@
-module PGenieGen.Model.Input where
+module PGenieGen.Model.Input
+  ( module PGenieGen.Model.Input,
+    Word (..),
+    WordChar (..),
+  )
+where
 
 import AesonDeriver qualified
 import Dhall qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.Orphans ()
+import PGenieGen.Model.Input.Word (Word (..))
+import PGenieGen.Model.Input.WordChar (WordChar (..))
 import PGenieGen.Prelude hiding (Version, Word)
 
 -- | Version with semantic versioning components
@@ -14,41 +21,6 @@ data Version = Version
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
-
--- | A word is a non-empty list of characters
-type Word = NonEmpty WordChar
-
-data WordChar
-  = WordCharA
-  | WordCharB
-  | WordCharC
-  | WordCharD
-  | WordCharE
-  | WordCharF
-  | WordCharG
-  | WordCharH
-  | WordCharI
-  | WordCharJ
-  | WordCharK
-  | WordCharL
-  | WordCharM
-  | WordCharN
-  | WordCharO
-  | WordCharP
-  | WordCharQ
-  | WordCharR
-  | WordCharS
-  | WordCharT
-  | WordCharU
-  | WordCharV
-  | WordCharW
-  | WordCharX
-  | WordCharY
-  | WordCharZ
-  deriving stock (Show, Eq, Generic)
-  deriving
-    (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "WordChar") WordChar)
 
 -- | Either a word or a number
 data WordOrNumber
@@ -234,7 +206,6 @@ data Project = Project
 
 AesonDeriver.derive
   [ ''Version,
-    ''WordChar,
     ''WordOrNumber,
     ''Name,
     ''Primitive,
