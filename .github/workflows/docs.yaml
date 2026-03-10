@@ -25,7 +25,7 @@ jobs:
         id: generate
         uses: nikita-volkov/dhall-docs.github-action@v1
         with:
-          input: dhall
+          input: .
           package-name: gen-sdk
           add-repo-reference: true
 
@@ -34,35 +34,25 @@ jobs:
           name: dhall
           path: ${{ steps.generate.outputs.path }}
 
-  generate-haskell-docs:
-    uses: nikita-volkov/haskell-hackage-lib-github-actions-workflows/.github/workflows/generate-docs.yaml@v4
-    secrets: inherit
-    with:
-      ghc: "9.12"
-      artifact-name: haskell
-
   deploy:
-    needs: [generate-dhall-docs, generate-haskell-docs]
+    needs: [generate-dhall-docs]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Download all artifacts
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          path: combined-site
-
-      - name: Add index page and icons
-        run: cp -r pages/* combined-site/
+          name: dhall
+          path: site
 
       - name: Upload to Pages
         uses: actions/upload-pages-artifact@v4
         with:
-          path: combined-site
+          path: site
 
       - name: Deploy
         id: deploy
         uses: actions/deploy-pages@v4
+

@@ -15,10 +15,9 @@
 
 # Unignore subtrees:
 !/.github/
-!/design/
-!/dhall/
-!/haskell/
-!/pages/
+!/Fixtures/
+!/Input/
+!/Output/
 
 # Ignore noise:
 .DS_Store

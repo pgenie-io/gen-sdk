@@ -21,7 +21,7 @@ jobs:
         id: resolve
         uses: nikita-volkov/dhall-resolve.github-action@v1
         with:
-          file: dhall/package.dhall
+          file: package.dhall
 
       - run: |
           ls -lh ${{ steps.resolve.outputs.path }}
