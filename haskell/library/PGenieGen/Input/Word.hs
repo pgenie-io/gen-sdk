@@ -1,10 +1,10 @@
-module PGenieGen.Model.Input.Word where
+module PGenieGen.Input.Word where
 
 import Data.Aeson qualified as Aeson
 import Data.Text qualified as Text
 import Dhall qualified
 import PGenieGen.Dhall.Orphans ()
-import PGenieGen.Model.Input.WordChar qualified as WordChar
+import PGenieGen.Input.WordChar qualified as WordChar
 import PGenieGen.Prelude hiding (Version, Word)
 
 -- | A word is a non-empty list of characters

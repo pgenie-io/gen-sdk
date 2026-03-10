@@ -1,4 +1,4 @@
-module PGenieGen.Model.Input.WordChar where
+module PGenieGen.Input.WordChar where
 
 import AesonDeriver qualified
 import Dhall qualified

@@ -1,15 +1,11 @@
--- | Integration with generator adapters.
+-- | SDK contract types for generator modules.
 module PGenieGen
-  ( Input,
-    Output,
-    Gen,
-    Location (..),
-    load,
-    bundle,
+  ( module PGenieGen.Input,
+    module PGenieGen.Output,
+    module PGenieGen.Contract,
   )
 where
 
-import PGenieGen.Bundle
-import PGenieGen.Load
-import PGenieGen.Location
-import PGenieGen.Model
+import PGenieGen.Contract
+import PGenieGen.Input
+import PGenieGen.Output

@@ -1,4 +1,4 @@
-module PGenieGen.Model.Output.Report where
+module PGenieGen.Output.Report where
 
 import Dhall qualified
 import PGenieGen.Prelude

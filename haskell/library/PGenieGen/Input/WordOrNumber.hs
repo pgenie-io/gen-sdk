@@ -1,10 +1,10 @@
-module PGenieGen.Model.Input.WordOrNumber where
+module PGenieGen.Input.WordOrNumber where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.Orphans ()
-import PGenieGen.Model.Input.Word (Word (..))
+import PGenieGen.Input.Word (Word (..))
 import PGenieGen.Prelude hiding (Version, Word)
 
 -- | Either a word or a number

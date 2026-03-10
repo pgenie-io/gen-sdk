@@ -1,4 +1,4 @@
-module PGenieGen.Model.Output
+module PGenieGen.Output
   ( Output (..),
     Report (..),
     Result (..),
@@ -10,7 +10,7 @@ import Dhall qualified
 import Dhall.Deriving qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.Orphans ()
-import PGenieGen.Model.Output.Report (Report (..))
+import PGenieGen.Output.Report (Report (..))
 import PGenieGen.Prelude
 
 data Output = Output

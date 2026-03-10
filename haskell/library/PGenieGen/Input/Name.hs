@@ -1,10 +1,10 @@
-module PGenieGen.Model.Input.Name where
+module PGenieGen.Input.Name where
 
 import Data.Aeson qualified as Aeson
 import Dhall qualified
 import PGenieGen.Dhall.Orphans ()
-import PGenieGen.Model.Input.Word (Word (..))
-import PGenieGen.Model.Input.WordOrNumber (WordOrNumber (..))
+import PGenieGen.Input.Word (Word (..))
+import PGenieGen.Input.WordOrNumber (WordOrNumber (..))
 import PGenieGen.Prelude hiding (Version, Word)
 
 -- | A strict name with a head word and tail of words or numbers

@@ -1,8 +1,7 @@
 { ContractVersion = ./ContractVersion.dhall
-, Project = ./Project.dhall
-, Fixtures = ./Fixtures/package.dhall
-, Compiled = ./Compiled/package.dhall
-, Files = ./Files/package.dhall
+, Input = ./Project.dhall
+, Output = ./Compiled/package.dhall
 , File = ./File/package.dhall
+, Fixtures = ./Fixtures/package.dhall
 , module = ./module.dhall
 }
