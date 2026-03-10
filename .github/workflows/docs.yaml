@@ -34,15 +34,8 @@ jobs:
           name: dhall
           path: ${{ steps.generate.outputs.path }}
 
-  generate-haskell-docs:
-    uses: nikita-volkov/haskell-hackage-lib-github-actions-workflows/.github/workflows/generate-docs.yaml@v4
-    secrets: inherit
-    with:
-      ghc: "9.12"
-      artifact-name: haskell
-
   deploy:
-    needs: [generate-dhall-docs, generate-haskell-docs]
+    needs: [generate-dhall-docs]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
