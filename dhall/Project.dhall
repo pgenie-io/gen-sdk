@@ -8,6 +8,65 @@ let Version = { major : Natural, minor : Natural, patch : Natural }
 let Name = CodegenKit.Name.Type
 
 let Primitive =
+    -- | PostgreSQL primitive type.
+    --
+    -- `Bit` - `bit` (OID 1560, array OID 1561).
+    -- `Bool` - `bool` (OID 16, array OID 1000).
+    -- `Box` - `box` (OID 603, array OID 1020).
+    -- `Bpchar` - `bpchar` / `char(n)` (OID 1042, array OID 1014).
+    -- `Bytea` - `bytea` (OID 17, array OID 1001).
+    -- `Char` - internal single-byte `"char"` (OID 18, array OID 1002).
+    -- `Cidr` - `cidr` (OID 650, array OID 651).
+    -- `Circle` - `circle` (OID 718, array OID 719).
+    -- `Citext` - `citext` (extension type).
+    -- `Date` - `date` (OID 1082, array OID 1182).
+    -- `Datemultirange` - `datemultirange` (OID 4535, array OID 6150).
+    -- `Daterange` - `daterange` (OID 3912, array OID 3913).
+    -- `Float4` - `float4` / `real` (OID 700, array OID 1021).
+    -- `Float8` - `float8` / `double precision` (OID 701, array OID 1022).
+    -- `Hstore` - `hstore` extension type (no fixed OID; requires the hstore extension).
+    -- `Inet` - `inet` (OID 869, array OID 1041).
+    -- `Int2` - `int2` / `smallint` (OID 21, array OID 1005).
+    -- `Int4` - `int4` / `integer` (OID 23, array OID 1007).
+    -- `Int4multirange` - `int4multirange` (OID 4451, array OID 6154).
+    -- `Int4range` - `int4range` (OID 3904, array OID 3905).
+    -- `Int8` - `int8` / `bigint` (OID 20, array OID 1016).
+    -- `Int8multirange` - `int8multirange` (OID 4536, array OID 6157).
+    -- `Int8range` - `int8range` (OID 3926, array OID 3927).
+    -- `Interval` - `interval` (OID 1186, array OID 1187).
+    -- `Json` - `json` (OID 114, array OID 199).
+    -- `Jsonb` - `jsonb` (OID 3802, array OID 3807).
+    -- `Line` - `line` (OID 628, array OID 629).
+    -- `Lseg` - `lseg` (OID 601, array OID 1018).
+    -- `Macaddr` - `macaddr` (OID 829, array OID 1040).
+    -- `Macaddr8` - `macaddr8` (OID 774, array OID 775).
+    -- `Money` - `money` (OID 790, array OID 791).
+    -- `Name` - `name` (OID 19, array OID 1003).
+    -- `Numeric` - `numeric` (OID 1700, array OID 1231).
+    -- `Nummultirange` - `nummultirange` (OID 4532, array OID 6151).
+    -- `Numrange` - `numrange` (OID 3906, array OID 3907).
+    -- `Oid` - `oid` (PostgreSQL object identifier type).
+    -- `Path` - `path` (OID 602, array OID 1019).
+    -- `PgLsn` - `pg_lsn` (OID 3220, array OID 3221).
+    -- `PgSnapshot` - `pg_snapshot` (OID 5038, array OID 5039).
+    -- `Point` - `point` (OID 600, array OID 1017).
+    -- `Polygon` - `polygon` (OID 604, array OID 1027).
+    -- `Text` - `text` (OID 25, array OID 1009).
+    -- `Time` - `time` (OID 1083, array OID 1183).
+    -- `Timestamp` - `timestamp` (OID 1114, array OID 1115).
+    -- `Timestamptz` - `timestamptz` (OID 1184, array OID 1185).
+    -- `Timetz` - `timetz` (OID 1266, array OID 1270).
+    -- `Tsmultirange` - `tsmultirange` (OID 4533, array OID 6152).
+    -- `Tsquery` - `tsquery` (OID 3615, array OID 3645).
+    -- `Tsrange` - `tsrange` (OID 3908, array OID 3909).
+    -- `Tstzmultirange` - `tstzmultirange` (OID 4534, array OID 6153).
+    -- `Tstzrange` - `tstzrange` (OID 3910, array OID 3911).
+    -- `Tsvector` - `tsvector` (OID 3614, array OID 3643).
+    -- `Uuid` - `uuid` (OID 2950, array OID 2951).
+    -- `Varbit` - `varbit` (OID 1562, array OID 1563).
+    -- `Varchar` - `varchar` / `character varying` (OID 1043, array OID 1015).
+    -- `Xml` - `xml` (OID 142, array OID 143).
+
       < Bit
       | Bool
       | Box
