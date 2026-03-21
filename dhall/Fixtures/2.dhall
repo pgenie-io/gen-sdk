@@ -9,6 +9,7 @@ let _89 =
       | Char
       | Cidr
       | Circle
+      | Citext
       | Date
       | Datemultirange
       | Daterange
@@ -35,6 +36,7 @@ let _89 =
       | Numeric
       | Nummultirange
       | Numrange
+      | Oid
       | Path
       | PgLsn
       | PgSnapshot
