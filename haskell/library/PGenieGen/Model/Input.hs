@@ -47,6 +47,8 @@ data Primitive
     PrimitiveCidr
   | -- | PostgreSQL 'circle' (OID 718, array OID 719).
     PrimitiveCircle
+  | -- | PostgreSQL 'citext' extension type (no fixed OID; requires the citext extension).
+    PrimitiveCitext
   | -- | PostgreSQL 'date' (OID 1082, array OID 1182).
     PrimitiveDate
   | -- | PostgreSQL 'datemultirange' (OID 4535, array OID 6150).
@@ -99,6 +101,8 @@ data Primitive
     PrimitiveNummultirange
   | -- | PostgreSQL 'numrange' (OID 3906, array OID 3907).
     PrimitiveNumrange
+  | -- | PostgreSQL 'oid' object identifier type (OID 26, array OID 1028).
+    PrimitiveOid
   | -- | PostgreSQL 'path' (OID 602, array OID 1019).
     PrimitivePath
   | -- | PostgreSQL 'pg_lsn' (OID 3220, array OID 3221).
