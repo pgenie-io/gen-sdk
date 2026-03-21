@@ -1,15 +1,20 @@
-let _91 = < Optional | Single | Multiple >
+let _90 = < Optional | Single | Multiple >
 
-let _90 =
-      < Bool
+let _89 =
+      < Bit
+      | Bool
+      | Box
+      | Bpchar
       | Bytea
       | Char
       | Cidr
+      | Circle
       | Date
       | Datemultirange
       | Daterange
       | Float4
       | Float8
+      | Hstore
       | Inet
       | Int2
       | Int4
@@ -21,26 +26,38 @@ let _90 =
       | Interval
       | Json
       | Jsonb
+      | Line
+      | Lseg
       | Macaddr
       | Macaddr8
       | Money
+      | Name
       | Numeric
       | Nummultirange
       | Numrange
+      | Path
+      | PgLsn
+      | PgSnapshot
+      | Point
+      | Polygon
       | Text
       | Time
       | Timestamp
       | Timestamptz
       | Timetz
       | Tsmultirange
+      | Tsquery
       | Tsrange
       | Tstzmultirange
       | Tstzrange
+      | Tsvector
       | Uuid
+      | Varbit
+      | Varchar
       | Xml
       >
 
-let _89 =
+let _88 =
       < A
       | B
       | C
@@ -69,218 +86,221 @@ let _89 =
       | Z
       >
 
-let _88 = _91.Multiple
+let _87 = _90.Multiple
 
-let _87 = _89.Y
+let _86 = _88.Y
 
-let _86 = _89.V
+let _85 = _88.V
 
-let _85 = _89.U
+let _84 = _88.U
 
-let _84 = _89.T
+let _83 = _88.T
 
-let _83 = _89.S
+let _82 = _88.S
 
-let _82 = _89.R
+let _81 = _88.R
 
-let _81 = _89.P
+let _80 = _88.P
 
-let _80 = _89.O
+let _79 = _88.O
 
-let _79 = _89.N
+let _78 = _88.N
 
-let _78 = _89.M
+let _77 = _88.M
 
-let _77 = _89.L
+let _76 = _88.L
 
-let _76 = _89.K
+let _75 = _88.K
 
-let _75 = _89.I
+let _74 = _88.I
 
-let _74 = _89.G
+let _73 = _88.G
 
-let _73 = _89.F
+let _72 = _88.F
 
-let _72 = _89.E
+let _71 = _88.E
 
-let _71 = _89.D
+let _70 = _88.D
 
-let _70 = _89.C
+let _69 = _88.C
 
-let _69 = _89.B
+let _68 = _88.B
 
-let _68 = _89.A
+let _67 = _88.A
 
-let _67 = { dimensionality : Natural, elementIsNullable : Bool }
+let _66 = { dimensionality : Natural, elementIsNullable : Bool }
 
-let _66 = [ _87 ]
+let _65 = [ _86 ]
 
-let _65 = [ _71 ]
+let _64 = [ _70 ]
 
-let _64 = { head : _89, tail : List _89 }
+let _63 = { head : _88, tail : List _88 }
 
-let _63 = None _67
+let _62 = None _66
 
-let _62 = < Word : _64 | Number : Natural >
+let _61 = < Word : _63 | Number : Natural >
 
-let _61 = _62.Word
+let _60 = _61.Word
 
-let _60 = List _62
+let _59 = List _61
 
-let _59 = { head = _79, tail = [ _68, _78, _72 ] }
+let _58 = { head = _78, tail = [ _67, _77, _71 ] }
 
-let _58 = { head = _71, tail = [ _75, _83, _70 ] }
+let _57 = { head = _70, tail = [ _74, _82, _69 ] }
 
-let _57 = [] : _60
+let _56 = [] : _59
 
-let _56 = { head = _68, tail = [ _77, _69, _85, _78 ] }
+let _55 = { head = _67, tail = [ _76, _68, _84, _77 ] }
 
-let _55 = { head = _85, tail = [ _81, _71, _68, _84, _72 ] }
+let _54 = { head = _84, tail = [ _80, _70, _67, _83, _71 ] }
 
-let _54 = { head = _84, tail = [ _82, _68, _70, _76, _83 ] }
+let _53 = { head = _83, tail = [ _81, _67, _69, _75, _82 ] }
 
-let _53 = { head = _83, tail = [ _72, _77, _72, _70, _84 ] }
+let _52 = { head = _82, tail = [ _71, _76, _71, _69, _83 ] }
 
-let _52 = { head = _73, tail = [ _80, _82, _78, _68, _84 ] }
+let _51 = { head = _72, tail = [ _79, _81, _77, _67, _83 ] }
 
-let _51 = { head = _68, tail = [ _82, _84, _75, _83, _84 ] }
+let _50 = { head = _67, tail = [ _81, _83, _74, _82, _83 ] }
 
-let _50 = { head : _64, tail : _60 }
+let _49 = { head : _63, tail : _59 }
 
-let _49 = _61 { head = _69, tail = _66 }
+let _48 = _60 { head = _68, tail = _65 }
 
-let _48 = < Primitive : _90 | Custom : _50 >
+let _47 = < Primitive : _89 | Custom : _49 >
 
-let _47 = { head = { head = _75, tail = _65 }, tail = _57 }
+let _46 = { head = { head = _74, tail = _64 }, tail = _56 }
 
-let _46 = _48.Primitive
+let _45 = _47.Primitive
 
-let _45 = _48.Custom
+let _44 = _47.Custom
 
-let _44 = { head = _82, tail = [ _72, _77, _72, _68, _83, _72, _71 ] }
+let _43 = { head = _81, tail = [ _71, _76, _71, _67, _82, _71, _70 ] }
 
-let _43 = _61 _59
+let _42 = _60 _58
 
-let _42 =
+let _41 =
       < Sql : Text
-      | Var : { name : _50, rawName : Text, paramIndex : Natural }
+      | Var : { name : _49, rawName : Text, paramIndex : Natural }
       >
 
-let _41 = { head = _82, tail = [ _72, _70, _80, _82, _71, _75, _79, _74 ] }
+let _40 = { head = _81, tail = [ _71, _69, _79, _81, _70, _74, _78, _73 ] }
 
-let _40 = [ _61 { head = _75, tail = [ _79, _73, _80 ] } ]
+let _39 = [ _60 { head = _74, tail = [ _78, _72, _79 ] } ]
 
-let _39 = _42.Var
+let _38 = _41.Var
 
-let _38 = _42.Sql
+let _37 = _41.Sql
 
-let _37 = { head = _59, tail = _57 }
+let _36 = { head = _58, tail = _56 }
 
-let _36 = _61 _56
+let _35 = _60 _55
 
-let _35 = _46 _90.Text
+let _34 = _45 _89.Text
 
-let _34 = { arraySettings : Optional _67, scalar : _48 }
+let _33 = { arraySettings : Optional _66, scalar : _47 }
 
-let _33 = _61 _52
+let _32 = _60 _51
 
-let _32 = _38 ", "
+let _31 = _37 ", "
 
-let _31 =
-      _38
+let _30 =
+      _37
         ''
 
         where id = ''
 
-let _30 = { head = _52, tail = _57 }
+let _29 = { head = _51, tail = _56 }
 
-let _29 = { head = _51, tail = _57 }
+let _28 = { head = _50, tail = _56 }
 
-let _28 = { arraySettings = _63, scalar = _35 }
+let _27 = { arraySettings = _62, scalar = _34 }
 
-let _27 = { arraySettings = _63, scalar = _46 _90.Int8 }
+let _26 = { arraySettings = _62, scalar = _45 _89.Int4 }
 
-let _26 = { arraySettings = _63, scalar = _46 _90.Int4 }
+let _25 = { arraySettings = _62, scalar = _45 _89.Date }
 
-let _25 = { arraySettings = _63, scalar = _46 _90.Date }
+let _24 = { head = _43, tail = _56 }
 
-let _24 = { head = _44, tail = _57 }
+let _23 = { head = _40, tail = _56 }
 
-let _23 = { head = _41, tail = _57 }
+let _22 = { head = _57, tail = _39 }
 
-let _22 = { head = _58, tail = _40 }
+let _21 = { head = { head = _83, tail = [ _81, _67, _69, _75 ] }, tail = _39 }
 
-let _21 = { head = { head = _84, tail = [ _82, _68, _70, _76 ] }, tail = _40 }
+let _20 = { head = _55, tail = [ _32 ] }
 
-let _20 = { head = _56, tail = [ _33 ] }
+let _19 = { head = _40, tail = _39 }
 
-let _19 = { head = _41, tail = _40 }
+let _18 = { name : _49, pgName : Text, isNullable : Bool, value : _33 }
 
-let _18 = { name : _50, pgName : Text, isNullable : Bool, value : _34 }
-
-let _17 = _39 { name = _47, rawName = "id", paramIndex = 1 }
+let _17 = _38 { name = _46, rawName = "id", paramIndex = 1 }
 
 let _16 = List _18
 
-let _15 = _39 { name = _37, rawName = "name", paramIndex = 0 }
+let _15 = _38 { name = _36, rawName = "name", paramIndex = 0 }
 
-let _14 = { name = _47, pgName = "id", isNullable = True, value = _27 }
-
-let _13 = { name = _47, pgName = "id", isNullable = False, value = _27 }
-
-let _12 = { name = _37, pgName = "name", isNullable = True, value = _28 }
-
-let _11 = { name = _37, pgName = "name", isNullable = False, value = _28 }
-
-let _10 = { name = _24, pgName = "released", isNullable = True, value = _25 }
-
-let _9 = { arraySettings = _63, scalar = _45 _20 }
-
-let _8 = { arraySettings = _63, scalar = _45 _19 }
-
-let _7 =
-      { name = { head = _58, tail = _57 }
-      , pgName = "disc"
-      , isNullable = True
-      , value = { arraySettings = _63, scalar = _45 _22 }
+let _14 =
+      { name = _46
+      , pgName = "id"
+      , isNullable = False
+      , value = { arraySettings = _62, scalar = _45 _89.Int8 }
       }
 
-let _6 =
-      { name = { head = _54, tail = _57 }
+let _13 = { name = _36, pgName = "name", isNullable = False, value = _27 }
+
+let _12 = [ _13 ]
+
+let _11 = { name = _24, pgName = "released", isNullable = True, value = _25 }
+
+let _10 = { arraySettings = _62, scalar = _44 _20 }
+
+let _9 = { arraySettings = _62, scalar = _44 _19 }
+
+let _8 =
+      { name = { head = _57, tail = _56 }
+      , pgName = "disc"
+      , isNullable = True
+      , value = { arraySettings = _62, scalar = _44 _22 }
+      }
+
+let _7 =
+      { name = { head = _53, tail = _56 }
       , pgName = "tracks"
       , isNullable = True
       , value =
         { arraySettings = Some { dimensionality = 1, elementIsNullable = False }
-        , scalar = _45 _21
+        , scalar = _44 _21
         }
       }
 
-let _5 =
+let _6 =
       < Composite : _16
-      | Enum : List { name : _50, pgName : Text }
-      | Domain : _34
+      | Enum : List { name : _49, pgName : Text }
+      | Domain : _33
       >
 
-let _4 = _5.Composite
+let _5 = _6.Composite
 
-let _3 = { name = _30, pgName = "format", isNullable = True, value = _9 }
+let _4 = { name = _29, pgName = "format", isNullable = True, value = _10 }
 
-let _2 = { name = _23, pgName = "recording", isNullable = True, value = _8 }
+let _3 = { name = _29, pgName = "format", isNullable = False, value = _10 }
+
+let _2 = { name = _23, pgName = "recording", isNullable = True, value = _9 }
 
 let _1 =
       Some
-        { cardinality = _88
-        , columns = { head = _13, tail = [ _11, _10, _3, _2 ] }
+        { cardinality = _87
+        , columns = { head = _14, tail = [ _13, _11, _4, _2 ] }
         }
 
 in  { space =
-      { head = { head = _78, tail = _66 }
-      , tail = [ _61 { head = _83, tail = [ _81, _68, _70, _72 ] } ]
+      { head = { head = _77, tail = _65 }
+      , tail = [ _60 { head = _82, tail = [ _80, _67, _69, _71 ] } ]
       }
     , name =
-      { head = { head = _78, tail = [ _85, _83, _75, _70 ] }
+      { head = { head = _77, tail = [ _84, _82, _74, _69 ] }
       , tail =
-        [ _61 { head = _70, tail = [ _68, _84, _68, _77, _80, _74, _85, _72 ] }
+        [ _60 { head = _69, tail = [ _67, _83, _67, _76, _79, _73, _84, _71 ] }
         ]
       }
     , version = { major = 1, minor = 0, patch = 0 }
@@ -289,39 +309,39 @@ in  { space =
         , pgSchema = "public"
         , pgName = "album_format"
         , definition =
-            _5.Enum
+            _6.Enum
               [ { name =
-                  { head = { head = _86, tail = [ _75, _79, _87, _77 ] }
-                  , tail = _57
+                  { head = { head = _85, tail = [ _74, _78, _86, _76 ] }
+                  , tail = _56
                   }
                 , pgName = "Vinyl"
                 }
-              , { name = { head = { head = _70, tail = _65 }, tail = _57 }
+              , { name = { head = { head = _69, tail = _64 }, tail = _56 }
                 , pgName = "CD"
                 }
               , { name =
                   { head =
-                    { head = _70, tail = [ _68, _83, _83, _72, _84, _84, _72 ] }
-                  , tail = _57
+                    { head = _69, tail = [ _67, _82, _82, _71, _83, _83, _71 ] }
+                  , tail = _56
                   }
                 , pgName = "Cassette"
                 }
               , { name =
                   { head =
-                    { head = _71, tail = [ _75, _74, _75, _84, _68, _77 ] }
-                  , tail = _57
+                    { head = _70, tail = [ _74, _73, _74, _83, _67, _76 ] }
+                  , tail = _56
                   }
                 , pgName = "Digital"
                 }
               , { name =
-                  { head = { head = _71, tail = [ _86, _71 ] }
-                  , tail = [ _61 { head = _68, tail = [ _85, _71, _75, _80 ] } ]
+                  { head = { head = _70, tail = [ _85, _70 ] }
+                  , tail = [ _60 { head = _67, tail = [ _84, _70, _74, _79 ] } ]
                   }
                 , pgName = "DVD-Audio"
                 }
               , { name =
-                  { head = { head = _83, tail = [ _68, _70, _71 ] }
-                  , tail = _57
+                  { head = { head = _82, tail = [ _67, _69, _70 ] }
+                  , tail = _56
                   }
                 , pgName = "SACD"
                 }
@@ -330,42 +350,46 @@ in  { space =
       , { name = _22
         , pgSchema = "public"
         , pgName = "disc_info"
-        , definition = _4 [ _12, _2 ]
+        , definition =
+            _5
+              [ { name = _36, pgName = "name", isNullable = True, value = _27 }
+              , _2
+              ]
         }
       , { name = _19
         , pgSchema = "public"
         , pgName = "recording_info"
         , definition =
-            _4
+            _5
               [ { name =
-                  { head = { head = _83, tail = [ _84, _85, _71, _75, _80 ] }
-                  , tail = [ _43 ]
+                  { head = { head = _82, tail = [ _83, _84, _70, _74, _79 ] }
+                  , tail = [ _42 ]
                   }
                 , pgName = "studio_name"
                 , isNullable = True
-                , value = _28
+                , value = _27
                 }
               , { name =
-                  { head = { head = _70, tail = [ _75, _84, _87 ] }
-                  , tail = _57
+                  { head = { head = _69, tail = [ _74, _83, _86 ] }
+                  , tail = _56
                   }
                 , pgName = "city"
                 , isNullable = True
-                , value = _28
+                , value = _27
                 }
               , { name =
                   { head =
-                    { head = _70, tail = [ _80, _85, _79, _84, _82, _87 ] }
-                  , tail = _57
+                    { head = _69, tail = [ _79, _84, _78, _83, _81, _86 ] }
+                  , tail = _56
                   }
                 , pgName = "country"
                 , isNullable = True
-                , value = _28
+                , value = _27
                 }
               , { name =
                   { head =
-                    { head = _82, tail = [ _72, _70, _80, _82, _71, _72, _71 ] }
-                  , tail = [ _61 { head = _71, tail = [ _68, _84, _72 ] } ]
+                    { head = _81, tail = [ _71, _69, _79, _81, _70, _71, _70 ] }
+                  , tail = [ _60 { head = _70, tail = [ _67, _83, _71 ] } ]
                   }
                 , pgName = "recorded_date"
                 , isNullable = True
@@ -377,21 +401,21 @@ in  { space =
         , pgSchema = "public"
         , pgName = "track_info"
         , definition =
-            _4
+            _5
               [ { name =
-                  { head = { head = _84, tail = [ _75, _84, _77, _72 ] }
-                  , tail = _57
+                  { head = { head = _83, tail = [ _74, _83, _76, _71 ] }
+                  , tail = _56
                   }
                 , pgName = "title"
                 , isNullable = True
-                , value = _28
+                , value = _27
                 }
               , { name =
                   { head =
-                    { head = _71, tail = [ _85, _82, _68, _84, _75, _80, _79 ] }
+                    { head = _70, tail = [ _84, _81, _67, _83, _74, _79, _78 ] }
                   , tail =
-                    [ _61
-                        { head = _83, tail = [ _72, _70, _80, _79, _71, _83 ] }
+                    [ _60
+                        { head = _82, tail = [ _71, _69, _79, _78, _70, _82 ] }
                     ]
                   }
                 , pgName = "duration_seconds"
@@ -399,15 +423,15 @@ in  { space =
                 , value = _26
                 }
               , { name =
-                  { head = { head = _84, tail = [ _68, _74, _83 ] }
-                  , tail = _57
+                  { head = { head = _83, tail = [ _67, _73, _82 ] }
+                  , tail = _56
                   }
                 , pgName = "tags"
                 , isNullable = True
                 , value =
                   { arraySettings = Some
                     { dimensionality = 1, elementIsNullable = True }
-                  , scalar = _35
+                  , scalar = _34
                   }
                 }
               ]
@@ -415,44 +439,44 @@ in  { space =
       ]
     , queries =
       [ { name =
-          { head = { head = _75, tail = [ _79, _83, _72, _82, _84 ] }
-          , tail = [ _36 ]
+          { head = { head = _74, tail = [ _78, _82, _71, _81, _83 ] }
+          , tail = [ _35 ]
           }
         , srcPath = "./queries/insert_album.sql"
         , params =
-          [ _11
+          [ _13
           , { name = _24, pgName = "released", isNullable = False, value = _25 }
-          , { name = _30, pgName = "format", isNullable = False, value = _9 }
-          , { name = _23, pgName = "recording", isNullable = False, value = _8 }
+          , _3
+          , { name = _23, pgName = "recording", isNullable = False, value = _9 }
           ]
         , result = Some
-          { cardinality = _91.Single
-          , columns = { head = _13, tail = [] : _16 }
+          { cardinality = _90.Single
+          , columns = { head = _14, tail = [] : _16 }
           }
         , fragments =
-          [ _38
+          [ _37
               ''
               insert into album (name, released, format, recording)
               values (''
           , _15
-          , _32
-          , _39 { name = _24, rawName = "released", paramIndex = 1 }
-          , _32
-          , _39 { name = _30, rawName = "format", paramIndex = 2 }
-          , _32
-          , _39 { name = _23, rawName = "recording", paramIndex = 3 }
-          , _38
+          , _31
+          , _38 { name = _24, rawName = "released", paramIndex = 1 }
+          , _31
+          , _38 { name = _29, rawName = "format", paramIndex = 2 }
+          , _31
+          , _38 { name = _23, rawName = "recording", paramIndex = 3 }
+          , _37
               ''
               )
               returning id''
           ]
         }
-      , { name = { head = _53, tail = [ _36, _49, _33 ] }
+      , { name = { head = _52, tail = [ _35, _48, _32 ] }
         , srcPath = "./queries/select_album_by_format.sql"
         , params = [ _3 ]
         , result = _1
         , fragments =
-          [ _38
+          [ _37
               ''
               select
                 id,
@@ -462,15 +486,15 @@ in  { space =
                 recording
               from album
               where format = ''
-          , _39 { name = _30, rawName = "format", paramIndex = 0 }
+          , _38 { name = _29, rawName = "format", paramIndex = 0 }
           ]
         }
-      , { name = { head = _53, tail = [ _36, _49, _43 ] }
+      , { name = { head = _52, tail = [ _35, _48, _42 ] }
         , srcPath = "./queries/select_album_by_name.sql"
-        , params = [ _12 ]
+        , params = _12
         , result = _1
         , fragments =
-          [ _38
+          [ _37
               ''
               select
                 id,
@@ -484,96 +508,96 @@ in  { space =
           ]
         }
       , { name =
-          { head = _53
+          { head = _52
           , tail =
-            [ _36, _61 { head = _89.W, tail = [ _75, _84, _89.H ] }, _61 _54 ]
+            [ _35, _60 { head = _88.W, tail = [ _74, _83, _88.H ] }, _60 _53 ]
           }
         , srcPath = "./queries/select_album_with_tracks.sql"
         , params = [ _14 ]
         , result = Some
-          { cardinality = _88
-          , columns = { head = _13, tail = [ _11, _6, _7 ] }
+          { cardinality = _87
+          , columns = { head = _14, tail = [ _13, _7, _8 ] }
           }
         , fragments =
-          [ _38
+          [ _37
               ''
               select id, name, tracks, disc
               from album
               where id = ''
-          , _39 { name = _47, rawName = "id", paramIndex = 0 }
+          , _38 { name = _46, rawName = "id", paramIndex = 0 }
           ]
         }
       , { name =
-          { head = _53
+          { head = _52
           , tail =
-            [ _61 { head = _74, tail = [ _72, _79, _82, _72 ] }, _49, _61 _51 ]
+            [ _60 { head = _73, tail = [ _71, _78, _81, _71 ] }, _48, _60 _50 ]
           }
         , srcPath = "./queries/select_genre_by_artist.sql"
         , params =
-          [ { name = _29, pgName = "artist", isNullable = True, value = _26 } ]
+          [ { name = _28, pgName = "artist", isNullable = False, value = _26 } ]
         , result = Some
-          { cardinality = _88
+          { cardinality = _87
           , columns =
             { head =
-              { name = _47, pgName = "id", isNullable = False, value = _26 }
-            , tail = [ _11 ]
+              { name = _46, pgName = "id", isNullable = False, value = _26 }
+            , tail = _12
             }
           }
         , fragments =
-          [ _38
+          [ _37
               ''
               select id, genre.name
               from genre
               left join album_genre on album_genre.genre = genre.id
               left join album_artist on album_artist.album = album_genre.album
               where album_artist.artist = ''
-          , _39 { name = _29, rawName = "artist", paramIndex = 0 }
+          , _38 { name = _28, rawName = "artist", paramIndex = 0 }
           ]
         }
       , { name =
-          { head = _55
+          { head = _54
           , tail =
-            [ _36
-            , _61 _41
-            , _61
-                { head = _82
-                , tail = [ _72, _84, _85, _82, _79, _75, _79, _74 ]
+            [ _35
+            , _60 _40
+            , _60
+                { head = _81
+                , tail = [ _71, _83, _84, _81, _78, _74, _78, _73 ]
                 }
             ]
           }
         , srcPath = "./queries/update_album_recording_returning.sql"
         , params = [ _2, _14 ]
         , result = Some
-          { cardinality = _88
-          , columns = { head = _13, tail = [ _11, _10, _3, _2, _6, _7 ] }
+          { cardinality = _87
+          , columns = { head = _14, tail = [ _13, _11, _4, _2, _7, _8 ] }
           }
         , fragments =
-          [ _38
+          [ _37
               ''
               -- Update album recording information
               update album
               set recording = ''
-          , _39 { name = _23, rawName = "recording", paramIndex = 0 }
-          , _31
+          , _38 { name = _23, rawName = "recording", paramIndex = 0 }
+          , _30
           , _17
-          , _38
+          , _37
               ''
 
               returning *''
           ]
         }
-      , { name = { head = _55, tail = [ _36, _61 _44 ] }
+      , { name = { head = _54, tail = [ _35, _60 _43 ] }
         , srcPath = "./queries/update_album_released.sql"
-        , params = [ _10, _14 ]
+        , params = [ _11, _14 ]
         , result =
-            None { cardinality : _91, columns : { head : _18, tail : _16 } }
+            None { cardinality : _90, columns : { head : _18, tail : _16 } }
         , fragments =
-          [ _38
+          [ _37
               ''
               update album
               set released = ''
-          , _39 { name = _24, rawName = "released", paramIndex = 0 }
-          , _31
+          , _38 { name = _24, rawName = "released", paramIndex = 0 }
+          , _30
           , _17
           ]
         }
