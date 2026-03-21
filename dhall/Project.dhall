@@ -8,15 +8,21 @@ let Version = { major : Natural, minor : Natural, patch : Natural }
 let Name = CodegenKit.Name.Type
 
 let Primitive =
-      < Bool
+      < Bit
+      | Bool
+      | Box
+      | Bpchar
       | Bytea
       | Char
       | Cidr
+      | Circle
+      | Citext
       | Date
       | Datemultirange
       | Daterange
       | Float4
       | Float8
+      | Hstore
       | Inet
       | Int2
       | Int4
@@ -28,22 +34,35 @@ let Primitive =
       | Interval
       | Json
       | Jsonb
+      | Line
+      | Lseg
       | Macaddr
       | Macaddr8
       | Money
+      | Name
       | Numeric
       | Nummultirange
       | Numrange
+      | Oid
+      | Path
+      | PgLsn
+      | PgSnapshot
+      | Point
+      | Polygon
       | Text
       | Time
       | Timestamp
       | Timestamptz
       | Timetz
       | Tsmultirange
+      | Tsquery
       | Tsrange
       | Tstzmultirange
       | Tstzrange
+      | Tsvector
       | Uuid
+      | Varbit
+      | Varchar
       | Xml
       >
 
@@ -101,15 +120,21 @@ let Project =
 let Primitive/toText
     : Primitive -> Text
     = let handler =
-            { Bool = "bool"
+            { Bit = "bit"
+            , Bool = "bool"
+            , Box = "box"
+            , Bpchar = "bpchar"
             , Bytea = "bytea"
             , Char = "char"
             , Cidr = "cidr"
+            , Circle = "circle"
+            , Citext = "citext"
             , Date = "date"
             , Datemultirange = "datemultirange"
             , Daterange = "daterange"
             , Float4 = "float4"
             , Float8 = "float8"
+            , Hstore = "hstore"
             , Inet = "inet"
             , Int2 = "int2"
             , Int4 = "int4"
@@ -121,22 +146,35 @@ let Primitive/toText
             , Interval = "interval"
             , Json = "json"
             , Jsonb = "jsonb"
+            , Line = "line"
+            , Lseg = "lseg"
             , Macaddr = "macaddr"
             , Macaddr8 = "macaddr8"
             , Money = "money"
+            , Name = "name"
             , Numeric = "numeric"
             , Nummultirange = "nummultirange"
             , Numrange = "numrange"
+            , Oid = "oid"
+            , Path = "path"
+            , PgLsn = "pg_lsn"
+            , PgSnapshot = "pg_snapshot"
+            , Point = "point"
+            , Polygon = "polygon"
             , Text = "text"
             , Time = "time"
             , Timestamp = "timestamp"
             , Timestamptz = "timestamptz"
             , Timetz = "timetz"
             , Tsmultirange = "tsmultirange"
+            , Tsquery = "tsquery"
             , Tsrange = "tsrange"
             , Tstzmultirange = "tstzmultirange"
             , Tstzrange = "tstzrange"
+            , Tsvector = "tsvector"
             , Uuid = "uuid"
+            , Varbit = "varbit"
+            , Varchar = "varchar"
             , Xml = "xml"
             }
 
