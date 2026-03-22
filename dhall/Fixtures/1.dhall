@@ -1,765 +1,607 @@
-let Model = ../Project.dhall
+let _90 = < Optional | Single | Multiple >
 
-let Lude = ../Lude.dhall
+let _89 =
+      < Bit
+      | Bool
+      | Box
+      | Bpchar
+      | Bytea
+      | Char
+      | Cidr
+      | Circle
+      | Citext
+      | Date
+      | Datemultirange
+      | Daterange
+      | Float4
+      | Float8
+      | Hstore
+      | Inet
+      | Int2
+      | Int4
+      | Int4multirange
+      | Int4range
+      | Int8
+      | Int8multirange
+      | Int8range
+      | Interval
+      | Json
+      | Jsonb
+      | Line
+      | Lseg
+      | Macaddr
+      | Macaddr8
+      | Money
+      | Name
+      | Numeric
+      | Nummultirange
+      | Numrange
+      | Oid
+      | Path
+      | PgLsn
+      | PgSnapshot
+      | Point
+      | Polygon
+      | Text
+      | Time
+      | Timestamp
+      | Timestamptz
+      | Timetz
+      | Tsmultirange
+      | Tsquery
+      | Tsrange
+      | Tstzmultirange
+      | Tstzrange
+      | Tsvector
+      | Uuid
+      | Varbit
+      | Varchar
+      | Xml
+      >
 
-let CodegenKit = ../CodegenKit.dhall
+let _88 =
+      < A
+      | B
+      | C
+      | D
+      | E
+      | F
+      | G
+      | H
+      | I
+      | J
+      | K
+      | L
+      | M
+      | N
+      | O
+      | P
+      | Q
+      | R
+      | S
+      | T
+      | U
+      | V
+      | W
+      | X
+      | Y
+      | Z
+      >
 
-let LatinChar = Lude.Structures.LatinChar
+let _87 = _90.Multiple
 
-let Name = CodegenKit.Name
+let _86 = _88.Y
 
-let a = LatinChar.Type.A
+let _85 = _88.V
 
-let b = LatinChar.Type.B
+let _84 = _88.U
 
-let c = LatinChar.Type.C
+let _83 = _88.T
 
-let d = LatinChar.Type.D
+let _82 = _88.S
 
-let e = LatinChar.Type.E
+let _81 = _88.R
 
-let f = LatinChar.Type.F
+let _80 = _88.P
 
-let g = LatinChar.Type.G
+let _79 = _88.O
 
-let h = LatinChar.Type.H
+let _78 = _88.N
 
-let i = LatinChar.Type.I
+let _77 = _88.M
 
-let j = LatinChar.Type.J
+let _76 = _88.L
 
-let k = LatinChar.Type.K
+let _75 = _88.K
 
-let l = LatinChar.Type.L
+let _74 = _88.I
 
-let m = LatinChar.Type.M
+let _73 = _88.G
 
-let n = LatinChar.Type.N
+let _72 = _88.F
 
-let o = LatinChar.Type.O
+let _71 = _88.E
 
-let p = LatinChar.Type.P
+let _70 = _88.D
 
-let q = LatinChar.Type.Q
+let _69 = _88.C
 
-let r = LatinChar.Type.R
+let _68 = _88.B
 
-let s = LatinChar.Type.S
+let _67 = _88.A
 
-let t = LatinChar.Type.T
+let _66 = { dimensionality : Natural, elementIsNullable : Bool }
 
-let u = LatinChar.Type.U
+let _65 = [ _86 ]
 
-let v = LatinChar.Type.V
+let _64 = [ _70 ]
 
-let w = LatinChar.Type.W
+let _63 = { head : _88, tail : List _88 }
 
-let x = LatinChar.Type.X
+let _62 = None _66
 
-let y = LatinChar.Type.Y
+let _61 = < Word : _63 | Number : Natural >
 
-let z = LatinChar.Type.Z
+let _60 = _61.Word
 
-let name
-    : List (List LatinChar.Type) -> Name.Type
-    = ./Helpers/name.dhall
+let _59 = List _61
 
-let varQueryFragment
-    : Natural -> List (List LatinChar.Type) -> Model.QueryFragment
-    = ./Helpers/varQueryFragment.dhall
+let _58 = { head = _78, tail = [ _67, _77, _71 ] }
 
-let pgSchema = "music_catalogue"
+let _57 = { head = _70, tail = [ _74, _82, _69 ] }
 
-in    { space = name [ [ d, e, m, o ] ]
-      , name = name [ [ m, u, s, i, c ], [ c, a, t, a, l, o, g, u, e ] ]
-      , version = { major = 1, minor = 0, patch = 0 }
-      , customTypes =
-        [ { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
-          , pgSchema
-          , pgName = "album_type"
-          , definition =
-              Model.CustomTypeDefinition.Enum
-                [ { name = name [ [ s, t, u, d, i, o ] ], pgName = "studio" }
-                , { name = name [ [ l, i, v, e ] ], pgName = "live" }
-                , { name = name [ [ c, o, m, p, i, l, a, t, i, o, n ] ]
-                  , pgName = "compilation"
-                  }
-                , { name = name [ [ s, o, u, n, d, t, r, a, c, k ] ]
-                  , pgName = "soundtrack"
-                  }
-                , { name = name [ [ e, p ] ], pgName = "ep" }
-                , { name = name [ [ s, i, n, g, l, e ] ], pgName = "single" }
-                ]
-          }
-        , { name = name [ [ t, r, a, c, k ], [ m, e, t, a, d, a, t, a ] ]
-          , pgSchema
-          , pgName = "track_metadata"
-          , definition =
-              Model.CustomTypeDefinition.Composite
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , pgName = "metadata"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = Some
-                      { dimensionality = 1, elementIsNullable = True }
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Jsonb
-                    }
-                  }
-                , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
-                  , pgName = "created_at"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Timestamp
-                    }
-                  }
-                ]
-          }
-        ]
-      , queries =
-        [ { name =
-              name
-                [ [ g, e, t ]
-                , [ a, l, b, u, m, s ]
-                , [ b, y ]
-                , [ a, r, t, i, s, t ]
-                ]
-          , srcPath = "queries/get_albums_by_artist.sql"
-          , params =
-            [ { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
-              , pgName = "artist_id"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Multiple
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ r, e, l, e, a, s, e ], [ y, e, a, r ] ]
-                  , pgName = "release_year"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ t, y, p, e ] ]
-                  , pgName = "album_type"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar =
-                        Model.Scalar.Custom
-                          (name [ [ a, l, b, u, m ], [ t, y, p, e ] ])
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql "SELECT"
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "    a.id,"
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "    a.title,"
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "    a.release_year,"
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "    a.album_type"
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "FROM albums a"
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "WHERE a.artist_id = "
-            , varQueryFragment 0 [ [ a, r, t, i, s, t ], [ i, d ] ]
-            , Model.QueryFragment.Sql "\n"
-            , Model.QueryFragment.Sql "ORDER BY a.release_year DESC"
-            ]
-          }
-        , { name =
-              name
-                [ [ s, e, a, r, c, h ]
-                , [ t, r, a, c, k, s ]
-                , [ b, y ]
-                , [ t, i, t, l, e ]
-                ]
-          , srcPath = "queries/search_tracks_by_title.sql"
-          , params =
-            [ { name = name [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
-              , pgName = "search_term"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Multiple
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ d, u, r, a, t, i, o, n ] ]
-                  , pgName = "duration_seconds"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , pgName = "album_title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , pgName = "artist_name"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    t.id,
-                    t.title,
-                    t.duration_seconds,
-                    a.title as album_title,
-                    ar.name as artist_name
-                FROM tracks t
-                JOIN albums a ON t.album_id = a.id
-                JOIN artists ar ON a.artist_id = ar.id
-                WHERE t.title ILIKE '%' || ''
-            , varQueryFragment 0 [ [ s, e, a, r, c, h ], [ t, e, r, m ] ]
-            , Model.QueryFragment.Sql
-                " || '%' ORDER BY ar.name, a.title, t.track_number"
-            ]
-          }
-        , { name =
-              name [ [ g, e, t ], [ t, r, a, c, k ], [ d, e, t, a, i, l, s ] ]
-          , srcPath = "queries/get_track_details.sql"
-          , params =
-            [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
-              , pgName = "track_id"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Single
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ d, u, r, a, t, i, o, n ] ]
-                  , pgName = "duration_seconds"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                , { name = name [ [ t, r, a, c, k ], [ n, u, m, b, e, r ] ]
-                  , pgName = "track_number"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ i, d ] ]
-                  , pgName = "album_id"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , pgName = "album_title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ a, r, t, i, s, t ], [ i, d ] ]
-                  , pgName = "artist_id"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                    }
-                  }
-                , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , pgName = "artist_name"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ g, e, n, r, e ] ]
-                  , pgName = "genre"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    t.id,
-                    t.title,
-                    t.duration_seconds,
-                    t.track_number,
-                    a.id as album_id,
-                    a.title as album_title,
-                    ar.id as artist_id,
-                    ar.name as artist_name,
-                    g.name as genre
-                FROM tracks t
-                JOIN albums a ON t.album_id = a.id
-                JOIN artists ar ON a.artist_id = ar.id
-                LEFT JOIN genres g ON t.genre_id = g.id
-                WHERE t.id = ''
-            , varQueryFragment 0 [ [ t, r, a, c, k ], [ i, d ] ]
-            ]
-          }
-        , { name =
-              name
-                [ [ g, e, t ]
-                , [ a, r, t, i, s, t, s ]
-                , [ w, i, t, h ]
-                , [ t, r, a, c, k ]
-                , [ c, o, u, n, t ]
-                ]
-          , srcPath = "queries/get_artists_with_track_count.sql"
-          , params = [] : List Model.Member
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Multiple
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ n, a, m, e ] ]
-                  , pgName = "name"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ t, r, a, c, k ], [ c, o, u, n, t ] ]
-                  , pgName = "track_count"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ c, o, u, n, t ] ]
-                  , pgName = "album_count"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    ar.id,
-                    ar.name,
-                    COUNT(DISTINCT t.id) as track_count,
-                    COUNT(DISTINCT a.id) as album_count
-                FROM artists ar
-                LEFT JOIN albums a ON ar.id = a.artist_id
-                LEFT JOIN tracks t ON a.id = t.album_id
-                GROUP BY ar.id, ar.name
-                ORDER BY track_count DESC''
-            ]
-          }
-        , { name = name [ [ c, r, e, a, t, e ], [ p, l, a, y, l, i, s, t ] ]
-          , srcPath = "queries/create_playlist.sql"
-          , params =
-            [ { name = name [ [ n, a, m, e ] ]
-              , pgName = "name"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                }
-              }
-            , { name = name [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
-              , pgName = "description"
-              , isNullable = True
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                }
-              }
-            , { name = name [ [ u, s, e, r ], [ i, d ] ]
-              , pgName = "user_id"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Single
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ n, a, m, e ] ]
-                  , pgName = "name"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ c, r, e, a, t, e, d ], [ a, t ] ]
-                  , pgName = "created_at"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Timestamp
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                INSERT INTO playlists (name, description, user_id, created_at)
-                VALUES (''
-            , varQueryFragment 1 [ [ n, a, m, e ] ]
-            , Model.QueryFragment.Sql ", "
-            , varQueryFragment 2 [ [ d, e, s, c, r, i, p, t, i, o, n ] ]
-            , Model.QueryFragment.Sql ", "
-            , varQueryFragment 0 [ [ u, s, e, r ], [ i, d ] ]
-            , Model.QueryFragment.Sql
-                ''
-                , NOW())
-                RETURNING id, name, created_at''
-            ]
-          }
-        , { name =
-              name
-                [ [ g, e, t ]
-                , [ t, o, p ]
-                , [ t, r, a, c, k, s ]
-                , [ b, y ]
-                , [ p, l, a, y ]
-                , [ c, o, u, n, t ]
-                ]
-          , srcPath = "queries/get_top_tracks_by_play_count.sql"
-          , params =
-            [ { name = name [ [ l, i, m, i, t ] ]
-              , pgName = "limit"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Multiple
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ a, r, t, i, s, t ], [ n, a, m, e ] ]
-                  , pgName = "artist_name"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ a, l, b, u, m ], [ t, i, t, l, e ] ]
-                  , pgName = "album_title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ p, l, a, y ], [ c, o, u, n, t ] ]
-                  , pgName = "play_count"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Int4
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    t.id,
-                    t.title,
-                    ar.name as artist_name,
-                    a.title as album_title,
-                    COALESCE(p.play_count, 0) as play_count
-                FROM tracks t
-                JOIN albums a ON t.album_id = a.id
-                JOIN artists ar ON a.artist_id = ar.id
-                LEFT JOIN (
-                    SELECT track_id, COUNT(*) as play_count
-                    FROM play_history
-                    GROUP BY track_id
-                ) p ON t.id = p.track_id
-                ORDER BY play_count DESC
-                LIMIT ''
-            , varQueryFragment 0 [ [ l, i, m, i, t ] ]
-            ]
-          }
-        , { name =
-              name
-                [ [ g, e, t ]
-                , [ t, r, a, c, k ]
-                , [ m, e, t, a, d, a, t, a ]
-                , [ x, m, l ]
-                ]
-          , srcPath = "queries/get_track_metadata_xml.sql"
-          , params =
-            [ { name = name [ [ t, r, a, c, k ], [ i, d ] ]
-              , pgName = "track_id"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Single
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , pgName = "metadata"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                    }
-                  }
-                , { name = name [ [ c, u, s, t, o, m ], [ t, a, g, s ] ]
-                  , pgName = "custom_tags"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = Some
-                      { dimensionality = 1, elementIsNullable = True }
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    t.id,
-                    t.metadata_xml as metadata,
-                    t.custom_tags_xml_array as custom_tags
-                FROM tracks t
-                WHERE t.id = ''
-            , varQueryFragment 0 [ [ t, r, a, c, k ], [ i, d ] ]
-            ]
-          }
-        , { name =
-              name
-                [ [ s, e, a, r, c, h ]
-                , [ t, r, a, c, k, s ]
-                , [ b, y ]
-                , [ x, m, l ]
-                , [ m, e, t, a, d, a, t, a ]
-                ]
-          , srcPath = "queries/search_tracks_by_xml_metadata.sql"
-          , params =
-            [ { name = name [ [ x, m, l ], [ q, u, e, r, y ] ]
-              , pgName = "xml_query"
-              , isNullable = False
-              , value =
-                { arraySettings = None Model.ArraySettings
-                , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                }
-              }
-            ]
-          , result = Some
-            { cardinality = Model.ResultRowsCardinality.Multiple
-            , columns =
-              { head =
-                { name = name [ [ i, d ] ]
-                , pgName = "id"
-                , isNullable = False
-                , value =
-                  { arraySettings = None Model.ArraySettings
-                  , scalar = Model.Scalar.Primitive Model.Primitive.Uuid
-                  }
-                }
-              , tail =
-                [ { name = name [ [ t, i, t, l, e ] ]
-                  , pgName = "title"
-                  , isNullable = False
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Text
-                    }
-                  }
-                , { name = name [ [ m, e, t, a, d, a, t, a ] ]
-                  , pgName = "metadata"
-                  , isNullable = True
-                  , value =
-                    { arraySettings = None Model.ArraySettings
-                    , scalar = Model.Scalar.Primitive Model.Primitive.Xml
-                    }
-                  }
-                ]
-              }
-            }
-          , fragments =
-            [ Model.QueryFragment.Sql
-                ''
-                SELECT 
-                    t.id,
-                    t.title,
-                    t.metadata_xml as metadata
-                FROM tracks t
-                WHERE xpath_exists(''
-            , varQueryFragment 0 [ [ x, m, l ], [ q, u, e, r, y ] ]
-            , Model.QueryFragment.Sql ", t.metadata_xml) ORDER BY t.title"
-            ]
-          }
+let _56 = [] : _59
+
+let _55 = { head = _67, tail = [ _76, _68, _84, _77 ] }
+
+let _54 = { head = _84, tail = [ _80, _70, _67, _83, _71 ] }
+
+let _53 = { head = _83, tail = [ _81, _67, _69, _75, _82 ] }
+
+let _52 = { head = _82, tail = [ _71, _76, _71, _69, _83 ] }
+
+let _51 = { head = _72, tail = [ _79, _81, _77, _67, _83 ] }
+
+let _50 = { head = _67, tail = [ _81, _83, _74, _82, _83 ] }
+
+let _49 = { head : _63, tail : _59 }
+
+let _48 = _60 { head = _68, tail = _65 }
+
+let _47 = < Primitive : _89 | Custom : _49 >
+
+let _46 = { head = { head = _74, tail = _64 }, tail = _56 }
+
+let _45 = _47.Primitive
+
+let _44 = _47.Custom
+
+let _43 = { head = _81, tail = [ _71, _76, _71, _67, _82, _71, _70 ] }
+
+let _42 = _60 _58
+
+let _41 =
+      < Sql : Text
+      | Var : { name : _49, rawName : Text, paramIndex : Natural }
+      >
+
+let _40 = { head = _81, tail = [ _71, _69, _79, _81, _70, _74, _78, _73 ] }
+
+let _39 = [ _60 { head = _74, tail = [ _78, _72, _79 ] } ]
+
+let _38 = _41.Var
+
+let _37 = _41.Sql
+
+let _36 = { head = _58, tail = _56 }
+
+let _35 = _60 _55
+
+let _34 = _45 _89.Text
+
+let _33 = { arraySettings : Optional _66, scalar : _47 }
+
+let _32 = _60 _51
+
+let _31 = _37 ", "
+
+let _30 =
+      _37
+        ''
+
+        where id = ''
+
+let _29 = { head = _51, tail = _56 }
+
+let _28 = { head = _50, tail = _56 }
+
+let _27 = { arraySettings = _62, scalar = _34 }
+
+let _26 = { arraySettings = _62, scalar = _45 _89.Int4 }
+
+let _25 = { arraySettings = _62, scalar = _45 _89.Date }
+
+let _24 = { head = _43, tail = _56 }
+
+let _23 = { head = _40, tail = _56 }
+
+let _22 = { head = _57, tail = _39 }
+
+let _21 = { head = { head = _83, tail = [ _81, _67, _69, _75 ] }, tail = _39 }
+
+let _20 = { head = _55, tail = [ _32 ] }
+
+let _19 = { head = _40, tail = _39 }
+
+let _18 = { name : _49, pgName : Text, isNullable : Bool, value : _33 }
+
+let _17 = _38 { name = _46, rawName = "id", paramIndex = 1 }
+
+let _16 = List _18
+
+let _15 = _38 { name = _36, rawName = "name", paramIndex = 0 }
+
+let _14 =
+      { name = _46
+      , pgName = "id"
+      , isNullable = False
+      , value = { arraySettings = _62, scalar = _45 _89.Int8 }
+      }
+
+let _13 = { name = _36, pgName = "name", isNullable = False, value = _27 }
+
+let _12 = [ _13 ]
+
+let _11 = { name = _24, pgName = "released", isNullable = True, value = _25 }
+
+let _10 = { arraySettings = _62, scalar = _44 _20 }
+
+let _9 = { arraySettings = _62, scalar = _44 _19 }
+
+let _8 =
+      { name = { head = _57, tail = _56 }
+      , pgName = "disc"
+      , isNullable = True
+      , value = { arraySettings = _62, scalar = _44 _22 }
+      }
+
+let _7 =
+      { name = { head = _53, tail = _56 }
+      , pgName = "tracks"
+      , isNullable = True
+      , value =
+        { arraySettings = Some { dimensionality = 1, elementIsNullable = False }
+        , scalar = _44 _21
+        }
+      }
+
+let _6 =
+      < Composite : _16
+      | Enum : List { name : _49, pgName : Text }
+      | Domain : _33
+      >
+
+let _5 = _6.Composite
+
+let _4 = { name = _29, pgName = "format", isNullable = True, value = _10 }
+
+let _3 = { name = _29, pgName = "format", isNullable = False, value = _10 }
+
+let _2 = { name = _23, pgName = "recording", isNullable = True, value = _9 }
+
+let _1 =
+      Some
+        { cardinality = _87
+        , columns = { head = _14, tail = [ _13, _11, _4, _2 ] }
+        }
+
+in  { space =
+      { head = { head = _77, tail = _65 }
+      , tail = [ _60 { head = _82, tail = [ _80, _67, _69, _71 ] } ]
+      }
+    , name =
+      { head = { head = _77, tail = [ _84, _82, _74, _69 ] }
+      , tail =
+        [ _60 { head = _69, tail = [ _67, _83, _67, _76, _79, _73, _84, _71 ] }
         ]
       }
-    : Model.Project
+    , version = { major = 1, minor = 0, patch = 0 }
+    , customTypes =
+      [ { name = _20
+        , pgSchema = "public"
+        , pgName = "album_format"
+        , definition =
+            _6.Enum
+              [ { name =
+                  { head = { head = _85, tail = [ _74, _78, _86, _76 ] }
+                  , tail = _56
+                  }
+                , pgName = "Vinyl"
+                }
+              , { name = { head = { head = _69, tail = _64 }, tail = _56 }
+                , pgName = "CD"
+                }
+              , { name =
+                  { head =
+                    { head = _69, tail = [ _67, _82, _82, _71, _83, _83, _71 ] }
+                  , tail = _56
+                  }
+                , pgName = "Cassette"
+                }
+              , { name =
+                  { head =
+                    { head = _70, tail = [ _74, _73, _74, _83, _67, _76 ] }
+                  , tail = _56
+                  }
+                , pgName = "Digital"
+                }
+              , { name =
+                  { head = { head = _70, tail = [ _85, _70 ] }
+                  , tail = [ _60 { head = _67, tail = [ _84, _70, _74, _79 ] } ]
+                  }
+                , pgName = "DVD-Audio"
+                }
+              , { name =
+                  { head = { head = _82, tail = [ _67, _69, _70 ] }
+                  , tail = _56
+                  }
+                , pgName = "SACD"
+                }
+              ]
+        }
+      , { name = _22
+        , pgSchema = "public"
+        , pgName = "disc_info"
+        , definition =
+            _5
+              [ { name = _36, pgName = "name", isNullable = True, value = _27 }
+              , _2
+              ]
+        }
+      , { name = _19
+        , pgSchema = "public"
+        , pgName = "recording_info"
+        , definition =
+            _5
+              [ { name =
+                  { head = { head = _82, tail = [ _83, _84, _70, _74, _79 ] }
+                  , tail = [ _42 ]
+                  }
+                , pgName = "studio_name"
+                , isNullable = True
+                , value = _27
+                }
+              , { name =
+                  { head = { head = _69, tail = [ _74, _83, _86 ] }
+                  , tail = _56
+                  }
+                , pgName = "city"
+                , isNullable = True
+                , value = _27
+                }
+              , { name =
+                  { head =
+                    { head = _69, tail = [ _79, _84, _78, _83, _81, _86 ] }
+                  , tail = _56
+                  }
+                , pgName = "country"
+                , isNullable = True
+                , value = _27
+                }
+              , { name =
+                  { head =
+                    { head = _81, tail = [ _71, _69, _79, _81, _70, _71, _70 ] }
+                  , tail = [ _60 { head = _70, tail = [ _67, _83, _71 ] } ]
+                  }
+                , pgName = "recorded_date"
+                , isNullable = True
+                , value = _25
+                }
+              ]
+        }
+      , { name = _21
+        , pgSchema = "public"
+        , pgName = "track_info"
+        , definition =
+            _5
+              [ { name =
+                  { head = { head = _83, tail = [ _74, _83, _76, _71 ] }
+                  , tail = _56
+                  }
+                , pgName = "title"
+                , isNullable = True
+                , value = _27
+                }
+              , { name =
+                  { head =
+                    { head = _70, tail = [ _84, _81, _67, _83, _74, _79, _78 ] }
+                  , tail =
+                    [ _60
+                        { head = _82, tail = [ _71, _69, _79, _78, _70, _82 ] }
+                    ]
+                  }
+                , pgName = "duration_seconds"
+                , isNullable = True
+                , value = _26
+                }
+              , { name =
+                  { head = { head = _83, tail = [ _67, _73, _82 ] }
+                  , tail = _56
+                  }
+                , pgName = "tags"
+                , isNullable = True
+                , value =
+                  { arraySettings = Some
+                    { dimensionality = 1, elementIsNullable = True }
+                  , scalar = _34
+                  }
+                }
+              ]
+        }
+      ]
+    , queries =
+      [ { name =
+          { head = { head = _74, tail = [ _78, _82, _71, _81, _83 ] }
+          , tail = [ _35 ]
+          }
+        , srcPath = "./queries/insert_album.sql"
+        , params =
+          [ _13
+          , { name = _24, pgName = "released", isNullable = False, value = _25 }
+          , _3
+          , { name = _23, pgName = "recording", isNullable = False, value = _9 }
+          ]
+        , result = Some
+          { cardinality = _90.Single
+          , columns = { head = _14, tail = [] : _16 }
+          }
+        , fragments =
+          [ _37
+              ''
+              insert into album (name, released, format, recording)
+              values (''
+          , _15
+          , _31
+          , _38 { name = _24, rawName = "released", paramIndex = 1 }
+          , _31
+          , _38 { name = _29, rawName = "format", paramIndex = 2 }
+          , _31
+          , _38 { name = _23, rawName = "recording", paramIndex = 3 }
+          , _37
+              ''
+              )
+              returning id''
+          ]
+        }
+      , { name = { head = _52, tail = [ _35, _48, _32 ] }
+        , srcPath = "./queries/select_album_by_format.sql"
+        , params = [ _3 ]
+        , result = _1
+        , fragments =
+          [ _37
+              ''
+              select
+                id,
+                name,
+                released,
+                format,
+                recording
+              from album
+              where format = ''
+          , _38 { name = _29, rawName = "format", paramIndex = 0 }
+          ]
+        }
+      , { name = { head = _52, tail = [ _35, _48, _42 ] }
+        , srcPath = "./queries/select_album_by_name.sql"
+        , params = _12
+        , result = _1
+        , fragments =
+          [ _37
+              ''
+              select
+                id,
+                name,
+                released,
+                format,
+                recording
+              from album
+              where name = ''
+          , _15
+          ]
+        }
+      , { name =
+          { head = _52
+          , tail =
+            [ _35, _60 { head = _88.W, tail = [ _74, _83, _88.H ] }, _60 _53 ]
+          }
+        , srcPath = "./queries/select_album_with_tracks.sql"
+        , params = [ _14 ]
+        , result = Some
+          { cardinality = _87
+          , columns = { head = _14, tail = [ _13, _7, _8 ] }
+          }
+        , fragments =
+          [ _37
+              ''
+              select id, name, tracks, disc
+              from album
+              where id = ''
+          , _38 { name = _46, rawName = "id", paramIndex = 0 }
+          ]
+        }
+      , { name =
+          { head = _52
+          , tail =
+            [ _60 { head = _73, tail = [ _71, _78, _81, _71 ] }, _48, _60 _50 ]
+          }
+        , srcPath = "./queries/select_genre_by_artist.sql"
+        , params =
+          [ { name = _28, pgName = "artist", isNullable = False, value = _26 } ]
+        , result = Some
+          { cardinality = _87
+          , columns =
+            { head =
+              { name = _46, pgName = "id", isNullable = False, value = _26 }
+            , tail = _12
+            }
+          }
+        , fragments =
+          [ _37
+              ''
+              select id, genre.name
+              from genre
+              left join album_genre on album_genre.genre = genre.id
+              left join album_artist on album_artist.album = album_genre.album
+              where album_artist.artist = ''
+          , _38 { name = _28, rawName = "artist", paramIndex = 0 }
+          ]
+        }
+      , { name =
+          { head = _54
+          , tail =
+            [ _35
+            , _60 _40
+            , _60
+                { head = _81
+                , tail = [ _71, _83, _84, _81, _78, _74, _78, _73 ]
+                }
+            ]
+          }
+        , srcPath = "./queries/update_album_recording_returning.sql"
+        , params = [ _2, _14 ]
+        , result = Some
+          { cardinality = _87
+          , columns = { head = _14, tail = [ _13, _11, _4, _2, _7, _8 ] }
+          }
+        , fragments =
+          [ _37
+              ''
+              -- Update album recording information
+              update album
+              set recording = ''
+          , _38 { name = _23, rawName = "recording", paramIndex = 0 }
+          , _30
+          , _17
+          , _37
+              ''
+
+              returning *''
+          ]
+        }
+      , { name = { head = _54, tail = [ _35, _60 _43 ] }
+        , srcPath = "./queries/update_album_released.sql"
+        , params = [ _11, _14 ]
+        , result =
+            None { cardinality : _90, columns : { head : _18, tail : _16 } }
+        , fragments =
+          [ _37
+              ''
+              update album
+              set released = ''
+          , _38 { name = _24, rawName = "released", paramIndex = 0 }
+          , _30
+          , _17
+          ]
+        }
+      ]
+    }
