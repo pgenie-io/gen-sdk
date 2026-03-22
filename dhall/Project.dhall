@@ -168,7 +168,7 @@ let Query =
       , fragments : QueryFragments
       }
 
-let Migration = { srcPath : Text, sql : Text }
+let Migration = { name : Text, sql : Text }
 
 let Project =
       { space : Name

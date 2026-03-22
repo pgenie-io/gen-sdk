@@ -16,7 +16,7 @@ input =
       queries = [exampleQuery],
       migrations =
         [ Input.Migration
-            { srcPath = "migrations/001_create_users.sql",
+            { name = "001_create_users",
               sql = "CREATE TABLE users (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT);"
             }
         ]

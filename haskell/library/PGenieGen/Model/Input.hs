@@ -259,7 +259,7 @@ data Query = Query
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
 data Migration = Migration
-  { srcPath :: Path,
+  { name :: Text,
     sql :: Text
   }
   deriving stock (Show, Eq, Generic)
