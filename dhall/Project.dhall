@@ -168,12 +168,15 @@ let Query =
       , fragments : QueryFragments
       }
 
+let Migration = { srcPath : Text, sql : Text }
+
 let Project =
       { space : Name
       , name : Name
       , version : Version
       , customTypes : List CustomType
       , queries : List Query
+      , migrations : List Migration
       }
 
 let Primitive/toText

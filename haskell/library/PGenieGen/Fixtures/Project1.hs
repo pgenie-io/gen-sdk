@@ -13,7 +13,13 @@ input =
       name = textName "demo_project",
       version = Input.Version {major = 1, minor = 0, patch = 0},
       customTypes = [],
-      queries = [exampleQuery]
+      queries = [exampleQuery],
+      migrations =
+        [ Input.Migration
+            { srcPath = "migrations/001_create_users.sql",
+              sql = "CREATE TABLE users (id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT);"
+            }
+        ]
     }
   where
     -- Helper function to create a simple name from text

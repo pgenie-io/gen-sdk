@@ -258,13 +258,21 @@ data Query = Query
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
+data Migration = Migration
+  { srcPath :: Path,
+    sql :: Text
+  }
+  deriving stock (Show, Eq, Generic)
+  deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
 -- | A project with name, version, custom types, and queries
 data Project = Project
   { space :: Name,
     name :: Name,
     version :: Version,
     customTypes :: [CustomType],
-    queries :: [Query]
+    queries :: [Query],
+    migrations :: [Migration]
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
@@ -284,5 +292,6 @@ AesonDeriver.derive
     ''Var,
     ''QueryFragment,
     ''Query,
-    ''Project
+    ''Project,
+    ''Migration
   ]
