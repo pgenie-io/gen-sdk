@@ -604,4 +604,121 @@ in  { space =
           ]
         }
       ]
+    , migrations =
+      [ { name = "1"
+        , sql =
+            ''
+
+            create table "genre" (
+              "id" int4 not null generated always as identity primary key,
+              "name" text not null unique
+            );
+
+            create table "artist" (
+              "id" int4 not null generated always as identity primary key,
+              "name" text not null
+            );
+
+            create table "album" (
+              "id" int4 not null generated always as identity primary key,
+              -- Album name.
+              "name" text not null,
+              -- The date the album was first released.
+              "released" date null
+            );
+
+            create table "album_genre" (
+              "album" int4 not null references "album",
+              "genre" int4 not null references "genre"
+            );
+
+            create table "album_artist" (
+              "album" int4 not null references "album",
+              "artist" int4 not null references "artist",
+              -- Whether it is the primary artist
+              "primary" bool not null,
+              primary key ("album", "artist")
+            );
+            ''
+        }
+      , { name = "2"
+        , sql =
+            ''
+            -- In this migration we're changing the type of the album "id" column
+            -- from "int4" to "int8".
+            -- Since this column is referenced from other tables, we also update them.
+
+
+            alter table album
+            alter column id type int8;
+
+            alter table album_genre
+            alter column album type int8;
+
+            alter table album_artist
+            alter column album type int8;
+            ''
+        }
+      , { name = "3"
+        , sql =
+            ''
+            -- Add enumeration type for album formats
+            create type album_format as enum (
+              'Vinyl',
+              'CD',
+              'Cassette',
+              'Digital',
+              'DVD-Audio',
+              'SACD'
+            );
+
+            -- Add composite type for recording session information
+            create type recording_info as (
+              studio_name text,
+              city text,
+              country text,
+              recorded_date date
+            );
+
+            -- Add format column to album table
+            alter table album
+            add column format album_format null;
+
+            -- Add recording information to album table
+            alter table album
+            add column recording recording_info null;
+            ''
+        }
+      , { name = "4"
+        , sql =
+            ''
+            -- Composite with array fields: a track in an album
+            create type track_info as (
+              title text,
+              duration_seconds int4,
+              tags text[]
+            );
+
+            -- Composite with composites: disc information referencing a recording
+            create type disc_info as (
+              name text,
+              recording recording_info
+            );
+
+            -- Edge case: array of composites column
+            alter table album
+            add column tracks track_info[] null;
+
+            -- Edge case: composite with composites column
+            alter table album
+            add column disc disc_info null;
+            ''
+        }
+      , { name = "5"
+        , sql =
+            ''
+            CREATE INDEX ON album (recording);
+            ''
+        }
+      ]
     }
