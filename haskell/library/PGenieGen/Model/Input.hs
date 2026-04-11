@@ -143,6 +143,16 @@ data Primitive
     PrimitiveVarchar
   | -- | PostgreSQL 'xml' (OID 142, array OID 143).
     PrimitiveXml
+  | -- | PostGIS 'box2d' extension type (box2d).
+    PrimitiveBox2D
+  | -- | PostGIS 'box3d' extension type (box3d).
+    PrimitiveBox3D
+  | -- | PostgreSQL 'ltree' extension type (ltree).
+    PrimitiveLtree
+  | -- | PostGIS 'geometry' extension type (geometry).
+    PrimitiveGeometry
+  | -- | PostGIS 'geography' extension type (geography).
+    PrimitiveGeography
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)

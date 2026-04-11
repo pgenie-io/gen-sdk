@@ -13,6 +13,8 @@ let Primitive =
     -- `Bit` - `bit` (OID 1560, array OID 1561).
     -- `Bool` - `bool` (OID 16, array OID 1000).
     -- `Box` - `box` (OID 603, array OID 1020).
+    -- `Box2D` - `box2d` (PostGIS extension type).
+    -- `Box3D` - `box3d` (PostGIS extension type).
     -- `Bpchar` - `bpchar` / `char(n)` (OID 1042, array OID 1014).
     -- `Bytea` - `bytea` (OID 17, array OID 1001).
     -- `Char` - internal single-byte `"char"` (OID 18, array OID 1002).
@@ -24,6 +26,8 @@ let Primitive =
     -- `Daterange` - `daterange` (OID 3912, array OID 3913).
     -- `Float4` - `float4` / `real` (OID 700, array OID 1021).
     -- `Float8` - `float8` / `double precision` (OID 701, array OID 1022).
+    -- `Geography` - `geography` (PostGIS extension type).
+    -- `Geometry` - `geometry` (PostGIS extension type).
     -- `Hstore` - `hstore` extension type (no fixed OID; requires the hstore extension).
     -- `Inet` - `inet` (OID 869, array OID 1041).
     -- `Int2` - `int2` / `smallint` (OID 21, array OID 1005).
@@ -38,6 +42,7 @@ let Primitive =
     -- `Jsonb` - `jsonb` (OID 3802, array OID 3807).
     -- `Line` - `line` (OID 628, array OID 629).
     -- `Lseg` - `lseg` (OID 601, array OID 1018).
+    -- `Ltree` - `ltree` (extension type).
     -- `Macaddr` - `macaddr` (OID 829, array OID 1040).
     -- `Macaddr8` - `macaddr8` (OID 774, array OID 775).
     -- `Money` - `money` (OID 790, array OID 791).
@@ -70,6 +75,8 @@ let Primitive =
       < Bit
       | Bool
       | Box
+      | Box2D
+      | Box3D
       | Bpchar
       | Bytea
       | Char
@@ -81,6 +88,8 @@ let Primitive =
       | Daterange
       | Float4
       | Float8
+      | Geography
+      | Geometry
       | Hstore
       | Inet
       | Int2
@@ -95,6 +104,7 @@ let Primitive =
       | Jsonb
       | Line
       | Lseg
+      | Ltree
       | Macaddr
       | Macaddr8
       | Money
@@ -238,6 +248,11 @@ let Primitive/toText
             , Varbit = "varbit"
             , Varchar = "varchar"
             , Xml = "xml"
+            , Ltree = "ltree"
+            , Geometry = "geometry"
+            , Geography = "geography"
+            , Box2D = "box2d"
+            , Box3D = "box3d"
             }
 
       in  \(primitive : Primitive) -> merge handler primitive

@@ -4,6 +4,8 @@ let _89 =
       < Bit
       | Bool
       | Box
+      | Box2D
+      | Box3D
       | Bpchar
       | Bytea
       | Char
@@ -15,6 +17,8 @@ let _89 =
       | Daterange
       | Float4
       | Float8
+      | Geography
+      | Geometry
       | Hstore
       | Inet
       | Int2
@@ -29,6 +33,7 @@ let _89 =
       | Jsonb
       | Line
       | Lseg
+      | Ltree
       | Macaddr
       | Macaddr8
       | Money
