@@ -36,6 +36,7 @@ input =
       Input.Query
         { name = textName "get_user",
           srcPath = "queries/get_user.sql",
+          idempotent = True,
           params = [userIdParam],
           result = Just userResult,
           fragments =

@@ -173,6 +173,7 @@ let QueryFragments = List QueryFragment
 let Query =
       { name : Name
       , srcPath : Text
+      , idempotent : Bool
       , params : List Member
       , result : Result
       , fragments : QueryFragments

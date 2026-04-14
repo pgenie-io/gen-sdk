@@ -542,6 +542,7 @@ in  { space =
     , queries =
       [ { name = { head = _89, tail = [ _69 ] }
         , srcPath = "./queries/insert_album.sql"
+        , idempotent = False
         , params =
           [ _23
           , { name = _49, pgName = "released", isNullable = False, value = _52 }
@@ -582,6 +583,7 @@ in  { space =
             ]
           }
         , srcPath = "./queries/insert_multiple_albums.sql"
+        , idempotent = False
         , params =
           [ { name = _70, pgName = "name", isNullable = True, value = _56 }
           , { name = _49
@@ -625,6 +627,7 @@ in  { space =
         }
       , { name = { head = _90, tail = [ _69, _85, _64 ] }
         , srcPath = "./queries/select_album_by_format.sql"
+        , idempotent = True
         , params = [ _4 ]
         , result = _1
         , fragments =
@@ -643,6 +646,7 @@ in  { space =
         }
       , { name = { head = _90, tail = [ _69, _85, _100 _102 ] }
         , srcPath = "./queries/select_album_by_id.sql"
+        , idempotent = True
         , params =
           [ { name = _82, pgName = "id", isNullable = True, value = _54 } ]
         , result = Some
@@ -679,6 +683,7 @@ in  { space =
         }
       , { name = { head = _90, tail = [ _69, _85, _77 ] }
         , srcPath = "./queries/select_album_by_name.sql"
+        , idempotent = True
         , params = _22
         , result = _1
         , fragments =
@@ -703,6 +708,7 @@ in  { space =
             ]
           }
         , srcPath = "./queries/select_album_fields.sql"
+        , idempotent = True
         , params =
           [ { name = _41
             , pgName = "include_name"
@@ -793,6 +799,7 @@ in  { space =
             ]
           }
         , srcPath = "./queries/select_album_with_filters.sql"
+        , idempotent = True
         , params =
           [ { name = _42
             , pgName = "artist_name"
@@ -876,6 +883,7 @@ in  { space =
         }
       , { name = { head = _90, tail = [ _69, _78, _65 ] }
         , srcPath = "./queries/select_album_with_tracks.sql"
+        , idempotent = True
         , params = [ _28 ]
         , result = Some
           { cardinality = _129
@@ -903,6 +911,7 @@ in  { space =
         }
       , { name = { head = _90, tail = [ _100 _94, _85, _100 _87 ] }
         , srcPath = "./queries/select_genre_by_artist.sql"
+        , idempotent = True
         , params =
           [ { name = _57, pgName = "artist", isNullable = False, value = _53 } ]
         , result = Some
@@ -936,6 +945,7 @@ in  { space =
             ]
           }
         , srcPath = "./queries/update_album_recording_returning.sql"
+        , idempotent = False
         , params = [ _2, _28 ]
         , result = Some
           { cardinality = _129
@@ -958,6 +968,7 @@ in  { space =
         }
       , { name = { head = _92, tail = [ _69, _50 ] }
         , srcPath = "./queries/update_album_released.sql"
+        , idempotent = False
         , params = [ _14, _28 ]
         , result =
             None { cardinality : _132, columns : { head : _34, tail : _31 } }
