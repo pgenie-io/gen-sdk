@@ -1,3 +1,5 @@
 let Project = (../Project.dhall).Project
 
-in  { _1 = ./1.dhall : Project }
+in  { Demo = ./Demo.dhall : Project,
+  AllTypes = ./AllTypes.dhall : Project
+ }
