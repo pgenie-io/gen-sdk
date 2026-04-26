@@ -84,7 +84,7 @@ let member =
       \(primitive : Project.Primitive) ->
         { name
         , pgName
-        , isNullable = True
+        , isNullable = False
         , value =
           { arraySettings = None Project.ArraySettings
           , scalar = Project.Scalar.Primitive primitive
