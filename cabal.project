@@ -6,3 +6,9 @@ allow-newer:
   , *:ghc-prim
   , *:template-haskell
   , dhall-json:*
+
+source-repository-package
+  type: git
+  location: https://github.com/nikita-volkov/dhall-haskell
+  tag: 116c10d3e3201e97211047b49b7e2418ced7d066
+  subdir: dhall
