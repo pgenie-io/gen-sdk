@@ -1,8 +1,8 @@
-let Prelude = ../Prelude.dhall
+let Prelude = ../Deps/Prelude.dhall
 
-let Lude = ../Lude.dhall
+let Lude = ../Deps/Lude.dhall
 
-let Typeclasses = ../Typeclasses.dhall
+let Typeclasses = ../Deps/Typeclasses.dhall
 
 let Compiled = ./Type.dhall
 

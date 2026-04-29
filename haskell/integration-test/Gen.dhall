@@ -1,4 +1,4 @@
-let Prelude = ../../dhall/Prelude.dhall
+let Prelude = ../../dhall/Deps/Prelude.dhall
 
 let Sdk = ../../dhall/package.dhall
 

@@ -1,6 +1,6 @@
-let Prelude = ../Prelude.dhall
+let Prelude = ../Deps/Prelude.dhall
 
-let Lude = ../Lude.dhall
+let Lude = ../Deps/Lude.dhall
 
 let Compiled = ./Type.dhall
 

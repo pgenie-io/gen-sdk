@@ -1,7 +1,7 @@
 -- Function for constructing standard Codegen modules.
 -- Takes a contract version, a config type, and a compile function,
 -- and returns a module with those components.
-let Prelude = ./Prelude.dhall
+let Prelude = ./Deps/Prelude.dhall
 
 let Project = ./Project.dhall
 

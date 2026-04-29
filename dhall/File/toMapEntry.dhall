@@ -1,4 +1,4 @@
-let Prelude = ../Prelude.dhall
+let Prelude = ../Deps/Prelude.dhall
 
 let File = ./Type.dhall
 

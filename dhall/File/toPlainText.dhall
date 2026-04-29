@@ -1,7 +1,5 @@
 -- Rendering for inspection purposes.
-let Prelude = ../Prelude.dhall
-
-let Lude = ../Lude.dhall
+let Lude = ../Deps/Lude.dhall
 
 let File = ./Type.dhall
 

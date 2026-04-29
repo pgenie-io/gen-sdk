@@ -1,11 +1,11 @@
 -- | The codegen API model. Used as input to generators.
-let Prelude = ./Prelude.dhall
+let Prelude = ./Deps/Prelude.dhall
 
-let CodegenKit = ./CodegenKit.dhall
+let Lude = ./Deps/Lude.dhall
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let Name = CodegenKit.Name.Type
+let Name = Lude.Structures.Name.Type
 
 let Primitive =
     -- | PostgreSQL primitive type.

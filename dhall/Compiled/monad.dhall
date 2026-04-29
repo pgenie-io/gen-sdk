@@ -1,8 +1,8 @@
-let Lude = ../Lude.dhall
+let Lude = ../Deps/Lude.dhall
 
 let Compiled = ./Type.dhall
 
-let Typeclasses = ../Typeclasses.dhall
+let Typeclasses = ../Deps/Typeclasses.dhall
 
 in    { applicative = ./applicative.dhall, flatMap = ./flatMap.dhall }
     : Typeclasses.Classes.Monad.Type Compiled

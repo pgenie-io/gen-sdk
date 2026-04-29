@@ -1,10 +1,8 @@
 let Project = ../Project.dhall
 
-let CodegenKit = ../CodegenKit.dhall
+let Lude = ../Deps/Lude.dhall
 
-let Lude = ../Lude.dhall
-
-let Name = CodegenKit.Name
+let Name = Lude.Structures.Name
 
 let Char = Lude.Structures.LatinChar.Type
 

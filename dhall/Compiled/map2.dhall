@@ -1,5 +1,5 @@
 -- Analogue to Haskell's `liftA2`
-let Prelude = ../Prelude.dhall
+let Prelude = ../Deps/Prelude.dhall
 
 let Compiled = ./Type.dhall
 
