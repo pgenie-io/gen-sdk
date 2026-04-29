@@ -12,7 +12,7 @@ in  Sdk.module
       ( \(config : Optional Config) ->
         \(project : Sdk.Project.Project) ->
           Lude.Compiled.ok
-            (List Sdk.File.Type)
+            Lude.Files.Type
             [ { path = "output.yaml"
               , content =
                   merge
