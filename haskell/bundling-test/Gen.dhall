@@ -1,5 +1,7 @@
 let Prelude = ../../dhall/Deps/Prelude.dhall
 
+let Lude = ../../dhall/Deps/Lude.dhall
+
 let Sdk = ../../dhall/package.dhall
 
 let Config = { foo : Text, bar : Optional Natural }
@@ -9,7 +11,7 @@ in  Sdk.module
       Config
       ( \(config : Optional Config) ->
         \(project : Sdk.Project.Project) ->
-          Sdk.Compiled.ok
+          Lude.Compiled.ok
             (List Sdk.File.Type)
             [ { path = "output.yaml"
               , content =

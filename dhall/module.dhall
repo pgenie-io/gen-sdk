@@ -3,9 +3,9 @@
 -- and returns a module with those components.
 let Prelude = ./Deps/Prelude.dhall
 
-let Project = ./Project.dhall
+let Lude = ./Deps/Lude.dhall
 
-let Compiled = ./Compiled/package.dhall
+let Project = ./Project.dhall
 
 let File = ./File/package.dhall
 
@@ -16,7 +16,9 @@ let ContractVersion = ./ContractVersion.dhall
 in  \(contractVersion : ContractVersion) ->
     \(Config : Type) ->
     \ ( compile
-      : Optional Config -> Project.Project -> Compiled.Type (List File.Type)
+      : Optional Config ->
+        Project.Project ->
+          Lude.Compiled.Type (List File.Type)
       ) ->
       let compileToFileMap
           -- Helper for immediately compiling a project to a file map.
@@ -26,13 +28,13 @@ in  \(contractVersion : ContractVersion) ->
               let compiledFiles = compile config project
 
               let compiledFileMap =
-                    Compiled.map
+                    Lude.Compiled.map
                       Files.Type
                       (Prelude.Map.Type Text Text)
                       Files.toFileMap
                       compiledFiles
 
-              let fileMap = Compiled.toFileMap compiledFileMap
+              let fileMap = Lude.Compiled.toFileMap compiledFileMap
 
               in  fileMap
 

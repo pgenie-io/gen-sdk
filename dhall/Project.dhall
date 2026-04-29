@@ -1,11 +1,44 @@
 -- | The codegen API model. Used as input to generators.
-let Prelude = ./Deps/Prelude.dhall
-
-let Lude = ./Deps/Lude.dhall
+let NonEmpty
+    : Type -> Type
+    = \(a : Type) -> { head : a, tail : List a }
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let Name = Lude.Structures.Name.Type
+let LatinChar =
+      < A
+      | B
+      | C
+      | D
+      | E
+      | F
+      | G
+      | H
+      | I
+      | J
+      | K
+      | L
+      | M
+      | N
+      | O
+      | P
+      | Q
+      | R
+      | S
+      | T
+      | U
+      | V
+      | W
+      | X
+      | Y
+      | Z
+      >
+
+let LatinWord = NonEmpty LatinChar
+
+let LatinWordOrNumber = < Number : Natural | Word : LatinWord >
+
+let Name = { head : LatinWord, tail : List LatinWordOrNumber }
 
 let Primitive =
     -- | PostgreSQL primitive type.
@@ -158,9 +191,7 @@ let CustomType =
 let ResultRowsCardinality = < Optional | Single | Multiple >
 
 let ResultRows =
-      { cardinality : ResultRowsCardinality
-      , columns : Prelude.NonEmpty.Type Member
-      }
+      { cardinality : ResultRowsCardinality, columns : NonEmpty Member }
 
 let Result = Optional ResultRows
 
@@ -191,6 +222,7 @@ let Project =
       }
 
 let Primitive/toText
+    -- Convert to PostgreSQL type name as text.
     : Primitive -> Text
     = let handler =
             { Bit = "bit"
@@ -260,6 +292,9 @@ let Primitive/toText
 
 in  { Project
     , Version
+    , LatinChar
+    , LatinWord
+    , LatinWordOrNumber
     , Name
     , Primitive
     , Primitive/toText

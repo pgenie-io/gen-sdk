@@ -2,9 +2,9 @@ let Project = ../Project.dhall
 
 let Lude = ../Deps/Lude.dhall
 
-let Name = Lude.Structures.Name
+let Name = Lude.Name
 
-let Char = Lude.Structures.LatinChar.Type
+let Char = Lude.LatinChar.Type
 
 let a = Char.A
 
@@ -62,9 +62,9 @@ let LatinChars/fromList =
       \(charList : List Char) ->
         merge
           { None = { head = z, tail = [] : List Char }
-          , Some = \(latinChars : Lude.Structures.LatinChars.Type) -> latinChars
+          , Some = \(latinChars : Lude.LatinChars.Type) -> latinChars
           }
-          (Lude.Extensions.List.uncons Char charList)
+          (Lude.List.uncons Char charList)
 
 let Name/chars
     : List Char -> Name.Type
