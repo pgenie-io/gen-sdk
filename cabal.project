@@ -10,5 +10,5 @@ allow-newer:
 source-repository-package
   type: git
   location: https://github.com/nikita-volkov/dhall-haskell
-  tag: 602e9f4c236370cdb47b35048654493a8f4ded04
+  tag: 4eb8ff2d5269f1aad37405e0588ed7514b6394a7
   subdir: dhall
