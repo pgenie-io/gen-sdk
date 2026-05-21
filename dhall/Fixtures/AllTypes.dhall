@@ -2,6 +2,9 @@ let Prelude = ../Deps/Prelude.dhall
 
 let Project = ../Project.dhall
 
+let Declarations =
+      { customTypes : List Project.CustomType, queries : List Project.Query }
+
 let name =
       \(inCamelCase : Text) ->
       \(inPascalCase : Text) ->
@@ -120,6 +123,121 @@ let primitiveQueries =
       \(primitive : Project.Primitive) ->
         scalarQueries (Project.Scalar.Primitive primitive)
 
+let customTypeDeclarations =
+      \(definition : Project.CustomTypeDefinition) ->
+      \(inCamelCase : Text) ->
+      \(inPascalCase : Text) ->
+      \(inKebabCase : Text) ->
+      \(inTrainCase : Text) ->
+      \(inScreamingKebabCase : Text) ->
+      \(inSnakeCase : Text) ->
+      \(inCamelSnakeCase : Text) ->
+      \(inScreamingSnakeCase : Text) ->
+          { customTypes =
+            [ { name =
+                  name
+                    inCamelCase
+                    inPascalCase
+                    inKebabCase
+                    inTrainCase
+                    inScreamingKebabCase
+                    inSnakeCase
+                    inCamelSnakeCase
+                    inScreamingSnakeCase
+              , pgSchema = "public"
+              , pgName = inSnakeCase
+              , definition
+              }
+            ]
+          , queries =
+              scalarQueries
+                ( Project.Scalar.Custom
+                    ( name
+                        inCamelCase
+                        inPascalCase
+                        inKebabCase
+                        inTrainCase
+                        inScreamingKebabCase
+                        inSnakeCase
+                        inCamelSnakeCase
+                        inScreamingSnakeCase
+                    )
+                )
+                inCamelCase
+                inPascalCase
+                inKebabCase
+                inTrainCase
+                inScreamingKebabCase
+                inSnakeCase
+                inCamelSnakeCase
+                inScreamingSnakeCase
+          }
+        : Declarations
+
+let enumDeclarations =
+      \(values : List Project.EnumVariant) ->
+        customTypeDeclarations (Project.CustomTypeDefinition.Enum values)
+
+let compositeDeclarations =
+      \(members : List Project.Member) ->
+        customTypeDeclarations (Project.CustomTypeDefinition.Composite members)
+
+let moodDeclarations =
+      enumDeclarations
+        [ { name = name "sad" "Sad" "sad" "Sad" "SAD" "sad" "Sad" "SAD"
+          , pgName = "sad"
+          }
+        , { name = name "ok" "Ok" "ok" "Ok" "OK" "ok" "Ok" "OK", pgName = "ok" }
+        , { name =
+              name
+                "happy"
+                "Happy"
+                "happy"
+                "Happy"
+                "HAPPY"
+                "happy"
+                "Happy"
+                "HAPPY"
+          , pgName = "happy"
+          }
+        ]
+        "mood"
+        "Mood"
+        "mood"
+        "Mood"
+        "MOOD"
+        "mood"
+        "Mood"
+        "MOOD"
+
+let coordinatesDeclarations =
+      compositeDeclarations
+        [ { name = name "x" "X" "x" "X" "X" "x" "X" "X"
+          , pgName = "x"
+          , isNullable = True
+          , value =
+            { arraySettings = None Project.ArraySettings
+            , scalar = Project.Scalar.Primitive Project.Primitive.Float8
+            }
+          }
+        , { name = name "y" "Y" "y" "Y" "Y" "y" "Y" "Y"
+          , pgName = "y"
+          , isNullable = True
+          , value =
+            { arraySettings = None Project.ArraySettings
+            , scalar = Project.Scalar.Primitive Project.Primitive.Float8
+            }
+          }
+        ]
+        "coordinate"
+        "Coordinate"
+        "coordinate"
+        "Coordinate"
+        "COORDINATE"
+        "coordinate"
+        "Coordinate"
+        "COORDINATE"
+
 in  { space =
         name
           "mySpace"
@@ -141,7 +259,10 @@ in  { space =
           "Music_Catalogue"
           "MUSIC_CATALOGUE"
     , version = { major = 1, minor = 0, patch = 1 }
-    , customTypes = [] : List Project.CustomType
+    , customTypes =
+        Prelude.List.concat
+          Project.CustomType
+          [ moodDeclarations.customTypes, coordinatesDeclarations.customTypes ]
     , queries =
         Prelude.List.concat
           Project.Query
@@ -715,6 +836,8 @@ in  { space =
               "xml"
               "Xml"
               "XML"
+          , moodDeclarations.queries
+          , coordinatesDeclarations.queries
           ]
     , migrations =
       [ { name = "1"
@@ -723,6 +846,13 @@ in  { space =
             create extension ltree;
             create extension hstore;
             create extension citext;
+            ''
+        }
+      , { name = "2"
+        , sql =
+            ''
+            create type mood as enum ('sad', 'ok', 'happy');
+            create type coordinate as (x float8, y float8);
             ''
         }
       ]
