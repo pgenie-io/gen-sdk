@@ -7,10 +7,9 @@ let Lude = ./Deps/Lude.dhall
 
 let Project = ./Project.dhall
 
-let ContractVersion = ./ContractVersion.dhall
+let contractVersion = { major = 2, minor = 0 }
 
-in  \(contractVersion : ContractVersion) ->
-    \(Config : Type) ->
+in  \(Config : Type) ->
     \ ( compile
       : Optional Config -> Project.Project -> Lude.Compiled.Type Lude.Files.Type
       ) ->

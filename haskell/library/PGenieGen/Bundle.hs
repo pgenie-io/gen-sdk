@@ -4,7 +4,7 @@ import Dhall qualified
 import Dhall.Core qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
 import Language.Haskell.TH.Syntax qualified as TH
-import PGenieGen.Contract qualified as Contract
+import PGenieGen.ContractVersion qualified as ContractVersion
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Location qualified as Location
 import PGenieGen.Model
@@ -22,35 +22,30 @@ bundle location hash = TH.Code do
 
     contractVersionExpr <- case ExprViews.recordField "contractVersion" genExpr of
       Nothing -> do
-        putStrLn "Could not find 'contractVersion' field in the loaded generator code"
-        exitFailure
+        fail "Could not find 'contractVersion' field in the loaded generator code"
       Just expr -> pure expr
 
-    Contract.ContractVersion major minor <- do
-      let decoder = Dhall.auto @Contract.ContractVersion
+    ContractVersion.ContractVersion major minor <- do
+      let decoder = Dhall.auto @ContractVersion.ContractVersion
 
       Dhall.expectWithSettings Dhall.defaultInputSettings decoder contractVersionExpr
 
       Dhall.rawInput decoder contractVersionExpr
 
-    when (major /= 1) do
-      putStrLn ("Incompatible contract major version: " <> show major <> ". Expected 1.")
-      exitFailure
+    when (major /= ContractVersion.current.major) do
+      fail ("Incompatible contract major version: " <> onto (show major) <> ". Expected " <> onto (show ContractVersion.current.major) <> ".")
 
-    when (minor > 0) do
-      putStrLn ("Incompatible contract minor version: " <> show minor <> ". Expected 0 or lower.")
-      exitFailure
+    when (minor > ContractVersion.current.minor) do
+      fail ("Incompatible contract minor version: " <> onto (show minor) <> ". Expected " <> onto (show ContractVersion.current.minor) <> " or lower.")
 
     configTypeExpr <- case ExprViews.recordField "Config" genExpr of
       Nothing -> do
-        putStrLn "Could not find 'Config' field in the loaded generator code"
-        exitFailure
+        fail "Could not find 'Config' field in the loaded generator code"
       Just expr -> pure expr
 
     compileExpr <- case ExprViews.recordField "compile" genExpr of
       Nothing -> do
-        putStrLn "Could not find 'compile' field in the loaded generator code"
-        exitFailure
+        fail "Could not find 'compile' field in the loaded generator code"
       Just expr -> pure expr
 
     pure (configTypeExpr, compileExpr)

@@ -4,7 +4,7 @@ import Dhall qualified
 import Dhall.Core qualified
 import Dhall.Import qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
-import PGenieGen.Contract qualified as Contract
+import PGenieGen.ContractVersion qualified as ContractVersion
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Location qualified as Location
 import PGenieGen.Model
@@ -35,18 +35,18 @@ load location hash echo = do
       fail "Could not find 'contractVersion' field in the loaded generator code"
     Just expr -> pure expr
 
-  Contract.ContractVersion major minor <- do
-    let decoder = Dhall.auto @Contract.ContractVersion
+  ContractVersion.ContractVersion major minor <- do
+    let decoder = Dhall.auto @ContractVersion.ContractVersion
 
     Dhall.expectWithSettings Dhall.defaultInputSettings decoder contractVersionExpr
 
     Dhall.rawInput decoder contractVersionExpr
 
-  when (major /= 2) do
-    fail ("Incompatible contract major version: " <> onto (show major) <> ". Expected 2.")
+  when (major /= ContractVersion.current.major) do
+    fail ("Incompatible contract major version: " <> onto (show major) <> ". Expected " <> onto (show ContractVersion.current.major) <> ".")
 
-  when (minor > 0) do
-    fail ("Incompatible contract minor version: " <> onto (show minor) <> ". Expected 0 or lower.")
+  when (minor > ContractVersion.current.minor) do
+    fail ("Incompatible contract minor version: " <> onto (show minor) <> ". Expected " <> onto (show ContractVersion.current.minor) <> " or lower.")
 
   configTypeExpr <- case ExprViews.recordField "Config" genExpr of
     Nothing -> do

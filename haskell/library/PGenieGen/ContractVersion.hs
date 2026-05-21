@@ -1,4 +1,4 @@
-module PGenieGen.Contract where
+module PGenieGen.ContractVersion where
 
 import Dhall qualified
 import PGenieGen.Dhall.Orphans ()
@@ -8,5 +8,8 @@ data ContractVersion = ContractVersion
   { major :: Natural,
     minor :: Natural
   }
-  deriving stock (Show, Eq, Generic)
+  deriving stock (Show, Eq, Ord, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
+
+current :: ContractVersion
+current = ContractVersion {major = 2, minor = 0}

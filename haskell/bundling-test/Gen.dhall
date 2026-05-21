@@ -7,7 +7,6 @@ let Sdk = ../../dhall/package.dhall
 let Config = { foo : Text, bar : Optional Natural }
 
 in  Sdk.module
-      { major = 2, minor = 0 }
       Config
       ( \(config : Optional Config) ->
         \(project : Sdk.Project.Project) ->

@@ -94,7 +94,7 @@ library
 
   other-modules:
     PGenieGen.Bundle
-    PGenieGen.Contract
+    PGenieGen.ContractVersion
     PGenieGen.Dhall.Decode
     PGenieGen.Dhall.Deriving
     PGenieGen.Dhall.ExprViews
