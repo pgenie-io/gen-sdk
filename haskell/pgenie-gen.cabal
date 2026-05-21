@@ -105,18 +105,15 @@ library
     PGenieGen.Location
     PGenieGen.Model
     PGenieGen.Model.Input.Name
-    PGenieGen.Model.Input.Word
-    PGenieGen.Model.Input.WordChar
-    PGenieGen.Model.Input.WordOrNumber
     PGenieGen.Prelude
     PGenieGen.Prelude.Path
 
   build-depends:
-    QuickCheck,
     aeson,
     algebraic-path ^>=0.1,
     base,
     bytestring,
+    cases,
     containers,
     data-has,
     dhall ^>=1.42.3,
@@ -127,6 +124,7 @@ library
     pgenie-gen:aeson-deriver,
     prettyprinter,
     profunctors,
+    QuickCheck,
     quickcheck-instances,
     template-haskell,
     text,

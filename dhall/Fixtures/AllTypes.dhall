@@ -1,255 +1,859 @@
+let Prelude = ../Deps/Prelude.dhall
+
 let Project = ../Project.dhall
 
-let Lude = ../Deps/Lude.dhall
+let Declarations =
+      { customTypes : List Project.CustomType, queries : List Project.Query }
 
-let Name = Lude.Name
-
-let Char = Lude.LatinChar.Type
-
-let a = Char.A
-
-let b = Char.B
-
-let c = Char.C
-
-let d = Char.D
-
-let e = Char.E
-
-let f = Char.F
-
-let g = Char.G
-
-let h = Char.H
-
-let i = Char.I
-
-let j = Char.J
-
-let k = Char.K
-
-let l = Char.L
-
-let m = Char.M
-
-let n = Char.N
-
-let o = Char.O
-
-let p = Char.P
-
-let q = Char.Q
-
-let r = Char.R
-
-let s = Char.S
-
-let t = Char.T
-
-let u = Char.U
-
-let v = Char.V
-
-let w = Char.W
-
-let x = Char.X
-
-let y = Char.Y
-
-let z = Char.Z
-
-let LatinChars/fromList =
-      \(charList : List Char) ->
-        merge
-          { None = { head = z, tail = [] : List Char }
-          , Some = \(latinChars : Lude.LatinChars.Type) -> latinChars
+let name =
+      \(inCamelCase : Text) ->
+      \(inPascalCase : Text) ->
+      \(inKebabCase : Text) ->
+      \(inTrainCase : Text) ->
+      \(inScreamingKebabCase : Text) ->
+      \(inSnakeCase : Text) ->
+      \(inCamelSnakeCase : Text) ->
+      \(inScreamingSnakeCase : Text) ->
+          { inCamelCase
+          , inPascalCase
+          , inKebabCase
+          , inTrainCase
+          , inScreamingKebabCase
+          , inSnakeCase
+          , inCamelSnakeCase
+          , inScreamingSnakeCase
           }
-          (Lude.List.uncons Char charList)
+        : Project.Name
 
-let Name/chars
-    : List Char -> Name.Type
-    = \(charList : List Char) ->
-        Name.fromLatinChars (LatinChars/fromList charList)
+let scalarQueries =
+      \(scalar : Project.Scalar) ->
+      \(inCamelCase : Text) ->
+      \(inPascalCase : Text) ->
+      \(inKebabCase : Text) ->
+      \(inTrainCase : Text) ->
+      \(inScreamingKebabCase : Text) ->
+      \(inSnakeCase : Text) ->
+      \(inCamelSnakeCase : Text) ->
+      \(inScreamingSnakeCase : Text) ->
+        let primitiveName =
+              name
+                inCamelCase
+                inPascalCase
+                inKebabCase
+                inTrainCase
+                inScreamingKebabCase
+                inSnakeCase
+                inCamelSnakeCase
+                inScreamingSnakeCase
 
-let Name/charsAndNumber =
-      \(chars : List Char) ->
-      \(number : Natural) ->
-        Name.fromLatinCharsAndNumber (LatinChars/fromList chars) number
+        let scalarTypeSig =
+              if Text/equal inSnakeCase "char" then "\"char\"" else inSnakeCase
 
-let member =
-      \(name : Name.Type) ->
-      \(pgName : Text) ->
+        let query =
+              \(nullable : Bool) ->
+              \(dimensionality : Natural) ->
+              \(elementIsNullable : Bool) ->
+                let typeSig =
+                          scalarTypeSig
+                      ++  Prelude.Text.replicate dimensionality "[]"
+
+                let member =
+                      { name = primitiveName
+                      , pgName = inSnakeCase
+                      , isNullable = nullable
+                      , value =
+                        { arraySettings =
+                            if    Natural/isZero dimensionality
+                            then  None Project.ArraySettings
+                            else  Some { dimensionality, elementIsNullable }
+                        , scalar
+                        }
+                      }
+
+                let dimensionality = Natural/show dimensionality
+
+                let nullable = if nullable then "1" else "0"
+
+                let elementIsNullable = if elementIsNullable then "1" else "0"
+
+                let name =
+                      name
+                        "select${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
+                        "Select${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
+                        "select-${inKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "Select-${inTrainCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "SELECT-${inScreamingKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "select_${inSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "Select_${inCamelSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "SELECT_${inScreamingSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+
+                in  { name
+                    , srcPath = "./queries/${name.inSnakeCase}.sql"
+                    , idempotent = True
+                    , params = [ member ]
+                    , result = Some
+                      { cardinality = Project.ResultRowsCardinality.Multiple
+                      , columns =
+                        { head = member, tail = [] : List Project.Member }
+                      }
+                    , fragments =
+                      [ Project.QueryFragment.Sql "select "
+                      , Project.QueryFragment.Var
+                          { name = primitiveName
+                          , rawName = inSnakeCase
+                          , paramIndex = 0
+                          }
+                      , Project.QueryFragment.Sql "::${typeSig}"
+                      ]
+                    }
+
+        in  [ query True 0 False
+            , query True 1 False
+            , query True 2 False
+            , query True 1 True
+            , query True 2 True
+            , query False 0 False
+            , query False 1 False
+            , query False 2 False
+            , query False 1 True
+            , query False 2 True
+            ]
+
+let primitiveQueries =
       \(primitive : Project.Primitive) ->
-        { name
-        , pgName
-        , isNullable = False
-        , value =
-          { arraySettings = None Project.ArraySettings
-          , scalar = Project.Scalar.Primitive primitive
-          }
-        }
+        scalarQueries (Project.Scalar.Primitive primitive)
 
-let query =
-      \(primitive : Project.Primitive) ->
-      \(name : Name.Type) ->
-        let sqlName = Project.Primitive/toText primitive
-
-        in  { name = Name.concat (Name/chars [ s, e, l, e, c, t ]) [ name ]
-            , srcPath = "./queries/select_" ++ sqlName ++ ".sql"
-            , idempotent = True
-            , params =
-              [ member (Name/chars [ p, a, r, a, m ]) "param" primitive ]
-            , result = Some
-              { cardinality = Project.ResultRowsCardinality.Multiple
-              , columns =
-                { head = member name sqlName primitive
-                , tail = [] : List Project.Member
-                }
+let customTypeDeclarations =
+      \(definition : Project.CustomTypeDefinition) ->
+      \(inCamelCase : Text) ->
+      \(inPascalCase : Text) ->
+      \(inKebabCase : Text) ->
+      \(inTrainCase : Text) ->
+      \(inScreamingKebabCase : Text) ->
+      \(inSnakeCase : Text) ->
+      \(inCamelSnakeCase : Text) ->
+      \(inScreamingSnakeCase : Text) ->
+          { customTypes =
+            [ { name =
+                  name
+                    inCamelCase
+                    inPascalCase
+                    inKebabCase
+                    inTrainCase
+                    inScreamingKebabCase
+                    inSnakeCase
+                    inCamelSnakeCase
+                    inScreamingSnakeCase
+              , pgSchema = "public"
+              , pgName = inSnakeCase
+              , definition
               }
-            , fragments =
-              [ Project.QueryFragment.Sql "select "
-              , Project.QueryFragment.Var
-                  { name = Name/chars [ p, a, r, a, m ]
-                  , rawName = "param"
-                  , paramIndex = 0
-                  }
-              , Project.QueryFragment.Sql ("::" ++ sqlName)
-              ]
-            }
+            ]
+          , queries =
+              scalarQueries
+                ( Project.Scalar.Custom
+                    ( name
+                        inCamelCase
+                        inPascalCase
+                        inKebabCase
+                        inTrainCase
+                        inScreamingKebabCase
+                        inSnakeCase
+                        inCamelSnakeCase
+                        inScreamingSnakeCase
+                    )
+                )
+                inCamelCase
+                inPascalCase
+                inKebabCase
+                inTrainCase
+                inScreamingKebabCase
+                inSnakeCase
+                inCamelSnakeCase
+                inScreamingSnakeCase
+          }
+        : Declarations
 
-let project =
-      { space =
-          Name.concat (Name/chars [ m, y ]) [ Name/chars [ s, p, a, c, e ] ]
-      , name =
-          Name.concat
-            (Name/chars [ m, u, s, i, c ])
-            [ Name/chars [ c, a, t, a, l, o, g, u, e ] ]
-      , version = { major = 1, minor = 0, patch = 1 }
-      , customTypes = [] : List Project.CustomType
-      , queries =
-        [ query Project.Primitive.Bit (Name/chars [ b, i, t ])
-        , query Project.Primitive.Bool (Name/chars [ b, o, o, l ])
-        , query Project.Primitive.Box (Name/chars [ b, o, x ])
-        , query Project.Primitive.Bpchar (Name/chars [ b, p, c, h, a, r ])
-        , query Project.Primitive.Bytea (Name/chars [ b, y, t, e, a ])
-        , query Project.Primitive.Char (Name/chars [ c, h, a, r ])
-        , query Project.Primitive.Cidr (Name/chars [ c, i, d, r ])
-        , query Project.Primitive.Circle (Name/chars [ c, i, r, c, l, e ])
-        , query Project.Primitive.Citext (Name/chars [ c, i, t, e, x, t ])
-        , query Project.Primitive.Date (Name/chars [ d, a, t, e ])
-        , query
-            Project.Primitive.Datemultirange
-            (Name/chars [ d, a, t, e, m, u, l, t, i, r, a, n, g, e ])
-        , query
-            Project.Primitive.Daterange
-            (Name/chars [ d, a, t, e, r, a, n, g, e ])
-        , query
-            Project.Primitive.Float4
-            (Name/charsAndNumber [ f, l, o, a, t ] 4)
-        , query
-            Project.Primitive.Float8
-            (Name/charsAndNumber [ f, l, o, a, t ] 8)
-        , query Project.Primitive.Hstore (Name/chars [ h, s, t, o, r, e ])
-        , query Project.Primitive.Inet (Name/chars [ i, n, e, t ])
-        , query Project.Primitive.Int2 (Name/charsAndNumber [ i, n, t ] 2)
-        , query Project.Primitive.Int4 (Name/charsAndNumber [ i, n, t ] 4)
-        , query
-            Project.Primitive.Int4multirange
-            ( Name.concat
-                (Name/charsAndNumber [ i, n, t ] 4)
-                [ Name/chars [ m, u, l, t, i, r, a, n, g, e ] ]
-            )
-        , query
-            Project.Primitive.Int4range
-            ( Name.concat
-                (Name/charsAndNumber [ i, n, t ] 4)
-                [ Name/chars [ r, a, n, g, e ] ]
-            )
-        , query Project.Primitive.Int8 (Name/charsAndNumber [ i, n, t ] 8)
-        , query
-            Project.Primitive.Int8multirange
-            ( Name.concat
-                (Name/charsAndNumber [ i, n, t ] 8)
-                [ Name/chars [ m, u, l, t, i, r, a, n, g, e ] ]
-            )
-        , query
-            Project.Primitive.Int8range
-            ( Name.concat
-                (Name/charsAndNumber [ i, n, t ] 8)
-                [ Name/chars [ r, a, n, g, e ] ]
-            )
-        , query
-            Project.Primitive.Interval
-            (Name/chars [ i, n, t, e, r, v, a, l ])
-        , query Project.Primitive.Json (Name/chars [ j, s, o, n ])
-        , query Project.Primitive.Jsonb (Name/chars [ j, s, o, n, b ])
-        , query Project.Primitive.Line (Name/chars [ l, i, n, e ])
-        , query Project.Primitive.Lseg (Name/chars [ l, s, e, g ])
-        , query Project.Primitive.Ltree (Name/chars [ l, t, r, e, e ])
-        , query Project.Primitive.Macaddr (Name/chars [ m, a, c, a, d, d, r ])
-        , query
-            Project.Primitive.Macaddr8
-            (Name/charsAndNumber [ m, a, c, a, d, d, r ] 8)
-        , query Project.Primitive.Money (Name/chars [ m, o, n, e, y ])
-        , query Project.Primitive.Name (Name/chars [ n, a, m, e ])
-        , query Project.Primitive.Numeric (Name/chars [ n, u, m, e, r, i, c ])
-        , query
-            Project.Primitive.Nummultirange
-            (Name/chars [ n, u, m, m, u, l, t, i, r, a, n, g, e ])
-        , query
-            Project.Primitive.Numrange
-            (Name/chars [ n, u, m, r, a, n, g, e ])
-        , query Project.Primitive.Oid (Name/chars [ o, i, d ])
-        , query Project.Primitive.Path (Name/chars [ p, a, t, h ])
-        , query
-            Project.Primitive.PgLsn
-            (Name.concat (Name/chars [ p, g ]) [ Name/chars [ l, s, n ] ])
-        , query
-            Project.Primitive.PgSnapshot
-            ( Name.concat
-                (Name/chars [ p, g ])
-                [ Name/chars [ s, n, a, p, s, h, o, t ] ]
-            )
-        , query Project.Primitive.Point (Name/chars [ p, o, i, n, t ])
-        , query Project.Primitive.Polygon (Name/chars [ p, o, l, y, g, o, n ])
-        , query Project.Primitive.Text (Name/chars [ t, e, x, t ])
-        , query Project.Primitive.Time (Name/chars [ t, i, m, e ])
-        , query
-            Project.Primitive.Timestamp
-            (Name/chars [ t, i, m, e, s, t, a, m, p ])
-        , query
-            Project.Primitive.Timestamptz
-            (Name/chars [ t, i, m, e, s, t, a, m, p, t, z ])
-        , query Project.Primitive.Timetz (Name/chars [ t, i, m, e, t, z ])
-        , query
-            Project.Primitive.Tsmultirange
-            (Name/chars [ t, s, m, u, l, t, i, r, a, n, g, e ])
-        , query Project.Primitive.Tsquery (Name/chars [ t, s, q, u, e, r, y ])
-        , query Project.Primitive.Tsrange (Name/chars [ t, s, r, a, n, g, e ])
-        , query
-            Project.Primitive.Tstzmultirange
-            (Name/chars [ t, s, t, z, m, u, l, t, i, r, a, n, g, e ])
-        , query
-            Project.Primitive.Tstzrange
-            (Name/chars [ t, s, t, z, r, a, n, g, e ])
-        , query
-            Project.Primitive.Tsvector
-            (Name/chars [ t, s, v, e, c, t, o, r ])
-        , query Project.Primitive.Uuid (Name/chars [ u, u, i, d ])
-        , query Project.Primitive.Varbit (Name/chars [ v, a, r, b, i, t ])
-        , query Project.Primitive.Varchar (Name/chars [ v, a, r, c, h, a, r ])
-        , query Project.Primitive.Xml (Name/chars [ x, m, l ])
-        ]
-      , migrations =
-        [ { name = "1"
-          , sql =
-              ''
-              create extension ltree;
-              create extension hstore;
-              create extension citext;
-              ''
+let enumDeclarations =
+      \(values : List Project.EnumVariant) ->
+        customTypeDeclarations (Project.CustomTypeDefinition.Enum values)
+
+let compositeDeclarations =
+      \(members : List Project.Member) ->
+        customTypeDeclarations (Project.CustomTypeDefinition.Composite members)
+
+let moodDeclarations =
+      enumDeclarations
+        [ { name = name "sad" "Sad" "sad" "Sad" "SAD" "sad" "Sad" "SAD"
+          , pgName = "sad"
+          }
+        , { name = name "ok" "Ok" "ok" "Ok" "OK" "ok" "Ok" "OK", pgName = "ok" }
+        , { name =
+              name
+                "happy"
+                "Happy"
+                "happy"
+                "Happy"
+                "HAPPY"
+                "happy"
+                "Happy"
+                "HAPPY"
+          , pgName = "happy"
           }
         ]
-      }
+        "mood"
+        "Mood"
+        "mood"
+        "Mood"
+        "MOOD"
+        "mood"
+        "Mood"
+        "MOOD"
 
-in  project
+let coordinatesDeclarations =
+      compositeDeclarations
+        [ { name = name "x" "X" "x" "X" "X" "x" "X" "X"
+          , pgName = "x"
+          , isNullable = True
+          , value =
+            { arraySettings = None Project.ArraySettings
+            , scalar = Project.Scalar.Primitive Project.Primitive.Float8
+            }
+          }
+        , { name = name "y" "Y" "y" "Y" "Y" "y" "Y" "Y"
+          , pgName = "y"
+          , isNullable = True
+          , value =
+            { arraySettings = None Project.ArraySettings
+            , scalar = Project.Scalar.Primitive Project.Primitive.Float8
+            }
+          }
+        ]
+        "coordinate"
+        "Coordinate"
+        "coordinate"
+        "Coordinate"
+        "COORDINATE"
+        "coordinate"
+        "Coordinate"
+        "COORDINATE"
+
+in  { space =
+        name
+          "mySpace"
+          "MySpace"
+          "my-space"
+          "My-Space"
+          "MY-SPACE"
+          "my_space"
+          "My_Space"
+          "MY_SPACE"
+    , name =
+        name
+          "musicCatalogue"
+          "MusicCatalogue"
+          "music-catalogue"
+          "Music-Catalogue"
+          "MUSIC-CATALOGUE"
+          "music_catalogue"
+          "Music_Catalogue"
+          "MUSIC_CATALOGUE"
+    , version = { major = 1, minor = 0, patch = 1 }
+    , customTypes =
+        Prelude.List.concat
+          Project.CustomType
+          [ moodDeclarations.customTypes, coordinatesDeclarations.customTypes ]
+    , queries =
+        Prelude.List.concat
+          Project.Query
+          [ primitiveQueries
+              Project.Primitive.Bit
+              "bit"
+              "Bit"
+              "bit"
+              "Bit"
+              "BIT"
+              "bit"
+              "Bit"
+              "BIT"
+          , primitiveQueries
+              Project.Primitive.Bool
+              "bool"
+              "Bool"
+              "bool"
+              "Bool"
+              "BOOL"
+              "bool"
+              "Bool"
+              "BOOL"
+          , primitiveQueries
+              Project.Primitive.Box
+              "box"
+              "Box"
+              "box"
+              "Box"
+              "BOX"
+              "box"
+              "Box"
+              "BOX"
+          , primitiveQueries
+              Project.Primitive.Bpchar
+              "bpchar"
+              "Bpchar"
+              "bpchar"
+              "Bpchar"
+              "BPCHAR"
+              "bpchar"
+              "Bpchar"
+              "BPCHAR"
+          , primitiveQueries
+              Project.Primitive.Bytea
+              "bytea"
+              "Bytea"
+              "bytea"
+              "Bytea"
+              "BYTEA"
+              "bytea"
+              "Bytea"
+              "BYTEA"
+          , primitiveQueries
+              Project.Primitive.Char
+              "char"
+              "Char"
+              "char"
+              "Char"
+              "CHAR"
+              "char"
+              "Char"
+              "CHAR"
+          , primitiveQueries
+              Project.Primitive.Cidr
+              "cidr"
+              "Cidr"
+              "cidr"
+              "Cidr"
+              "CIDR"
+              "cidr"
+              "Cidr"
+              "CIDR"
+          , primitiveQueries
+              Project.Primitive.Circle
+              "circle"
+              "Circle"
+              "circle"
+              "Circle"
+              "CIRCLE"
+              "circle"
+              "Circle"
+              "CIRCLE"
+          , primitiveQueries
+              Project.Primitive.Citext
+              "citext"
+              "Citext"
+              "citext"
+              "Citext"
+              "CITEXT"
+              "citext"
+              "Citext"
+              "CITEXT"
+          , primitiveQueries
+              Project.Primitive.Date
+              "date"
+              "Date"
+              "date"
+              "Date"
+              "DATE"
+              "date"
+              "Date"
+              "DATE"
+          , primitiveQueries
+              Project.Primitive.Datemultirange
+              "datemultirange"
+              "Datemultirange"
+              "datemultirange"
+              "Datemultirange"
+              "DATEMULTIRANGE"
+              "datemultirange"
+              "Datemultirange"
+              "DATEMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Daterange
+              "daterange"
+              "Daterange"
+              "daterange"
+              "Daterange"
+              "DATERANGE"
+              "daterange"
+              "Daterange"
+              "DATERANGE"
+          , primitiveQueries
+              Project.Primitive.Float4
+              "float4"
+              "Float4"
+              "float4"
+              "Float4"
+              "FLOAT4"
+              "float4"
+              "Float4"
+              "FLOAT4"
+          , primitiveQueries
+              Project.Primitive.Float8
+              "float8"
+              "Float8"
+              "float8"
+              "Float8"
+              "FLOAT8"
+              "float8"
+              "Float8"
+              "FLOAT8"
+          , primitiveQueries
+              Project.Primitive.Hstore
+              "hstore"
+              "Hstore"
+              "hstore"
+              "Hstore"
+              "HSTORE"
+              "hstore"
+              "Hstore"
+              "HSTORE"
+          , primitiveQueries
+              Project.Primitive.Inet
+              "inet"
+              "Inet"
+              "inet"
+              "Inet"
+              "INET"
+              "inet"
+              "Inet"
+              "INET"
+          , primitiveQueries
+              Project.Primitive.Int2
+              "int2"
+              "Int2"
+              "int2"
+              "Int2"
+              "INT2"
+              "int2"
+              "Int2"
+              "INT2"
+          , primitiveQueries
+              Project.Primitive.Int4
+              "int4"
+              "Int4"
+              "int4"
+              "Int4"
+              "INT4"
+              "int4"
+              "Int4"
+              "INT4"
+          , primitiveQueries
+              Project.Primitive.Int4multirange
+              "int4multirange"
+              "Int4multirange"
+              "int4multirange"
+              "Int4multirange"
+              "INT4MULTIRANGE"
+              "int4multirange"
+              "Int4multirange"
+              "INT4MULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Int4range
+              "int4range"
+              "Int4range"
+              "int4range"
+              "Int4range"
+              "INT4RANGE"
+              "int4range"
+              "Int4range"
+              "INT4RANGE"
+          , primitiveQueries
+              Project.Primitive.Int8
+              "int8"
+              "Int8"
+              "int8"
+              "Int8"
+              "INT8"
+              "int8"
+              "Int8"
+              "INT8"
+          , primitiveQueries
+              Project.Primitive.Int8multirange
+              "int8multirange"
+              "Int8multirange"
+              "int8multirange"
+              "Int8multirange"
+              "INT8MULTIRANGE"
+              "int8multirange"
+              "Int8multirange"
+              "INT8MULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Int8range
+              "int8range"
+              "Int8range"
+              "int8range"
+              "Int8range"
+              "INT8RANGE"
+              "int8range"
+              "Int8range"
+              "INT8RANGE"
+          , primitiveQueries
+              Project.Primitive.Interval
+              "interval"
+              "Interval"
+              "interval"
+              "Interval"
+              "INTERVAL"
+              "interval"
+              "Interval"
+              "INTERVAL"
+          , primitiveQueries
+              Project.Primitive.Json
+              "json"
+              "Json"
+              "json"
+              "Json"
+              "JSON"
+              "json"
+              "Json"
+              "JSON"
+          , primitiveQueries
+              Project.Primitive.Jsonb
+              "jsonb"
+              "Jsonb"
+              "jsonb"
+              "Jsonb"
+              "JSONB"
+              "jsonb"
+              "Jsonb"
+              "JSONB"
+          , primitiveQueries
+              Project.Primitive.Line
+              "line"
+              "Line"
+              "line"
+              "Line"
+              "LINE"
+              "line"
+              "Line"
+              "LINE"
+          , primitiveQueries
+              Project.Primitive.Lseg
+              "lseg"
+              "Lseg"
+              "lseg"
+              "Lseg"
+              "LSEG"
+              "lseg"
+              "Lseg"
+              "LSEG"
+          , primitiveQueries
+              Project.Primitive.Ltree
+              "ltree"
+              "Ltree"
+              "ltree"
+              "Ltree"
+              "LTREE"
+              "ltree"
+              "Ltree"
+              "LTREE"
+          , primitiveQueries
+              Project.Primitive.Macaddr
+              "macaddr"
+              "Macaddr"
+              "macaddr"
+              "Macaddr"
+              "MACADDR"
+              "macaddr"
+              "Macaddr"
+              "MACADDR"
+          , primitiveQueries
+              Project.Primitive.Macaddr8
+              "macaddr8"
+              "Macaddr8"
+              "macaddr8"
+              "Macaddr8"
+              "MACADDR8"
+              "macaddr8"
+              "Macaddr8"
+              "MACADDR8"
+          , primitiveQueries
+              Project.Primitive.Money
+              "money"
+              "Money"
+              "money"
+              "Money"
+              "MONEY"
+              "money"
+              "Money"
+              "MONEY"
+          , primitiveQueries
+              Project.Primitive.Name
+              "name"
+              "Name"
+              "name"
+              "Name"
+              "NAME"
+              "name"
+              "Name"
+              "NAME"
+          , primitiveQueries
+              Project.Primitive.Numeric
+              "numeric"
+              "Numeric"
+              "numeric"
+              "Numeric"
+              "NUMERIC"
+              "numeric"
+              "Numeric"
+              "NUMERIC"
+          , primitiveQueries
+              Project.Primitive.Nummultirange
+              "nummultirange"
+              "Nummultirange"
+              "nummultirange"
+              "Nummultirange"
+              "NUMMULTIRANGE"
+              "nummultirange"
+              "Nummultirange"
+              "NUMMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Numrange
+              "numrange"
+              "Numrange"
+              "numrange"
+              "Numrange"
+              "NUMRANGE"
+              "numrange"
+              "Numrange"
+              "NUMRANGE"
+          , primitiveQueries
+              Project.Primitive.Oid
+              "oid"
+              "Oid"
+              "oid"
+              "Oid"
+              "OID"
+              "oid"
+              "Oid"
+              "OID"
+          , primitiveQueries
+              Project.Primitive.Path
+              "path"
+              "Path"
+              "path"
+              "Path"
+              "PATH"
+              "path"
+              "Path"
+              "PATH"
+          , primitiveQueries
+              Project.Primitive.PgLsn
+              "pgLsn"
+              "PgLsn"
+              "pg-lsn"
+              "Pg-Lsn"
+              "PG-LSN"
+              "pg_lsn"
+              "Pg_Lsn"
+              "PG_LSN"
+          , primitiveQueries
+              Project.Primitive.PgSnapshot
+              "pgSnapshot"
+              "PgSnapshot"
+              "pg-snapshot"
+              "Pg-Snapshot"
+              "PG-SNAPSHOT"
+              "pg_snapshot"
+              "Pg_Snapshot"
+              "PG_SNAPSHOT"
+          , primitiveQueries
+              Project.Primitive.Point
+              "point"
+              "Point"
+              "point"
+              "Point"
+              "POINT"
+              "point"
+              "Point"
+              "POINT"
+          , primitiveQueries
+              Project.Primitive.Polygon
+              "polygon"
+              "Polygon"
+              "polygon"
+              "Polygon"
+              "POLYGON"
+              "polygon"
+              "Polygon"
+              "POLYGON"
+          , primitiveQueries
+              Project.Primitive.Text
+              "text"
+              "Text"
+              "text"
+              "Text"
+              "TEXT"
+              "text"
+              "Text"
+              "TEXT"
+          , primitiveQueries
+              Project.Primitive.Time
+              "time"
+              "Time"
+              "time"
+              "Time"
+              "TIME"
+              "time"
+              "Time"
+              "TIME"
+          , primitiveQueries
+              Project.Primitive.Timestamp
+              "timestamp"
+              "Timestamp"
+              "timestamp"
+              "Timestamp"
+              "TIMESTAMP"
+              "timestamp"
+              "Timestamp"
+              "TIMESTAMP"
+          , primitiveQueries
+              Project.Primitive.Timestamptz
+              "timestamptz"
+              "Timestamptz"
+              "timestamptz"
+              "Timestamptz"
+              "TIMESTAMPTZ"
+              "timestamptz"
+              "Timestamptz"
+              "TIMESTAMPTZ"
+          , primitiveQueries
+              Project.Primitive.Timetz
+              "timetz"
+              "Timetz"
+              "timetz"
+              "Timetz"
+              "TIMETZ"
+              "timetz"
+              "Timetz"
+              "TIMETZ"
+          , primitiveQueries
+              Project.Primitive.Tsmultirange
+              "tsmultirange"
+              "Tsmultirange"
+              "tsmultirange"
+              "Tsmultirange"
+              "TSMULTIRANGE"
+              "tsmultirange"
+              "Tsmultirange"
+              "TSMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Tsquery
+              "tsquery"
+              "Tsquery"
+              "tsquery"
+              "Tsquery"
+              "TSQUERY"
+              "tsquery"
+              "Tsquery"
+              "TSQUERY"
+          , primitiveQueries
+              Project.Primitive.Tsrange
+              "tsrange"
+              "Tsrange"
+              "tsrange"
+              "Tsrange"
+              "TSRANGE"
+              "tsrange"
+              "Tsrange"
+              "TSRANGE"
+          , primitiveQueries
+              Project.Primitive.Tstzmultirange
+              "tstzmultirange"
+              "Tstzmultirange"
+              "tstzmultirange"
+              "Tstzmultirange"
+              "TSTZMULTIRANGE"
+              "tstzmultirange"
+              "Tstzmultirange"
+              "TSTZMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Tstzrange
+              "tstzrange"
+              "Tstzrange"
+              "tstzrange"
+              "Tstzrange"
+              "TSTZRANGE"
+              "tstzrange"
+              "Tstzrange"
+              "TSTZRANGE"
+          , primitiveQueries
+              Project.Primitive.Tsvector
+              "tsvector"
+              "Tsvector"
+              "tsvector"
+              "Tsvector"
+              "TSVECTOR"
+              "tsvector"
+              "Tsvector"
+              "TSVECTOR"
+          , primitiveQueries
+              Project.Primitive.Uuid
+              "uuid"
+              "Uuid"
+              "uuid"
+              "Uuid"
+              "UUID"
+              "uuid"
+              "Uuid"
+              "UUID"
+          , primitiveQueries
+              Project.Primitive.Varbit
+              "varbit"
+              "Varbit"
+              "varbit"
+              "Varbit"
+              "VARBIT"
+              "varbit"
+              "Varbit"
+              "VARBIT"
+          , primitiveQueries
+              Project.Primitive.Varchar
+              "varchar"
+              "Varchar"
+              "varchar"
+              "Varchar"
+              "VARCHAR"
+              "varchar"
+              "Varchar"
+              "VARCHAR"
+          , primitiveQueries
+              Project.Primitive.Xml
+              "xml"
+              "Xml"
+              "xml"
+              "Xml"
+              "XML"
+              "xml"
+              "Xml"
+              "XML"
+          , moodDeclarations.queries
+          , coordinatesDeclarations.queries
+          ]
+    , migrations =
+      [ { name = "1"
+        , sql =
+            ''
+            create extension ltree;
+            create extension hstore;
+            create extension citext;
+            ''
+        }
+      , { name = "2"
+        , sql =
+            ''
+            create type mood as enum ('sad', 'ok', 'happy');
+            create type coordinate as (x float8, y float8);
+            ''
+        }
+      ]
+    }

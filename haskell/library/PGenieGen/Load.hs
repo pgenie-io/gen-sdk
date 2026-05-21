@@ -43,8 +43,8 @@ load location hash echo = do
 
     Dhall.rawInput decoder contractVersionExpr
 
-  when (major /= 1) do
-    echo ("Incompatible contract major version: " <> onto (show major) <> ". Expected 1.")
+  when (major /= 2) do
+    echo ("Incompatible contract major version: " <> onto (show major) <> ". Expected 2.")
     exitFailure
 
   when (minor > 0) do
