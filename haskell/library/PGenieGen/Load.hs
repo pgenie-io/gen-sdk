@@ -32,8 +32,7 @@ load location hash echo = do
 
   contractVersionExpr <- case ExprViews.recordField "contractVersion" genExpr of
     Nothing -> do
-      echo "Could not find 'contractVersion' field in the loaded generator code"
-      exitFailure
+      fail "Could not find 'contractVersion' field in the loaded generator code"
     Just expr -> pure expr
 
   Contract.ContractVersion major minor <- do
@@ -44,23 +43,19 @@ load location hash echo = do
     Dhall.rawInput decoder contractVersionExpr
 
   when (major /= 2) do
-    echo ("Incompatible contract major version: " <> onto (show major) <> ". Expected 2.")
-    exitFailure
+    fail ("Incompatible contract major version: " <> onto (show major) <> ". Expected 2.")
 
   when (minor > 0) do
-    echo ("Incompatible contract minor version: " <> onto (show minor) <> ". Expected 0 or lower.")
-    exitFailure
+    fail ("Incompatible contract minor version: " <> onto (show minor) <> ". Expected 0 or lower.")
 
   configTypeExpr <- case ExprViews.recordField "Config" genExpr of
     Nothing -> do
-      echo "Could not find 'Config' field in the loaded generator code"
-      exitFailure
+      fail "Could not find 'Config' field in the loaded generator code"
     Just expr -> pure expr
 
   compileExpr <- case ExprViews.recordField "compile" genExpr of
     Nothing -> do
-      echo "Could not find 'compile' field in the loaded generator code"
-      exitFailure
+      fail "Could not find 'compile' field in the loaded generator code"
     Just expr -> pure expr
 
   -- Compute the semantic integrity hash of the loaded expression
