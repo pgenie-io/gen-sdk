@@ -1,32 +1,54 @@
 module PGenieGen.Model.Input.Name where
 
 import Data.Aeson qualified as Aeson
+import Data.Text (Text)
 import Dhall qualified
 import PGenieGen.Dhall.Orphans ()
-import PGenieGen.Model.Input.Word (Word (..))
-import PGenieGen.Model.Input.WordOrNumber (WordOrNumber (..))
-import PGenieGen.Prelude hiding (Version, Word)
+import PGenieGen.Prelude hiding (Version)
 
--- | A strict name with a head word and tail of words or numbers
+-- | A name with precomputed case renderings
 data Name = Name
-  { head :: Word,
-    tail :: [WordOrNumber]
+  { inCamelCase :: Text,
+    inPascalCase :: Text,
+    inKebabCase :: Text,
+    inTrainCase :: Text,
+    inScreamingKebabCase :: Text,
+    inSnakeCase :: Text,
+    inCamelSnakeCase :: Text,
+    inScreamingSnakeCase :: Text
   }
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
 instance Aeson.ToJSON Name where
-  toJSON (Name head tail) =
-    Aeson.Array
-      $ fromList (Aeson.toJSON head : map Aeson.toJSON tail)
+  toJSON (Name cc pc kc tc skc sc csc ssc) =
+    Aeson.object
+      [ "inCamelCase" Aeson..= cc,
+        "inPascalCase" Aeson..= pc,
+        "inKebabCase" Aeson..= kc,
+        "inTrainCase" Aeson..= tc,
+        "inScreamingKebabCase" Aeson..= skc,
+        "inSnakeCase" Aeson..= sc,
+        "inCamelSnakeCase" Aeson..= csc,
+        "inScreamingSnakeCase" Aeson..= ssc
+      ]
 
 instance Aeson.FromJSON Name where
-  parseJSON = \case
-    Aeson.Array array ->
-      case toList array of
-        [] -> fail "Expected non-empty array for Name"
-        (headValue : tailValues) -> do
-          head <- Aeson.parseJSON headValue
-          tail <- mapM Aeson.parseJSON tailValues
-          return (Name head tail)
-    _ -> fail "Expected array for Name"
+  parseJSON = Aeson.withObject "Name" \obj ->
+    Name
+      <$> obj
+      Aeson..: "inCamelCase"
+      <*> obj
+      Aeson..: "inPascalCase"
+      <*> obj
+      Aeson..: "inKebabCase"
+      <*> obj
+      Aeson..: "inTrainCase"
+      <*> obj
+      Aeson..: "inScreamingKebabCase"
+      <*> obj
+      Aeson..: "inSnakeCase"
+      <*> obj
+      Aeson..: "inCamelSnakeCase"
+      <*> obj
+      Aeson..: "inScreamingSnakeCase"

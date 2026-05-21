@@ -1,9 +1,6 @@
 module PGenieGen.Model.Input
   ( module PGenieGen.Model.Input,
     Name (..),
-    Word (..),
-    WordChar (..),
-    WordOrNumber (..),
   )
 where
 
@@ -12,9 +9,6 @@ import Dhall qualified
 import PGenieGen.Dhall.Deriving qualified as Dhall.Deriving
 import PGenieGen.Dhall.Orphans ()
 import PGenieGen.Model.Input.Name (Name (..))
-import PGenieGen.Model.Input.Word (Word (..))
-import PGenieGen.Model.Input.WordChar (WordChar (..))
-import PGenieGen.Model.Input.WordOrNumber (WordOrNumber (..))
 import PGenieGen.Prelude hiding (Version, Word)
 
 -- | Version with semantic versioning components

@@ -1,7 +1,10 @@
 -- | Integration with generator adapters.
 module PGenieGen.Fixtures.Project1 where
 
+import Cases qualified
+import Data.Char qualified as Char
 import Data.List.NonEmpty qualified as NonEmpty
+import Data.Text qualified as Text
 import PGenieGen.Model
 import PGenieGen.Model.Input qualified as Input
 import PGenieGen.Prelude
@@ -22,12 +25,18 @@ input =
         ]
     }
   where
-    -- Helper function to create a simple name from text
+    -- Helper function to create a name from text with all case renderings
     textName :: Text -> Input.Name
-    textName _text =
+    textName source =
       Input.Name
-        { head = Input.Word (NonEmpty.fromList [Input.WordCharA, Input.WordCharB]),
-          tail = []
+        { inCamelCase = Cases.camelize source,
+          inPascalCase = Cases.process Cases.title Cases.camel source,
+          inKebabCase = Cases.spinalize source,
+          inTrainCase = Cases.process Cases.title Cases.spinal source,
+          inScreamingKebabCase = Cases.process Cases.upper Cases.spinal source,
+          inSnakeCase = Cases.snakify source,
+          inCamelSnakeCase = Cases.process Cases.title Cases.snake source,
+          inScreamingSnakeCase = Cases.process Cases.upper Cases.snake source
         }
 
     -- Example query

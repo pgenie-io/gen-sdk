@@ -5,40 +5,16 @@ let NonEmpty
 
 let Version = { major : Natural, minor : Natural, patch : Natural }
 
-let LatinChar =
-      < A
-      | B
-      | C
-      | D
-      | E
-      | F
-      | G
-      | H
-      | I
-      | J
-      | K
-      | L
-      | M
-      | N
-      | O
-      | P
-      | Q
-      | R
-      | S
-      | T
-      | U
-      | V
-      | W
-      | X
-      | Y
-      | Z
-      >
-
-let LatinWord = NonEmpty LatinChar
-
-let LatinWordOrNumber = < Number : Natural | Word : LatinWord >
-
-let Name = { head : LatinWord, tail : List LatinWordOrNumber }
+let Name =
+      { inCamelCase : Text
+      , inPascalCase : Text
+      , inKebabCase : Text
+      , inTrainCase : Text
+      , inScreamingKebabCase : Text
+      , inSnakeCase : Text
+      , inCamelSnakeCase : Text
+      , inScreamingSnakeCase : Text
+      }
 
 let Primitive =
     -- | PostgreSQL primitive type.
@@ -292,9 +268,6 @@ let Primitive/toText
 
 in  { Project
     , Version
-    , LatinChar
-    , LatinWord
-    , LatinWordOrNumber
     , Name
     , Primitive
     , Primitive/toText
