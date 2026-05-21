@@ -1,10 +1,9 @@
+let Prelude = ../Deps/Prelude.dhall
+
 let Project = ../Project.dhall
 
-let Name = Project.Name
-
-let name
-    : Text -> Text -> Text -> Text -> Text -> Text -> Text -> Text -> Name
-    = \(inCamelCase : Text) ->
+let name =
+      \(inCamelCase : Text) ->
       \(inPascalCase : Text) ->
       \(inKebabCase : Text) ->
       \(inTrainCase : Text) ->
@@ -12,80 +11,114 @@ let name
       \(inSnakeCase : Text) ->
       \(inCamelSnakeCase : Text) ->
       \(inScreamingSnakeCase : Text) ->
-        { inCamelCase
-        , inPascalCase
-        , inKebabCase
-        , inTrainCase
-        , inScreamingKebabCase
-        , inSnakeCase
-        , inCamelSnakeCase
-        , inScreamingSnakeCase
-        }
+          { inCamelCase
+          , inPascalCase
+          , inKebabCase
+          , inTrainCase
+          , inScreamingKebabCase
+          , inSnakeCase
+          , inCamelSnakeCase
+          , inScreamingSnakeCase
+          }
+        : Project.Name
 
-let query =
-      let paramName =
-            name "param" "Param" "param" "Param" "PARAM" "param" "Param" "PARAM"
+let scalarQueries =
+      \(scalar : Project.Scalar) ->
+      \(inCamelCase : Text) ->
+      \(inPascalCase : Text) ->
+      \(inKebabCase : Text) ->
+      \(inTrainCase : Text) ->
+      \(inScreamingKebabCase : Text) ->
+      \(inSnakeCase : Text) ->
+      \(inCamelSnakeCase : Text) ->
+      \(inScreamingSnakeCase : Text) ->
+        let primitiveName =
+              name
+                inCamelCase
+                inPascalCase
+                inKebabCase
+                inTrainCase
+                inScreamingKebabCase
+                inSnakeCase
+                inCamelSnakeCase
+                inScreamingSnakeCase
 
-      let member =
-            \(name : Name) ->
-            \(pgName : Text) ->
-            \(primitive : Project.Primitive) ->
-              { name
-              , pgName
-              , isNullable = False
-              , value =
-                { arraySettings = None Project.ArraySettings
-                , scalar = Project.Scalar.Primitive primitive
-                }
-              }
+        let scalarTypeSig =
+              if Text/equal inSnakeCase "char" then "\"char\"" else inSnakeCase
 
-      in  \(primitive : Project.Primitive) ->
-          \(inCamelCase : Text) ->
-          \(inPascalCase : Text) ->
-          \(inKebabCase : Text) ->
-          \(inTrainCase : Text) ->
-          \(inScreamingKebabCase : Text) ->
-          \(inSnakeCase : Text) ->
-          \(inCamelSnakeCase : Text) ->
-          \(inScreamingSnakeCase : Text) ->
-            let primitiveName =
-                  name
-                    inCamelCase
-                    inPascalCase
-                    inKebabCase
-                    inTrainCase
-                    inScreamingKebabCase
-                    inSnakeCase
-                    inCamelSnakeCase
-                    inScreamingSnakeCase
+        let query =
+              \(nullable : Bool) ->
+              \(dimensionality : Natural) ->
+              \(elementIsNullable : Bool) ->
+                let typeSig =
+                          scalarTypeSig
+                      ++  Prelude.Text.replicate dimensionality "[]"
 
-            in  { name =
-                    name
-                      ("select" ++ inPascalCase)
-                      ("Select" ++ inPascalCase)
-                      ("select-" ++ inKebabCase)
-                      ("Select-" ++ inTrainCase)
-                      ("SELECT-" ++ inScreamingKebabCase)
-                      ("select_" ++ inSnakeCase)
-                      ("Select_" ++ inCamelSnakeCase)
-                      ("SELECT_" ++ inScreamingSnakeCase)
-                , srcPath = "./queries/select_" ++ inSnakeCase ++ ".sql"
-                , idempotent = True
-                , params = [ member paramName "param" primitive ]
-                , result = Some
-                  { cardinality = Project.ResultRowsCardinality.Multiple
-                  , columns =
-                    { head = member primitiveName inSnakeCase primitive
-                    , tail = [] : List Project.Member
+                let member =
+                      { name = primitiveName
+                      , pgName = inSnakeCase
+                      , isNullable = nullable
+                      , value =
+                        { arraySettings =
+                            if    Natural/isZero dimensionality
+                            then  None Project.ArraySettings
+                            else  Some { dimensionality, elementIsNullable }
+                        , scalar
+                        }
+                      }
+
+                let dimensionality = Natural/show dimensionality
+
+                let nullable = if nullable then "1" else "0"
+
+                let elementIsNullable = if elementIsNullable then "1" else "0"
+
+                let name =
+                      name
+                        "select${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
+                        "Select${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
+                        "select-${inKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "Select-${inTrainCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "SELECT-${inScreamingKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "select_${inSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "Select_${inCamelSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "SELECT_${inScreamingSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+
+                in  { name
+                    , srcPath = "./queries/${name.inSnakeCase}.sql"
+                    , idempotent = True
+                    , params = [ member ]
+                    , result = Some
+                      { cardinality = Project.ResultRowsCardinality.Multiple
+                      , columns =
+                        { head = member, tail = [] : List Project.Member }
+                      }
+                    , fragments =
+                      [ Project.QueryFragment.Sql "select "
+                      , Project.QueryFragment.Var
+                          { name = primitiveName
+                          , rawName = inSnakeCase
+                          , paramIndex = 0
+                          }
+                      , Project.QueryFragment.Sql "::${typeSig}"
+                      ]
                     }
-                  }
-                , fragments =
-                  [ Project.QueryFragment.Sql "select "
-                  , Project.QueryFragment.Var
-                      { name = paramName, rawName = "param", paramIndex = 0 }
-                  , Project.QueryFragment.Sql ("::" ++ inSnakeCase)
-                  ]
-                }
+
+        in  [ query True 0 False
+            , query True 1 False
+            , query True 2 False
+            , query True 1 True
+            , query True 2 True
+            , query False 0 False
+            , query False 1 False
+            , query False 2 False
+            , query False 1 True
+            , query False 2 True
+            ]
+
+let primitiveQueries =
+      \(primitive : Project.Primitive) ->
+        scalarQueries (Project.Scalar.Primitive primitive)
 
 in  { space =
         name
@@ -110,577 +143,579 @@ in  { space =
     , version = { major = 1, minor = 0, patch = 1 }
     , customTypes = [] : List Project.CustomType
     , queries =
-      [ query
-          Project.Primitive.Bit
-          "bit"
-          "Bit"
-          "bit"
-          "Bit"
-          "BIT"
-          "bit"
-          "Bit"
-          "BIT"
-      , query
-          Project.Primitive.Bool
-          "bool"
-          "Bool"
-          "bool"
-          "Bool"
-          "BOOL"
-          "bool"
-          "Bool"
-          "BOOL"
-      , query
-          Project.Primitive.Box
-          "box"
-          "Box"
-          "box"
-          "Box"
-          "BOX"
-          "box"
-          "Box"
-          "BOX"
-      , query
-          Project.Primitive.Bpchar
-          "bpchar"
-          "Bpchar"
-          "bpchar"
-          "Bpchar"
-          "BPCHAR"
-          "bpchar"
-          "Bpchar"
-          "BPCHAR"
-      , query
-          Project.Primitive.Bytea
-          "bytea"
-          "Bytea"
-          "bytea"
-          "Bytea"
-          "BYTEA"
-          "bytea"
-          "Bytea"
-          "BYTEA"
-      , query
-          Project.Primitive.Char
-          "char"
-          "Char"
-          "char"
-          "Char"
-          "CHAR"
-          "char"
-          "Char"
-          "CHAR"
-      , query
-          Project.Primitive.Cidr
-          "cidr"
-          "Cidr"
-          "cidr"
-          "Cidr"
-          "CIDR"
-          "cidr"
-          "Cidr"
-          "CIDR"
-      , query
-          Project.Primitive.Circle
-          "circle"
-          "Circle"
-          "circle"
-          "Circle"
-          "CIRCLE"
-          "circle"
-          "Circle"
-          "CIRCLE"
-      , query
-          Project.Primitive.Citext
-          "citext"
-          "Citext"
-          "citext"
-          "Citext"
-          "CITEXT"
-          "citext"
-          "Citext"
-          "CITEXT"
-      , query
-          Project.Primitive.Date
-          "date"
-          "Date"
-          "date"
-          "Date"
-          "DATE"
-          "date"
-          "Date"
-          "DATE"
-      , query
-          Project.Primitive.Datemultirange
-          "datemultirange"
-          "Datemultirange"
-          "datemultirange"
-          "Datemultirange"
-          "DATEMULTIRANGE"
-          "datemultirange"
-          "Datemultirange"
-          "DATEMULTIRANGE"
-      , query
-          Project.Primitive.Daterange
-          "daterange"
-          "Daterange"
-          "daterange"
-          "Daterange"
-          "DATERANGE"
-          "daterange"
-          "Daterange"
-          "DATERANGE"
-      , query
-          Project.Primitive.Float4
-          "float4"
-          "Float4"
-          "float4"
-          "Float4"
-          "FLOAT4"
-          "float4"
-          "Float4"
-          "FLOAT4"
-      , query
-          Project.Primitive.Float8
-          "float8"
-          "Float8"
-          "float8"
-          "Float8"
-          "FLOAT8"
-          "float8"
-          "Float8"
-          "FLOAT8"
-      , query
-          Project.Primitive.Hstore
-          "hstore"
-          "Hstore"
-          "hstore"
-          "Hstore"
-          "HSTORE"
-          "hstore"
-          "Hstore"
-          "HSTORE"
-      , query
-          Project.Primitive.Inet
-          "inet"
-          "Inet"
-          "inet"
-          "Inet"
-          "INET"
-          "inet"
-          "Inet"
-          "INET"
-      , query
-          Project.Primitive.Int2
-          "int2"
-          "Int2"
-          "int2"
-          "Int2"
-          "INT2"
-          "int2"
-          "Int2"
-          "INT2"
-      , query
-          Project.Primitive.Int4
-          "int4"
-          "Int4"
-          "int4"
-          "Int4"
-          "INT4"
-          "int4"
-          "Int4"
-          "INT4"
-      , query
-          Project.Primitive.Int4multirange
-          "int4multirange"
-          "Int4multirange"
-          "int4multirange"
-          "Int4multirange"
-          "INT4MULTIRANGE"
-          "int4multirange"
-          "Int4multirange"
-          "INT4MULTIRANGE"
-      , query
-          Project.Primitive.Int4range
-          "int4range"
-          "Int4range"
-          "int4range"
-          "Int4range"
-          "INT4RANGE"
-          "int4range"
-          "Int4range"
-          "INT4RANGE"
-      , query
-          Project.Primitive.Int8
-          "int8"
-          "Int8"
-          "int8"
-          "Int8"
-          "INT8"
-          "int8"
-          "Int8"
-          "INT8"
-      , query
-          Project.Primitive.Int8multirange
-          "int8multirange"
-          "Int8multirange"
-          "int8multirange"
-          "Int8multirange"
-          "INT8MULTIRANGE"
-          "int8multirange"
-          "Int8multirange"
-          "INT8MULTIRANGE"
-      , query
-          Project.Primitive.Int8range
-          "int8range"
-          "Int8range"
-          "int8range"
-          "Int8range"
-          "INT8RANGE"
-          "int8range"
-          "Int8range"
-          "INT8RANGE"
-      , query
-          Project.Primitive.Interval
-          "interval"
-          "Interval"
-          "interval"
-          "Interval"
-          "INTERVAL"
-          "interval"
-          "Interval"
-          "INTERVAL"
-      , query
-          Project.Primitive.Json
-          "json"
-          "Json"
-          "json"
-          "Json"
-          "JSON"
-          "json"
-          "Json"
-          "JSON"
-      , query
-          Project.Primitive.Jsonb
-          "jsonb"
-          "Jsonb"
-          "jsonb"
-          "Jsonb"
-          "JSONB"
-          "jsonb"
-          "Jsonb"
-          "JSONB"
-      , query
-          Project.Primitive.Line
-          "line"
-          "Line"
-          "line"
-          "Line"
-          "LINE"
-          "line"
-          "Line"
-          "LINE"
-      , query
-          Project.Primitive.Lseg
-          "lseg"
-          "Lseg"
-          "lseg"
-          "Lseg"
-          "LSEG"
-          "lseg"
-          "Lseg"
-          "LSEG"
-      , query
-          Project.Primitive.Ltree
-          "ltree"
-          "Ltree"
-          "ltree"
-          "Ltree"
-          "LTREE"
-          "ltree"
-          "Ltree"
-          "LTREE"
-      , query
-          Project.Primitive.Macaddr
-          "macaddr"
-          "Macaddr"
-          "macaddr"
-          "Macaddr"
-          "MACADDR"
-          "macaddr"
-          "Macaddr"
-          "MACADDR"
-      , query
-          Project.Primitive.Macaddr8
-          "macaddr8"
-          "Macaddr8"
-          "macaddr8"
-          "Macaddr8"
-          "MACADDR8"
-          "macaddr8"
-          "Macaddr8"
-          "MACADDR8"
-      , query
-          Project.Primitive.Money
-          "money"
-          "Money"
-          "money"
-          "Money"
-          "MONEY"
-          "money"
-          "Money"
-          "MONEY"
-      , query
-          Project.Primitive.Name
-          "name"
-          "Name"
-          "name"
-          "Name"
-          "NAME"
-          "name"
-          "Name"
-          "NAME"
-      , query
-          Project.Primitive.Numeric
-          "numeric"
-          "Numeric"
-          "numeric"
-          "Numeric"
-          "NUMERIC"
-          "numeric"
-          "Numeric"
-          "NUMERIC"
-      , query
-          Project.Primitive.Nummultirange
-          "nummultirange"
-          "Nummultirange"
-          "nummultirange"
-          "Nummultirange"
-          "NUMMULTIRANGE"
-          "nummultirange"
-          "Nummultirange"
-          "NUMMULTIRANGE"
-      , query
-          Project.Primitive.Numrange
-          "numrange"
-          "Numrange"
-          "numrange"
-          "Numrange"
-          "NUMRANGE"
-          "numrange"
-          "Numrange"
-          "NUMRANGE"
-      , query
-          Project.Primitive.Oid
-          "oid"
-          "Oid"
-          "oid"
-          "Oid"
-          "OID"
-          "oid"
-          "Oid"
-          "OID"
-      , query
-          Project.Primitive.Path
-          "path"
-          "Path"
-          "path"
-          "Path"
-          "PATH"
-          "path"
-          "Path"
-          "PATH"
-      , query
-          Project.Primitive.PgLsn
-          "pgLsn"
-          "PgLsn"
-          "pg-lsn"
-          "Pg-Lsn"
-          "PG-LSN"
-          "pg_lsn"
-          "Pg_Lsn"
-          "PG_LSN"
-      , query
-          Project.Primitive.PgSnapshot
-          "pgSnapshot"
-          "PgSnapshot"
-          "pg-snapshot"
-          "Pg-Snapshot"
-          "PG-SNAPSHOT"
-          "pg_snapshot"
-          "Pg_Snapshot"
-          "PG_SNAPSHOT"
-      , query
-          Project.Primitive.Point
-          "point"
-          "Point"
-          "point"
-          "Point"
-          "POINT"
-          "point"
-          "Point"
-          "POINT"
-      , query
-          Project.Primitive.Polygon
-          "polygon"
-          "Polygon"
-          "polygon"
-          "Polygon"
-          "POLYGON"
-          "polygon"
-          "Polygon"
-          "POLYGON"
-      , query
-          Project.Primitive.Text
-          "text"
-          "Text"
-          "text"
-          "Text"
-          "TEXT"
-          "text"
-          "Text"
-          "TEXT"
-      , query
-          Project.Primitive.Time
-          "time"
-          "Time"
-          "time"
-          "Time"
-          "TIME"
-          "time"
-          "Time"
-          "TIME"
-      , query
-          Project.Primitive.Timestamp
-          "timestamp"
-          "Timestamp"
-          "timestamp"
-          "Timestamp"
-          "TIMESTAMP"
-          "timestamp"
-          "Timestamp"
-          "TIMESTAMP"
-      , query
-          Project.Primitive.Timestamptz
-          "timestamptz"
-          "Timestamptz"
-          "timestamptz"
-          "Timestamptz"
-          "TIMESTAMPTZ"
-          "timestamptz"
-          "Timestamptz"
-          "TIMESTAMPTZ"
-      , query
-          Project.Primitive.Timetz
-          "timetz"
-          "Timetz"
-          "timetz"
-          "Timetz"
-          "TIMETZ"
-          "timetz"
-          "Timetz"
-          "TIMETZ"
-      , query
-          Project.Primitive.Tsmultirange
-          "tsmultirange"
-          "Tsmultirange"
-          "tsmultirange"
-          "Tsmultirange"
-          "TSMULTIRANGE"
-          "tsmultirange"
-          "Tsmultirange"
-          "TSMULTIRANGE"
-      , query
-          Project.Primitive.Tsquery
-          "tsquery"
-          "Tsquery"
-          "tsquery"
-          "Tsquery"
-          "TSQUERY"
-          "tsquery"
-          "Tsquery"
-          "TSQUERY"
-      , query
-          Project.Primitive.Tsrange
-          "tsrange"
-          "Tsrange"
-          "tsrange"
-          "Tsrange"
-          "TSRANGE"
-          "tsrange"
-          "Tsrange"
-          "TSRANGE"
-      , query
-          Project.Primitive.Tstzmultirange
-          "tstzmultirange"
-          "Tstzmultirange"
-          "tstzmultirange"
-          "Tstzmultirange"
-          "TSTZMULTIRANGE"
-          "tstzmultirange"
-          "Tstzmultirange"
-          "TSTZMULTIRANGE"
-      , query
-          Project.Primitive.Tstzrange
-          "tstzrange"
-          "Tstzrange"
-          "tstzrange"
-          "Tstzrange"
-          "TSTZRANGE"
-          "tstzrange"
-          "Tstzrange"
-          "TSTZRANGE"
-      , query
-          Project.Primitive.Tsvector
-          "tsvector"
-          "Tsvector"
-          "tsvector"
-          "Tsvector"
-          "TSVECTOR"
-          "tsvector"
-          "Tsvector"
-          "TSVECTOR"
-      , query
-          Project.Primitive.Uuid
-          "uuid"
-          "Uuid"
-          "uuid"
-          "Uuid"
-          "UUID"
-          "uuid"
-          "Uuid"
-          "UUID"
-      , query
-          Project.Primitive.Varbit
-          "varbit"
-          "Varbit"
-          "varbit"
-          "Varbit"
-          "VARBIT"
-          "varbit"
-          "Varbit"
-          "VARBIT"
-      , query
-          Project.Primitive.Varchar
-          "varchar"
-          "Varchar"
-          "varchar"
-          "Varchar"
-          "VARCHAR"
-          "varchar"
-          "Varchar"
-          "VARCHAR"
-      , query
-          Project.Primitive.Xml
-          "xml"
-          "Xml"
-          "xml"
-          "Xml"
-          "XML"
-          "xml"
-          "Xml"
-          "XML"
-      ]
+        Prelude.List.concat
+          Project.Query
+          [ primitiveQueries
+              Project.Primitive.Bit
+              "bit"
+              "Bit"
+              "bit"
+              "Bit"
+              "BIT"
+              "bit"
+              "Bit"
+              "BIT"
+          , primitiveQueries
+              Project.Primitive.Bool
+              "bool"
+              "Bool"
+              "bool"
+              "Bool"
+              "BOOL"
+              "bool"
+              "Bool"
+              "BOOL"
+          , primitiveQueries
+              Project.Primitive.Box
+              "box"
+              "Box"
+              "box"
+              "Box"
+              "BOX"
+              "box"
+              "Box"
+              "BOX"
+          , primitiveQueries
+              Project.Primitive.Bpchar
+              "bpchar"
+              "Bpchar"
+              "bpchar"
+              "Bpchar"
+              "BPCHAR"
+              "bpchar"
+              "Bpchar"
+              "BPCHAR"
+          , primitiveQueries
+              Project.Primitive.Bytea
+              "bytea"
+              "Bytea"
+              "bytea"
+              "Bytea"
+              "BYTEA"
+              "bytea"
+              "Bytea"
+              "BYTEA"
+          , primitiveQueries
+              Project.Primitive.Char
+              "char"
+              "Char"
+              "char"
+              "Char"
+              "CHAR"
+              "char"
+              "Char"
+              "CHAR"
+          , primitiveQueries
+              Project.Primitive.Cidr
+              "cidr"
+              "Cidr"
+              "cidr"
+              "Cidr"
+              "CIDR"
+              "cidr"
+              "Cidr"
+              "CIDR"
+          , primitiveQueries
+              Project.Primitive.Circle
+              "circle"
+              "Circle"
+              "circle"
+              "Circle"
+              "CIRCLE"
+              "circle"
+              "Circle"
+              "CIRCLE"
+          , primitiveQueries
+              Project.Primitive.Citext
+              "citext"
+              "Citext"
+              "citext"
+              "Citext"
+              "CITEXT"
+              "citext"
+              "Citext"
+              "CITEXT"
+          , primitiveQueries
+              Project.Primitive.Date
+              "date"
+              "Date"
+              "date"
+              "Date"
+              "DATE"
+              "date"
+              "Date"
+              "DATE"
+          , primitiveQueries
+              Project.Primitive.Datemultirange
+              "datemultirange"
+              "Datemultirange"
+              "datemultirange"
+              "Datemultirange"
+              "DATEMULTIRANGE"
+              "datemultirange"
+              "Datemultirange"
+              "DATEMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Daterange
+              "daterange"
+              "Daterange"
+              "daterange"
+              "Daterange"
+              "DATERANGE"
+              "daterange"
+              "Daterange"
+              "DATERANGE"
+          , primitiveQueries
+              Project.Primitive.Float4
+              "float4"
+              "Float4"
+              "float4"
+              "Float4"
+              "FLOAT4"
+              "float4"
+              "Float4"
+              "FLOAT4"
+          , primitiveQueries
+              Project.Primitive.Float8
+              "float8"
+              "Float8"
+              "float8"
+              "Float8"
+              "FLOAT8"
+              "float8"
+              "Float8"
+              "FLOAT8"
+          , primitiveQueries
+              Project.Primitive.Hstore
+              "hstore"
+              "Hstore"
+              "hstore"
+              "Hstore"
+              "HSTORE"
+              "hstore"
+              "Hstore"
+              "HSTORE"
+          , primitiveQueries
+              Project.Primitive.Inet
+              "inet"
+              "Inet"
+              "inet"
+              "Inet"
+              "INET"
+              "inet"
+              "Inet"
+              "INET"
+          , primitiveQueries
+              Project.Primitive.Int2
+              "int2"
+              "Int2"
+              "int2"
+              "Int2"
+              "INT2"
+              "int2"
+              "Int2"
+              "INT2"
+          , primitiveQueries
+              Project.Primitive.Int4
+              "int4"
+              "Int4"
+              "int4"
+              "Int4"
+              "INT4"
+              "int4"
+              "Int4"
+              "INT4"
+          , primitiveQueries
+              Project.Primitive.Int4multirange
+              "int4multirange"
+              "Int4multirange"
+              "int4multirange"
+              "Int4multirange"
+              "INT4MULTIRANGE"
+              "int4multirange"
+              "Int4multirange"
+              "INT4MULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Int4range
+              "int4range"
+              "Int4range"
+              "int4range"
+              "Int4range"
+              "INT4RANGE"
+              "int4range"
+              "Int4range"
+              "INT4RANGE"
+          , primitiveQueries
+              Project.Primitive.Int8
+              "int8"
+              "Int8"
+              "int8"
+              "Int8"
+              "INT8"
+              "int8"
+              "Int8"
+              "INT8"
+          , primitiveQueries
+              Project.Primitive.Int8multirange
+              "int8multirange"
+              "Int8multirange"
+              "int8multirange"
+              "Int8multirange"
+              "INT8MULTIRANGE"
+              "int8multirange"
+              "Int8multirange"
+              "INT8MULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Int8range
+              "int8range"
+              "Int8range"
+              "int8range"
+              "Int8range"
+              "INT8RANGE"
+              "int8range"
+              "Int8range"
+              "INT8RANGE"
+          , primitiveQueries
+              Project.Primitive.Interval
+              "interval"
+              "Interval"
+              "interval"
+              "Interval"
+              "INTERVAL"
+              "interval"
+              "Interval"
+              "INTERVAL"
+          , primitiveQueries
+              Project.Primitive.Json
+              "json"
+              "Json"
+              "json"
+              "Json"
+              "JSON"
+              "json"
+              "Json"
+              "JSON"
+          , primitiveQueries
+              Project.Primitive.Jsonb
+              "jsonb"
+              "Jsonb"
+              "jsonb"
+              "Jsonb"
+              "JSONB"
+              "jsonb"
+              "Jsonb"
+              "JSONB"
+          , primitiveQueries
+              Project.Primitive.Line
+              "line"
+              "Line"
+              "line"
+              "Line"
+              "LINE"
+              "line"
+              "Line"
+              "LINE"
+          , primitiveQueries
+              Project.Primitive.Lseg
+              "lseg"
+              "Lseg"
+              "lseg"
+              "Lseg"
+              "LSEG"
+              "lseg"
+              "Lseg"
+              "LSEG"
+          , primitiveQueries
+              Project.Primitive.Ltree
+              "ltree"
+              "Ltree"
+              "ltree"
+              "Ltree"
+              "LTREE"
+              "ltree"
+              "Ltree"
+              "LTREE"
+          , primitiveQueries
+              Project.Primitive.Macaddr
+              "macaddr"
+              "Macaddr"
+              "macaddr"
+              "Macaddr"
+              "MACADDR"
+              "macaddr"
+              "Macaddr"
+              "MACADDR"
+          , primitiveQueries
+              Project.Primitive.Macaddr8
+              "macaddr8"
+              "Macaddr8"
+              "macaddr8"
+              "Macaddr8"
+              "MACADDR8"
+              "macaddr8"
+              "Macaddr8"
+              "MACADDR8"
+          , primitiveQueries
+              Project.Primitive.Money
+              "money"
+              "Money"
+              "money"
+              "Money"
+              "MONEY"
+              "money"
+              "Money"
+              "MONEY"
+          , primitiveQueries
+              Project.Primitive.Name
+              "name"
+              "Name"
+              "name"
+              "Name"
+              "NAME"
+              "name"
+              "Name"
+              "NAME"
+          , primitiveQueries
+              Project.Primitive.Numeric
+              "numeric"
+              "Numeric"
+              "numeric"
+              "Numeric"
+              "NUMERIC"
+              "numeric"
+              "Numeric"
+              "NUMERIC"
+          , primitiveQueries
+              Project.Primitive.Nummultirange
+              "nummultirange"
+              "Nummultirange"
+              "nummultirange"
+              "Nummultirange"
+              "NUMMULTIRANGE"
+              "nummultirange"
+              "Nummultirange"
+              "NUMMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Numrange
+              "numrange"
+              "Numrange"
+              "numrange"
+              "Numrange"
+              "NUMRANGE"
+              "numrange"
+              "Numrange"
+              "NUMRANGE"
+          , primitiveQueries
+              Project.Primitive.Oid
+              "oid"
+              "Oid"
+              "oid"
+              "Oid"
+              "OID"
+              "oid"
+              "Oid"
+              "OID"
+          , primitiveQueries
+              Project.Primitive.Path
+              "path"
+              "Path"
+              "path"
+              "Path"
+              "PATH"
+              "path"
+              "Path"
+              "PATH"
+          , primitiveQueries
+              Project.Primitive.PgLsn
+              "pgLsn"
+              "PgLsn"
+              "pg-lsn"
+              "Pg-Lsn"
+              "PG-LSN"
+              "pg_lsn"
+              "Pg_Lsn"
+              "PG_LSN"
+          , primitiveQueries
+              Project.Primitive.PgSnapshot
+              "pgSnapshot"
+              "PgSnapshot"
+              "pg-snapshot"
+              "Pg-Snapshot"
+              "PG-SNAPSHOT"
+              "pg_snapshot"
+              "Pg_Snapshot"
+              "PG_SNAPSHOT"
+          , primitiveQueries
+              Project.Primitive.Point
+              "point"
+              "Point"
+              "point"
+              "Point"
+              "POINT"
+              "point"
+              "Point"
+              "POINT"
+          , primitiveQueries
+              Project.Primitive.Polygon
+              "polygon"
+              "Polygon"
+              "polygon"
+              "Polygon"
+              "POLYGON"
+              "polygon"
+              "Polygon"
+              "POLYGON"
+          , primitiveQueries
+              Project.Primitive.Text
+              "text"
+              "Text"
+              "text"
+              "Text"
+              "TEXT"
+              "text"
+              "Text"
+              "TEXT"
+          , primitiveQueries
+              Project.Primitive.Time
+              "time"
+              "Time"
+              "time"
+              "Time"
+              "TIME"
+              "time"
+              "Time"
+              "TIME"
+          , primitiveQueries
+              Project.Primitive.Timestamp
+              "timestamp"
+              "Timestamp"
+              "timestamp"
+              "Timestamp"
+              "TIMESTAMP"
+              "timestamp"
+              "Timestamp"
+              "TIMESTAMP"
+          , primitiveQueries
+              Project.Primitive.Timestamptz
+              "timestamptz"
+              "Timestamptz"
+              "timestamptz"
+              "Timestamptz"
+              "TIMESTAMPTZ"
+              "timestamptz"
+              "Timestamptz"
+              "TIMESTAMPTZ"
+          , primitiveQueries
+              Project.Primitive.Timetz
+              "timetz"
+              "Timetz"
+              "timetz"
+              "Timetz"
+              "TIMETZ"
+              "timetz"
+              "Timetz"
+              "TIMETZ"
+          , primitiveQueries
+              Project.Primitive.Tsmultirange
+              "tsmultirange"
+              "Tsmultirange"
+              "tsmultirange"
+              "Tsmultirange"
+              "TSMULTIRANGE"
+              "tsmultirange"
+              "Tsmultirange"
+              "TSMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Tsquery
+              "tsquery"
+              "Tsquery"
+              "tsquery"
+              "Tsquery"
+              "TSQUERY"
+              "tsquery"
+              "Tsquery"
+              "TSQUERY"
+          , primitiveQueries
+              Project.Primitive.Tsrange
+              "tsrange"
+              "Tsrange"
+              "tsrange"
+              "Tsrange"
+              "TSRANGE"
+              "tsrange"
+              "Tsrange"
+              "TSRANGE"
+          , primitiveQueries
+              Project.Primitive.Tstzmultirange
+              "tstzmultirange"
+              "Tstzmultirange"
+              "tstzmultirange"
+              "Tstzmultirange"
+              "TSTZMULTIRANGE"
+              "tstzmultirange"
+              "Tstzmultirange"
+              "TSTZMULTIRANGE"
+          , primitiveQueries
+              Project.Primitive.Tstzrange
+              "tstzrange"
+              "Tstzrange"
+              "tstzrange"
+              "Tstzrange"
+              "TSTZRANGE"
+              "tstzrange"
+              "Tstzrange"
+              "TSTZRANGE"
+          , primitiveQueries
+              Project.Primitive.Tsvector
+              "tsvector"
+              "Tsvector"
+              "tsvector"
+              "Tsvector"
+              "TSVECTOR"
+              "tsvector"
+              "Tsvector"
+              "TSVECTOR"
+          , primitiveQueries
+              Project.Primitive.Uuid
+              "uuid"
+              "Uuid"
+              "uuid"
+              "Uuid"
+              "UUID"
+              "uuid"
+              "Uuid"
+              "UUID"
+          , primitiveQueries
+              Project.Primitive.Varbit
+              "varbit"
+              "Varbit"
+              "varbit"
+              "Varbit"
+              "VARBIT"
+              "varbit"
+              "Varbit"
+              "VARBIT"
+          , primitiveQueries
+              Project.Primitive.Varchar
+              "varchar"
+              "Varchar"
+              "varchar"
+              "Varchar"
+              "VARCHAR"
+              "varchar"
+              "Varchar"
+              "VARCHAR"
+          , primitiveQueries
+              Project.Primitive.Xml
+              "xml"
+              "Xml"
+              "xml"
+              "Xml"
+              "XML"
+              "xml"
+              "Xml"
+              "XML"
+          ]
     , migrations =
       [ { name = "1"
         , sql =
