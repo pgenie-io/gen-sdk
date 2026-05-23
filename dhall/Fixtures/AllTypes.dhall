@@ -89,6 +89,7 @@ let scalarQueries =
 
                 in  { name
                     , srcPath = "./queries/${name.inSnakeCase}.sql"
+                    , identity = True
                     , idempotent = True
                     , params = [ member ]
                     , result = Some

@@ -255,6 +255,7 @@ data QueryFragment
 data Query = Query
   { name :: Name,
     srcPath :: Path,
+    identity :: Bool,
     idempotent :: Bool,
     params :: [Member],
     result :: Maybe ResultRows,

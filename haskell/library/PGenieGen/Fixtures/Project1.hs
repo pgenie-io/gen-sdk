@@ -45,6 +45,7 @@ input =
       Input.Query
         { name = textName "get_user",
           srcPath = "queries/get_user.sql",
+          identity = False,
           idempotent = True,
           params = [userIdParam],
           result = Just userResult,

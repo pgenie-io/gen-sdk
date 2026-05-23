@@ -180,6 +180,7 @@ let QueryFragments = List QueryFragment
 let Query =
       { name : Name
       , srcPath : Text
+      , identity : Bool
       , idempotent : Bool
       , params : List Member
       , result : Result
