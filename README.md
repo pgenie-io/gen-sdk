@@ -3,27 +3,28 @@
 [![Continuous Docs for Dhall](https://img.shields.io/badge/dhall_docs-master-blue)](https://pgenie-io.github.io/gen-sdk/dhall/)
 [![Continuous Docs for Haskell](https://img.shields.io/badge/haskell_docs-master-blue)](https://pgenie-io.github.io/gen-sdk/haskell/)
 
-SDK for building [pGenie](https://github.com/pgenie-io/pgenie) code generators.
+Shared contract and SDK for [pGenie](https://pgenie.io) code generators.
+
+The repository has two consumers of the same model:
+
+- The **Dhall contract** is what generator authors write against. It defines the generator input schema, fixtures, contract versioning, and the `module` constructor used to assemble a generator package.
+- The **Haskell library** is used by the pGenie CLI app to load generators, validate the contract version, and invoke the compiled generator code at runtime or through Template Haskell.
 
 > [!IMPORTANT]
 > This library relies on a fork of Dhall that provides primitives for `Natural/equal` and `Natural/lessThan`. These have been [PRd](https://github.com/dhall-lang/dhall-haskell/pull/2739) into the main repo. Until they get merged you will need to use the custom Dhall binary provided in https://github.com/nikita-volkov/dhall-haskell.
 
 ## Structure
 
-The repository contains two components distributed together:
-
 ### `dhall/`
 
-The primary component for generator authors. It provides the Dhall API that code generators are written against — type definitions, the module constructor, and utilities for producing compilable output. See the [Dhall docs](https://pgenie-io.github.io/gen-sdk/dhall/) for the full API reference.
+The Dhall side is the contract for generator authors. It is the source of truth for the codegen model and the helper API used by generators. See the [Dhall docs](https://pgenie-io.github.io/gen-sdk/dhall/) for the full reference.
 
 The entry point is `package.dhall`, which exposes:
 
-- **`Project`** — the input model describing a PostgreSQL project (queries, custom types, primitive types, etc.)
-- **`Compiled`** — the output model carrying generated files along with warnings and errors
-- **`File`** / **`Files`** — types representing generated output files
-- **`ContractVersion`** — versioning schema for the generator contract
-- **`module`** — constructor function for assembling a generator module from a contract version, a config type, and a compile function
-- **`Fixtures`** — sample projects for use in generator tests
+- **`Project`** — the input model describing a PostgreSQL project: queries, custom types, primitive types, migrations, and related metadata
+- **`ContractVersion`** — the versioning schema for the generator contract
+- **`module`** — the constructor used to assemble a generator module from a contract version, a config type, and a compile function
+- **`Fixtures`** — sample projects for generator tests
 
 A minimal generator looks like this:
 
@@ -40,8 +41,8 @@ For a real-world example see [haskell-hasql.gen](https://github.com/pgenie-io/ha
 
 ### `haskell/`
 
-The Haskell library used by [pGenie](https://github.com/pgenie-io/pgenie) itself to load and invoke generators at runtime and at compile time (via Template Haskell). Generator authors do not need this component. See the [Haskell docs](https://pgenie-io.github.io/gen-sdk/haskell/) for details.
+The Haskell side is the bridge used by the pGenie CLI app. It loads generator code, checks contract compatibility, decodes generator configuration, and exposes the same generator model to runtime and Template Haskell callers. See the [Haskell docs](https://pgenie-io.github.io/gen-sdk/haskell/) for details.
 
 ## Why they live together
 
-Both components share the same ephemeral bridge model between Haskell and Dhall — the Haskell types and the Dhall types must stay in sync. Co-locating them in one repository and testing them together in CI ensures that any change to the shared model is validated end-to-end before being released.
+The Dhall contract and the Haskell bridge need to agree on the same model. Keeping them in one repository makes it easier to keep the schema, the loader, and the compatibility tests in sync so changes to the contract are validated end-to-end before release.
