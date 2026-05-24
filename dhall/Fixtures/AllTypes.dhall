@@ -49,7 +49,7 @@ let scalarQueries =
         let scalarTypeSig =
               if Text/equal inSnakeCase "char" then "\"char\"" else inSnakeCase
 
-        let query =
+        let column =
               \(nullable : Bool) ->
               \(dimensionality : Natural) ->
               \(elementIsNullable : Bool) ->
@@ -76,48 +76,154 @@ let scalarQueries =
 
                 let elementIsNullable = if elementIsNullable then "1" else "0"
 
-                let name =
+                let memberName =
                       name
-                        "select${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
-                        "Select${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
-                        "select-${inKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
-                        "Select-${inTrainCase}-${nullable}-${dimensionality}-${elementIsNullable}"
-                        "SELECT-${inScreamingKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
-                        "select_${inSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
-                        "Select_${inCamelSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
-                        "SELECT_${inScreamingSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "${inCamelCase}${nullable}${dimensionality}${elementIsNullable}"
+                        "${inPascalCase}${nullable}${dimensionality}${elementIsNullable}"
+                        "${inKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "${inTrainCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "${inScreamingKebabCase}-${nullable}-${dimensionality}-${elementIsNullable}"
+                        "${inSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "${inCamelSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
+                        "${inScreamingSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
 
-                in  { name
-                    , srcPath = "./queries/${name.inSnakeCase}.sql"
-                    , identity = True
-                    , idempotent = True
-                    , params = [ member ]
-                    , result = Some
-                      { cardinality = Project.ResultRowsCardinality.Multiple
-                      , columns =
-                        { head = member, tail = [] : List Project.Member }
-                      }
-                    , fragments =
-                      [ Project.QueryFragment.Sql "select "
-                      , Project.QueryFragment.Var
-                          { name = primitiveName
-                          , rawName = inSnakeCase
-                          , paramIndex = 0
+                let member =
+                          member
+                      //  { name = memberName
+                          , pgName =
+                              "${inSnakeCase}_${nullable}_${dimensionality}_${elementIsNullable}"
                           }
-                      , Project.QueryFragment.Sql "::${typeSig}"
-                      ]
-                    }
 
-        in  [ query True 0 False
-            , query True 1 False
-            , query True 2 False
-            , query True 1 True
-            , query True 2 True
-            , query False 0 False
-            , query False 1 False
-            , query False 2 False
-            , query False 1 True
-            , query False 2 True
+                in  { member, typeSig }
+
+        let col100 = column True 0 False
+
+        let col110 = column True 1 False
+
+        let col120 = column True 2 False
+
+        let col111 = column True 1 True
+
+        let col121 = column True 2 True
+
+        let col000 = column False 0 False
+
+        let col010 = column False 1 False
+
+        let col020 = column False 2 False
+
+        let col011 = column False 1 True
+
+        let col021 = column False 2 True
+
+        let queryName =
+              name
+                "select${inPascalCase}"
+                "Select${inPascalCase}"
+                "select-${inKebabCase}"
+                "Select-${inTrainCase}"
+                "SELECT-${inScreamingKebabCase}"
+                "select_${inSnakeCase}"
+                "Select_${inCamelSnakeCase}"
+                "SELECT_${inScreamingSnakeCase}"
+
+        in  [ { name = queryName
+              , srcPath = "./queries/${queryName.inSnakeCase}.sql"
+              , identity = True
+              , idempotent = True
+              , params =
+                [ col100.member
+                , col110.member
+                , col120.member
+                , col111.member
+                , col121.member
+                , col000.member
+                , col010.member
+                , col020.member
+                , col011.member
+                , col021.member
+                ]
+              , result = Some
+                { cardinality = Project.ResultRowsCardinality.Multiple
+                , columns =
+                  { head = col100.member
+                  , tail =
+                    [ col110.member
+                    , col120.member
+                    , col111.member
+                    , col121.member
+                    , col000.member
+                    , col010.member
+                    , col020.member
+                    , col011.member
+                    , col021.member
+                    ]
+                  }
+                }
+              , fragments =
+                [ Project.QueryFragment.Sql "select "
+                , Project.QueryFragment.Var
+                    { name = col100.member.name
+                    , rawName = col100.member.pgName
+                    , paramIndex = 0
+                    }
+                , Project.QueryFragment.Sql "::${col100.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col110.member.name
+                    , rawName = col110.member.pgName
+                    , paramIndex = 1
+                    }
+                , Project.QueryFragment.Sql "::${col110.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col120.member.name
+                    , rawName = col120.member.pgName
+                    , paramIndex = 2
+                    }
+                , Project.QueryFragment.Sql "::${col120.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col111.member.name
+                    , rawName = col111.member.pgName
+                    , paramIndex = 3
+                    }
+                , Project.QueryFragment.Sql "::${col111.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col121.member.name
+                    , rawName = col121.member.pgName
+                    , paramIndex = 4
+                    }
+                , Project.QueryFragment.Sql "::${col121.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col000.member.name
+                    , rawName = col000.member.pgName
+                    , paramIndex = 5
+                    }
+                , Project.QueryFragment.Sql "::${col000.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col010.member.name
+                    , rawName = col010.member.pgName
+                    , paramIndex = 6
+                    }
+                , Project.QueryFragment.Sql "::${col010.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col020.member.name
+                    , rawName = col020.member.pgName
+                    , paramIndex = 7
+                    }
+                , Project.QueryFragment.Sql "::${col020.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col011.member.name
+                    , rawName = col011.member.pgName
+                    , paramIndex = 8
+                    }
+                , Project.QueryFragment.Sql "::${col011.typeSig}, "
+                , Project.QueryFragment.Var
+                    { name = col021.member.name
+                    , rawName = col021.member.pgName
+                    , paramIndex = 9
+                    }
+                , Project.QueryFragment.Sql "::${col021.typeSig}"
+                ]
+              }
             ]
 
 let primitiveQueries =
