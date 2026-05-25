@@ -7,7 +7,7 @@ let Lude = ./Deps/Lude.dhall
 
 let Project = ./Project.dhall
 
-let contractVersion = { major = 2, minor = 0 }
+let contractVersion = { major = 3, minor = 0 }
 
 in  \(Config : Type) ->
     \ ( compile

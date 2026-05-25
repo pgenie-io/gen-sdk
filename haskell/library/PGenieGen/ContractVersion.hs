@@ -12,4 +12,4 @@ data ContractVersion = ContractVersion
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
 current :: ContractVersion
-current = ContractVersion {major = 2, minor = 0}
+current = ContractVersion {major = 3, minor = 0}
