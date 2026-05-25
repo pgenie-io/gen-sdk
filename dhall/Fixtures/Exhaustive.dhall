@@ -345,6 +345,48 @@ let coordinatesDeclarations =
         "Coordinate"
         "COORDINATE"
 
+let idempotentNonIdentityQuery
+    : Project.Query
+    = { name =
+          name
+            "setApplicationName"
+            "SetApplicationName"
+            "set-application-name"
+            "Set-Application-Name"
+            "SET-APPLICATION-NAME"
+            "set_application_name"
+            "Set_Application_Name"
+            "SET_APPLICATION_NAME"
+      , srcPath = "./queries/set_application_name.sql"
+      , identity = False
+      , idempotent = True
+      , params = [] : List Project.Member
+      , result = None Project.ResultRows
+      , fragments =
+        [ Project.QueryFragment.Sql "set application_name = 'pgenie_fixture'" ]
+      }
+
+let nonIdempotentNonIdentityQuery
+    : Project.Query
+    = { name =
+          name
+            "notifyFixtureChannel"
+            "NotifyFixtureChannel"
+            "notify-fixture-channel"
+            "Notify-Fixture-Channel"
+            "NOTIFY-FIXTURE-CHANNEL"
+            "notify_fixture_channel"
+            "Notify_Fixture_Channel"
+            "NOTIFY_FIXTURE_CHANNEL"
+      , srcPath = "./queries/notify_fixture_channel.sql"
+      , identity = False
+      , idempotent = False
+      , params = [] : List Project.Member
+      , result = None Project.ResultRows
+      , fragments =
+        [ Project.QueryFragment.Sql "notify fixture_channel, 'fixture'" ]
+      }
+
 in  { space =
         name
           "mySpace"
@@ -945,6 +987,7 @@ in  { space =
               "XML"
           , moodDeclarations.queries
           , coordinatesDeclarations.queries
+          , [ idempotentNonIdentityQuery, nonIdempotentNonIdentityQuery ]
           ]
     , migrations =
       [ { name = "1"

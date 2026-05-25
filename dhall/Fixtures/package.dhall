@@ -1,3 +1,3 @@
 let Project = (../Project.dhall).Project
 
-in  { AllTypes = ./AllTypes.dhall : Project }
+in  { Exhaustive = ./Exhaustive.dhall : Project }
