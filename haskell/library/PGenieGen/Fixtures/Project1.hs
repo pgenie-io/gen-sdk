@@ -48,7 +48,7 @@ input =
           identity = False,
           idempotent = True,
           params = [userIdParam],
-          result = Just userResult,
+          result = userResult,
           fragments =
             [ Input.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
               Input.QueryFragmentVar
@@ -76,41 +76,42 @@ input =
         }
 
     -- Result structure for user query
-    userResult :: Input.ResultRows
+    userResult :: Input.Result
     userResult =
-      Input.ResultRows
-        { cardinality = Input.ResultRowsCardinalityOptional,
-          columns =
-            NonEmpty.fromList
-              [ Input.Member
-                  { name = textName "id",
-                    pgName = "id",
-                    isNullable = False,
-                    value =
-                      Input.Value
-                        { arraySettings = Nothing,
-                          scalar = Input.ScalarPrimitive Input.PrimitiveInt4
-                        }
-                  },
-                Input.Member
-                  { name = textName "name",
-                    pgName = "name",
-                    isNullable = False,
-                    value =
-                      Input.Value
-                        { arraySettings = Nothing,
-                          scalar = Input.ScalarPrimitive Input.PrimitiveText
-                        }
-                  },
-                Input.Member
-                  { name = textName "email",
-                    pgName = "email",
-                    isNullable = True,
-                    value =
-                      Input.Value
-                        { arraySettings = Nothing,
-                          scalar = Input.ScalarPrimitive Input.PrimitiveText
-                        }
-                  }
-              ]
-        }
+      Input.ResultRows_
+        Input.ResultRows
+          { cardinality = Input.ResultRowsCardinalityOptional,
+            columns =
+              NonEmpty.fromList
+                [ Input.Member
+                    { name = textName "id",
+                      pgName = "id",
+                      isNullable = False,
+                      value =
+                        Input.Value
+                          { arraySettings = Nothing,
+                            scalar = Input.ScalarPrimitive Input.PrimitiveInt4
+                          }
+                    },
+                  Input.Member
+                    { name = textName "name",
+                      pgName = "name",
+                      isNullable = False,
+                      value =
+                        Input.Value
+                          { arraySettings = Nothing,
+                            scalar = Input.ScalarPrimitive Input.PrimitiveText
+                          }
+                    },
+                  Input.Member
+                    { name = textName "email",
+                      pgName = "email",
+                      isNullable = True,
+                      value =
+                        Input.Value
+                          { arraySettings = Nothing,
+                            scalar = Input.ScalarPrimitive Input.PrimitiveText
+                          }
+                    }
+                ]
+          }

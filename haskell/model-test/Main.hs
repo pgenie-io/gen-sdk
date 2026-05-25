@@ -70,6 +70,10 @@ main = hspec do
       $ checkUnionAlternatives @Input.ResultRowsCardinality
         "(../dhall/Project.dhall).ResultRowsCardinality"
 
+    it "Result union alternatives match"
+      $ checkUnionAlternatives @Input.Result
+        "(../dhall/Project.dhall).Result"
+
     it "QueryFragment union alternatives match"
       $ checkUnionAlternatives @Input.QueryFragment
         "(../dhall/Project.dhall).QueryFragment"

@@ -143,23 +143,24 @@ let scalarQueries =
                 , col011.member
                 , col021.member
                 ]
-              , result = Some
-                { cardinality = Project.ResultRowsCardinality.Multiple
-                , columns =
-                  { head = col100.member
-                  , tail =
-                    [ col110.member
-                    , col120.member
-                    , col111.member
-                    , col121.member
-                    , col000.member
-                    , col010.member
-                    , col020.member
-                    , col011.member
-                    , col021.member
-                    ]
-                  }
-                }
+              , result =
+                  Project.Result.Rows
+                    { cardinality = Project.ResultRowsCardinality.Multiple
+                    , columns =
+                      { head = col100.member
+                      , tail =
+                        [ col110.member
+                        , col120.member
+                        , col111.member
+                        , col121.member
+                        , col000.member
+                        , col010.member
+                        , col020.member
+                        , col011.member
+                        , col021.member
+                        ]
+                      }
+                    }
               , fragments =
                 [ Project.QueryFragment.Sql "select "
                 , Project.QueryFragment.Var
@@ -361,7 +362,7 @@ let idempotentNonIdentityQuery
       , identity = False
       , idempotent = True
       , params = [] : List Project.Member
-      , result = None Project.ResultRows
+      , result = Project.Result.Void
       , fragments =
         [ Project.QueryFragment.Sql "set application_name = 'pgenie_fixture'" ]
       }
@@ -382,7 +383,7 @@ let nonIdempotentNonIdentityQuery
       , identity = False
       , idempotent = False
       , params = [] : List Project.Member
-      , result = None Project.ResultRows
+      , result = Project.Result.Void
       , fragments =
         [ Project.QueryFragment.Sql "notify fixture_channel, 'fixture'" ]
       }

@@ -169,7 +169,7 @@ let ResultRowsCardinality = < Optional | Single | Multiple >
 let ResultRows =
       { cardinality : ResultRowsCardinality, columns : NonEmpty Member }
 
-let Result = Optional ResultRows
+let Result = < Void | RowsAffected | Rows : ResultRows >
 
 let Var = { name : Name, rawName : Text, paramIndex : Natural }
 

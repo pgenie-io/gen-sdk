@@ -233,6 +233,16 @@ data ResultRows = ResultRows
   deriving stock (Show, Eq, Generic)
   deriving anyclass (Dhall.ToDhall, Dhall.FromDhall)
 
+-- | Query result classification
+data Result
+  = ResultVoid
+  | ResultRowsAffected
+  | ResultRows_ ResultRows
+  deriving stock (Show, Eq, Generic)
+  deriving
+    (Dhall.FromDhall, Dhall.ToDhall)
+    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Result") Result)
+
 -- | A variable in a query fragment
 data Var = Var
   { name :: Name,
@@ -258,7 +268,7 @@ data Query = Query
     identity :: Bool,
     idempotent :: Bool,
     params :: [Member],
-    result :: Maybe ResultRows,
+    result :: Result,
     fragments :: [QueryFragment]
   }
   deriving stock (Show, Eq, Generic)
@@ -295,6 +305,7 @@ AesonDeriver.derive
     ''CustomType,
     ''ResultRowsCardinality,
     ''ResultRows,
+    ''Result,
     ''Var,
     ''QueryFragment,
     ''Query,
