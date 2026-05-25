@@ -78,6 +78,21 @@ main = hspec do
       $ checkUnionAlternatives @Input.QueryFragment
         "(../dhall/Project.dhall).QueryFragment"
 
+    it "ResultRowsCardinality Optional serializes/deserializes"
+      $ checkSerialization
+        Input.OptionalResultRowsCardinality
+        "(../dhall/Project.dhall).ResultRowsCardinality.Optional"
+
+    it "Result RowsAffected serializes/deserializes"
+      $ checkSerialization
+        Input.RowsAffectedResult
+        "(../dhall/Project.dhall).Result.RowsAffected"
+
+    it "Scalar Primitive payload serializes/deserializes"
+      $ checkSerialization
+        (Input.PrimitiveScalar Input.Int4Primitive)
+        "(../dhall/Project.dhall).Scalar.Primitive (../dhall/Project.dhall).Primitive.Int4"
+
 -- | Assert that a Dhall record type expression and a Haskell 'Decoder'
 -- describe the same set of record fields.
 checkRecordFields :: forall a. (Dhall.FromDhall a) => Text -> IO ()
@@ -117,3 +132,14 @@ recordFields :: Dhall.Core.Expr s a -> Set Text
 recordFields = \case
   Dhall.Core.Record fields -> Set.fromList (Dhall.Map.keys fields)
   _ -> Set.empty
+
+-- | Assert a Haskell value round-trips through a specific Dhall expression
+-- and that encoding uses an expression judgmentally equal to that expression.
+checkSerialization :: forall a. (Eq a, Show a, Dhall.FromDhall a, Dhall.ToDhall a) => a -> Text -> IO ()
+checkSerialization value dhallExpr = do
+  decoded <- Dhall.input Dhall.auto dhallExpr
+  decoded `shouldBe` value
+
+  expected <- Dhall.inputExpr dhallExpr
+  let encoded = Dhall.embed Dhall.inject value
+  Dhall.Core.judgmentallyEqual encoded expected `shouldBe` True

@@ -21,8 +21,8 @@ data Output = Output
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
 
 data Result
-  = ResultOk [File]
-  | ResultErr Report
+  = OkResult [File]
+  | ErrResult Report
   deriving stock (Generic, Show, Eq)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)

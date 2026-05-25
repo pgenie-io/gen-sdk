@@ -34,14 +34,14 @@ main = hspec do
 
       files <-
         case output.result of
-          Output.ResultErr report -> do
+          Output.ErrResult report -> do
             putStrLn "Generation failed!"
             forM_ output.warnings \warning -> do
               Text.putStrLn (Output.Report.toWarningYamlText warning)
 
             Text.putStrLn (Output.Report.toErrorYamlText report)
             exitFailure
-          Output.ResultOk files -> do
+          Output.OkResult files -> do
             putStrLn "Generation succeeded!"
             forM_ output.warnings \warning -> do
               Text.putStrLn (Output.Report.toWarningYamlText warning)

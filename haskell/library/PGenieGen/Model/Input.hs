@@ -22,131 +22,131 @@ data Version = Version
 
 -- | PostgreSQL primitive types.
 --
--- Keep 'PrimitiveChar' for the internal single-byte '"char"' type (OID 18),
+-- Keep 'CharPrimitive' for the internal single-byte '"char"' type (OID 18),
 -- which is distinct from 'char(n)' / 'bpchar'.
 data Primitive
   = -- | PostgreSQL 'bit' (OID 1560, array OID 1561).
-    PrimitiveBit
+    BitPrimitive
   | -- | PostgreSQL 'bool' (OID 16, array OID 1000).
-    PrimitiveBool
+    BoolPrimitive
   | -- | PostgreSQL 'box' (OID 603, array OID 1020).
-    PrimitiveBox
+    BoxPrimitive
   | -- | PostgreSQL 'bpchar' / 'char(n)' (OID 1042, array OID 1014).
-    PrimitiveBpchar
+    BpcharPrimitive
   | -- | PostgreSQL 'bytea' (OID 17, array OID 1001).
-    PrimitiveBytea
+    ByteaPrimitive
   | -- | PostgreSQL internal single-byte '"char"' (OID 18, array OID 1002).
-    PrimitiveChar
+    CharPrimitive
   | -- | PostgreSQL 'cidr' (OID 650, array OID 651).
-    PrimitiveCidr
+    CidrPrimitive
   | -- | PostgreSQL 'circle' (OID 718, array OID 719).
-    PrimitiveCircle
+    CirclePrimitive
   | -- | PostgreSQL 'citext' extension type (no fixed OID; requires the citext extension).
-    PrimitiveCitext
+    CitextPrimitive
   | -- | PostgreSQL 'date' (OID 1082, array OID 1182).
-    PrimitiveDate
+    DatePrimitive
   | -- | PostgreSQL 'datemultirange' (OID 4535, array OID 6150).
-    PrimitiveDatemultirange
+    DatemultirangePrimitive
   | -- | PostgreSQL 'daterange' (OID 3912, array OID 3913).
-    PrimitiveDaterange
+    DaterangePrimitive
   | -- | PostgreSQL 'float4' / 'real' (OID 700, array OID 1021).
-    PrimitiveFloat4
+    Float4Primitive
   | -- | PostgreSQL 'float8' / 'double precision' (OID 701, array OID 1022).
-    PrimitiveFloat8
+    Float8Primitive
   | -- | PostgreSQL 'hstore' extension type (no fixed OID; requires the hstore extension).
-    PrimitiveHstore
+    HstorePrimitive
   | -- | PostgreSQL 'inet' (OID 869, array OID 1041).
-    PrimitiveInet
+    InetPrimitive
   | -- | PostgreSQL 'int2' / 'smallint' (OID 21, array OID 1005).
-    PrimitiveInt2
+    Int2Primitive
   | -- | PostgreSQL 'int4' / 'integer' (OID 23, array OID 1007).
-    PrimitiveInt4
+    Int4Primitive
   | -- | PostgreSQL 'int4multirange' (OID 4451, array OID 6154).
-    PrimitiveInt4multirange
+    Int4multirangePrimitive
   | -- | PostgreSQL 'int4range' (OID 3904, array OID 3905).
-    PrimitiveInt4range
+    Int4rangePrimitive
   | -- | PostgreSQL 'int8' / 'bigint' (OID 20, array OID 1016).
-    PrimitiveInt8
+    Int8Primitive
   | -- | PostgreSQL 'int8multirange' (OID 4536, array OID 6157).
-    PrimitiveInt8multirange
+    Int8multirangePrimitive
   | -- | PostgreSQL 'int8range' (OID 3926, array OID 3927).
-    PrimitiveInt8range
+    Int8rangePrimitive
   | -- | PostgreSQL 'interval' (OID 1186, array OID 1187).
-    PrimitiveInterval
+    IntervalPrimitive
   | -- | PostgreSQL 'json' (OID 114, array OID 199).
-    PrimitiveJson
+    JsonPrimitive
   | -- | PostgreSQL 'jsonb' (OID 3802, array OID 3807).
-    PrimitiveJsonb
+    JsonbPrimitive
   | -- | PostgreSQL 'line' (OID 628, array OID 629).
-    PrimitiveLine
+    LinePrimitive
   | -- | PostgreSQL 'lseg' (OID 601, array OID 1018).
-    PrimitiveLseg
+    LsegPrimitive
   | -- | PostgreSQL 'macaddr' (OID 829, array OID 1040).
-    PrimitiveMacaddr
+    MacaddrPrimitive
   | -- | PostgreSQL 'macaddr8' (OID 774, array OID 775).
-    PrimitiveMacaddr8
+    Macaddr8Primitive
   | -- | PostgreSQL 'money' (OID 790, array OID 791).
-    PrimitiveMoney
+    MoneyPrimitive
   | -- | PostgreSQL 'name' (OID 19, array OID 1003).
-    PrimitiveName
+    NamePrimitive
   | -- | PostgreSQL 'numeric' (OID 1700, array OID 1231).
-    PrimitiveNumeric
+    NumericPrimitive
   | -- | PostgreSQL 'nummultirange' (OID 4532, array OID 6151).
-    PrimitiveNummultirange
+    NummultirangePrimitive
   | -- | PostgreSQL 'numrange' (OID 3906, array OID 3907).
-    PrimitiveNumrange
+    NumrangePrimitive
   | -- | PostgreSQL 'oid' object identifier type (OID 26, array OID 1028).
-    PrimitiveOid
+    OidPrimitive
   | -- | PostgreSQL 'path' (OID 602, array OID 1019).
-    PrimitivePath
+    PathPrimitive
   | -- | PostgreSQL 'pg_lsn' (OID 3220, array OID 3221).
-    PrimitivePgLsn
+    PgLsnPrimitive
   | -- | PostgreSQL 'pg_snapshot' (OID 5038, array OID 5039).
-    PrimitivePgSnapshot
+    PgSnapshotPrimitive
   | -- | PostgreSQL 'point' (OID 600, array OID 1017).
-    PrimitivePoint
+    PointPrimitive
   | -- | PostgreSQL 'polygon' (OID 604, array OID 1027).
-    PrimitivePolygon
+    PolygonPrimitive
   | -- | PostgreSQL 'text' (OID 25, array OID 1009).
-    PrimitiveText
+    TextPrimitive
   | -- | PostgreSQL 'time' (OID 1083, array OID 1183).
-    PrimitiveTime
+    TimePrimitive
   | -- | PostgreSQL 'timestamp' (OID 1114, array OID 1115).
-    PrimitiveTimestamp
+    TimestampPrimitive
   | -- | PostgreSQL 'timestamptz' (OID 1184, array OID 1185).
-    PrimitiveTimestamptz
+    TimestamptzPrimitive
   | -- | PostgreSQL 'timetz' (OID 1266, array OID 1270).
-    PrimitiveTimetz
+    TimetzPrimitive
   | -- | PostgreSQL 'tsmultirange' (OID 4533, array OID 6152).
-    PrimitiveTsmultirange
+    TsmultirangePrimitive
   | -- | PostgreSQL 'tsquery' (OID 3615, array OID 3645).
-    PrimitiveTsquery
+    TsqueryPrimitive
   | -- | PostgreSQL 'tsrange' (OID 3908, array OID 3909).
-    PrimitiveTsrange
+    TsrangePrimitive
   | -- | PostgreSQL 'tstzmultirange' (OID 4534, array OID 6153).
-    PrimitiveTstzmultirange
+    TstzmultirangePrimitive
   | -- | PostgreSQL 'tstzrange' (OID 3910, array OID 3911).
-    PrimitiveTstzrange
+    TstzrangePrimitive
   | -- | PostgreSQL 'tsvector' (OID 3614, array OID 3643).
-    PrimitiveTsvector
+    TsvectorPrimitive
   | -- | PostgreSQL 'uuid' (OID 2950, array OID 2951).
-    PrimitiveUuid
+    UuidPrimitive
   | -- | PostgreSQL 'varbit' (OID 1562, array OID 1563).
-    PrimitiveVarbit
+    VarbitPrimitive
   | -- | PostgreSQL 'varchar' / 'character varying' (OID 1043, array OID 1015).
-    PrimitiveVarchar
+    VarcharPrimitive
   | -- | PostgreSQL 'xml' (OID 142, array OID 143).
-    PrimitiveXml
+    XmlPrimitive
   | -- | PostGIS 'box2d' extension type (box2d).
-    PrimitiveBox2D
+    Box2DPrimitive
   | -- | PostGIS 'box3d' extension type (box3d).
-    PrimitiveBox3D
+    Box3DPrimitive
   | -- | PostgreSQL 'ltree' extension type (ltree).
-    PrimitiveLtree
+    LtreePrimitive
   | -- | PostGIS 'geometry' extension type (geometry).
-    PrimitiveGeometry
+    GeometryPrimitive
   | -- | PostGIS 'geography' extension type (geography).
-    PrimitiveGeography
+    GeographyPrimitive
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -154,8 +154,8 @@ data Primitive
 
 -- | Either a primitive type or a custom type
 data Scalar
-  = ScalarPrimitive Primitive
-  | ScalarCustom Name
+  = PrimitiveScalar Primitive
+  | CustomScalar Name
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -197,9 +197,9 @@ data EnumVariant = EnumVariant
 
 -- | Definition of a custom type
 data CustomTypeDefinition
-  = CustomTypeDefinitionComposite [Member]
-  | CustomTypeDefinitionEnum [EnumVariant]
-  | CustomTypeDefinitionDomain Value
+  = CompositeCustomTypeDefinition [Member]
+  | EnumCustomTypeDefinition [EnumVariant]
+  | DomainCustomTypeDefinition Value
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -217,9 +217,9 @@ data CustomType = CustomType
 
 -- | Category of result rows
 data ResultRowsCardinality
-  = ResultRowsCardinalityOptional
-  | ResultRowsCardinalitySingle
-  | ResultRowsCardinalityMultiple
+  = OptionalResultRowsCardinality
+  | SingleResultRowsCardinality
+  | MultipleResultRowsCardinality
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -235,9 +235,9 @@ data ResultRows = ResultRows
 
 -- | Query result classification
 data Result
-  = ResultVoid
-  | ResultRowsAffected
-  | ResultRows_ ResultRows
+  = VoidResult
+  | RowsAffectedResult
+  | RowsResult ResultRows
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
@@ -254,8 +254,8 @@ data Var = Var
 
 -- | A fragment of a query, either SQL text or a variable
 data QueryFragment
-  = QueryFragmentSql Text
-  | QueryFragmentVar Var
+  = SqlQueryFragment Text
+  | VarQueryFragment Var
   deriving stock (Show, Eq, Generic)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)

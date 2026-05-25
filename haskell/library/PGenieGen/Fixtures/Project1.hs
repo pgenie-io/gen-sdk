@@ -50,8 +50,8 @@ input =
           params = [userIdParam],
           result = userResult,
           fragments =
-            [ Input.QueryFragmentSql "SELECT id, name, email FROM users WHERE id = ",
-              Input.QueryFragmentVar
+            [ Input.SqlQueryFragment "SELECT id, name, email FROM users WHERE id = ",
+              Input.VarQueryFragment
                 ( Input.Var
                     { name = textName "user_id",
                       rawName = "user_id",
@@ -71,16 +71,16 @@ input =
           value =
             Input.Value
               { arraySettings = Nothing,
-                scalar = Input.ScalarPrimitive Input.PrimitiveInt4
+                scalar = Input.PrimitiveScalar Input.Int4Primitive
               }
         }
 
     -- Result structure for user query
     userResult :: Input.Result
     userResult =
-      Input.ResultRows_
+      Input.RowsResult
         Input.ResultRows
-          { cardinality = Input.ResultRowsCardinalityOptional,
+          { cardinality = Input.OptionalResultRowsCardinality,
             columns =
               NonEmpty.fromList
                 [ Input.Member
@@ -90,7 +90,7 @@ input =
                       value =
                         Input.Value
                           { arraySettings = Nothing,
-                            scalar = Input.ScalarPrimitive Input.PrimitiveInt4
+                            scalar = Input.PrimitiveScalar Input.Int4Primitive
                           }
                     },
                   Input.Member
@@ -100,7 +100,7 @@ input =
                       value =
                         Input.Value
                           { arraySettings = Nothing,
-                            scalar = Input.ScalarPrimitive Input.PrimitiveText
+                            scalar = Input.PrimitiveScalar Input.TextPrimitive
                           }
                     },
                   Input.Member
@@ -110,7 +110,7 @@ input =
                       value =
                         Input.Value
                           { arraySettings = Nothing,
-                            scalar = Input.ScalarPrimitive Input.PrimitiveText
+                            scalar = Input.PrimitiveScalar Input.TextPrimitive
                           }
                     }
                 ]
