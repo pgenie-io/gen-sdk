@@ -120,6 +120,7 @@ library
     dhall-json ^>=1.7.2,
     hashable,
     lawful-conversions ^>=0.4,
+    microlens,
     mtl,
     pgenie-gen:aeson-deriver,
     prettyprinter,

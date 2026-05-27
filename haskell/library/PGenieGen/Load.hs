@@ -4,6 +4,7 @@ import Dhall qualified
 import Dhall.Core qualified
 import Dhall.Import qualified
 import Dhall.JSONToDhall qualified as Dhall.FromJson
+import Lens.Micro qualified
 import PGenieGen.ContractVersion qualified as ContractVersion
 import PGenieGen.Dhall.ExprViews qualified as ExprViews
 import PGenieGen.Location qualified as Location
@@ -20,15 +21,20 @@ load ::
   Location.Location ->
   -- | Optional integrity hash to verify and cache the loaded generator.
   Maybe Text ->
+  -- | Info logging callback to report progress during loading.
+  (Text -> IO ()) ->
+  -- | Warning logging callback to report non-fatal issues during loading.
   (Text -> IO ()) ->
   IO (Gen, Text)
-load location hash echo = do
+load location hash echo warn = do
   let code =
         mconcat [Location.toCode location, maybe "" (\h -> " " <> h) hash]
 
   echo ("Loading generator code from: " <> to code)
 
-  genExpr <- Dhall.inputExpr code
+  let settings = Lens.Micro.set Dhall.reportWarning warn Dhall.defaultInputSettings
+
+  genExpr <- Dhall.inputExprWithSettings settings code
 
   contractVersionExpr <- case ExprViews.recordField "contractVersion" genExpr of
     Nothing -> do

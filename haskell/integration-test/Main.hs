@@ -16,7 +16,7 @@ main = hspec do
   describe "" do
     it "" do
       (gen, hash) <-
-        PGenieGen.load location Nothing Text.putStrLn
+        PGenieGen.load location Nothing Text.putStrLn Text.putStrLn
 
       -- Print the computed hash for verification
       putStrLn $ "Computed hash: " ++ show hash
