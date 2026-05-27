@@ -297,6 +297,19 @@ let multiParamColQuery
                 }
               }
 
+      let int8Member =
+            \(memberName : Project.Name) ->
+            \(pgName : Text) ->
+            \(isNullable : Bool) ->
+              { name = memberName
+              , pgName
+              , isNullable
+              , value =
+                { arraySettings = None Project.ArraySettings
+                , scalar = Project.Scalar.Primitive Project.Primitive.Int8
+                }
+              }
+
       let param1 =
             textMember
               ( name
@@ -313,7 +326,7 @@ let multiParamColQuery
               False
 
       let param2 =
-            textMember
+            int8Member
               ( name
                   "param2"
                   "Param2"
@@ -343,7 +356,7 @@ let multiParamColQuery
               False
 
       let col2 =
-            textMember
+            int8Member
               ( name
                   "col2"
                   "Col2"
@@ -383,7 +396,7 @@ let multiParamColQuery
             , Project.QueryFragment.Sql "::text, "
             , Project.QueryFragment.Var
                 { name = param2.name, rawName = "param_2", paramIndex = 1 }
-            , Project.QueryFragment.Sql "::text"
+            , Project.QueryFragment.Sql "::int8"
             ]
           }
 
