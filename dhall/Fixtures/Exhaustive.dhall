@@ -282,6 +282,111 @@ let nonIdempotentNonIdentityQuery
         [ Project.QueryFragment.Sql "notify fixture_channel, 'fixture'" ]
       }
 
+let multiParamColQuery
+    : Project.Query
+    = let textMember =
+            \(memberName : Project.Name) ->
+            \(pgName : Text) ->
+            \(isNullable : Bool) ->
+              { name = memberName
+              , pgName
+              , isNullable
+              , value =
+                { arraySettings = None Project.ArraySettings
+                , scalar = Project.Scalar.Primitive Project.Primitive.Text
+                }
+              }
+
+      let param1 =
+            textMember
+              ( name
+                  "param1"
+                  "Param1"
+                  "param-1"
+                  "Param-1"
+                  "PARAM-1"
+                  "param_1"
+                  "Param_1"
+                  "PARAM_1"
+              )
+              "param_1"
+              False
+
+      let param2 =
+            textMember
+              ( name
+                  "param2"
+                  "Param2"
+                  "param-2"
+                  "Param-2"
+                  "PARAM-2"
+                  "param_2"
+                  "Param_2"
+                  "PARAM_2"
+              )
+              "param_2"
+              False
+
+      let col1 =
+            textMember
+              ( name
+                  "col1"
+                  "Col1"
+                  "col-1"
+                  "Col-1"
+                  "COL-1"
+                  "col_1"
+                  "Col_1"
+                  "COL_1"
+              )
+              "col_1"
+              False
+
+      let col2 =
+            textMember
+              ( name
+                  "col2"
+                  "Col2"
+                  "col-2"
+                  "Col-2"
+                  "COL-2"
+                  "col_2"
+                  "Col_2"
+                  "COL_2"
+              )
+              "col_2"
+              False
+
+      in  { name =
+              name
+                "selectTexts"
+                "SelectTexts"
+                "select-texts"
+                "Select-Texts"
+                "SELECT-TEXTS"
+                "select_texts"
+                "Select_Texts"
+                "SELECT_TEXTS"
+          , srcPath = "./queries/select_texts.sql"
+          , identity = True
+          , idempotent = True
+          , params = [ param1, param2 ]
+          , result =
+              Project.Result.Rows
+                { cardinality = Project.ResultRowsCardinality.Multiple
+                , columns = { head = col1, tail = [ col2 ] }
+                }
+          , fragments =
+            [ Project.QueryFragment.Sql "select "
+            , Project.QueryFragment.Var
+                { name = param1.name, rawName = "param_1", paramIndex = 0 }
+            , Project.QueryFragment.Sql "::text, "
+            , Project.QueryFragment.Var
+                { name = param2.name, rawName = "param_2", paramIndex = 1 }
+            , Project.QueryFragment.Sql "::text"
+            ]
+          }
+
 in  { space =
         name
           "mySpace"
@@ -882,7 +987,10 @@ in  { space =
               "XML"
           , moodDeclarations.queries
           , coordinatesDeclarations.queries
-          , [ idempotentNonIdentityQuery, nonIdempotentNonIdentityQuery ]
+          , [ idempotentNonIdentityQuery
+            , nonIdempotentNonIdentityQuery
+            , multiParamColQuery
+            ]
           ]
     , migrations =
       [ { name = "1"
