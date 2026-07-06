@@ -28,20 +28,17 @@ main = hspec do
             compile Fixtures.Project1.input
 
       files <-
-        case output.result of
-          Output.ErrResult report -> do
+        case output of
+          Output.ErrOutput report -> do
             putStrLn "Generation failed!"
-            forM_ output.warnings \warning -> do
-              Text.putStrLn (Output.Report.toWarningYamlText warning)
-
             Text.putStrLn (Output.Report.toErrorYamlText report)
             exitFailure
-          Output.OkResult files -> do
+          Output.OkOutput (Output.OutputOk {warnings, value}) -> do
             putStrLn "Generation succeeded!"
-            forM_ output.warnings \warning -> do
+            forM_ warnings \warning -> do
               Text.putStrLn (Output.Report.toWarningYamlText warning)
 
-            pure files
+            pure value
 
       shouldBe
         files

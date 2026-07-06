@@ -1,7 +1,7 @@
 module PGenieGen.Model.Output
   ( Output (..),
+    OutputOk (..),
     Report (..),
-    Result (..),
     File (..),
   )
 where
@@ -13,20 +13,21 @@ import PGenieGen.Dhall.Orphans ()
 import PGenieGen.Model.Output.Report (Report (..))
 import PGenieGen.Prelude
 
-data Output = Output
+-- | Successful generator output.
+data OutputOk = OutputOk
   { warnings :: [Report],
-    result :: Result
+    value :: [File]
   }
   deriving stock (Generic, Show, Eq)
   deriving anyclass (Dhall.FromDhall, Dhall.ToDhall)
 
-data Result
-  = OkResult [File]
-  | ErrResult Report
+data Output
+  = OkOutput OutputOk
+  | ErrOutput Report
   deriving stock (Generic, Show, Eq)
   deriving
     (Dhall.FromDhall, Dhall.ToDhall)
-    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Result") Result)
+    via (Dhall.Deriving.Codec (Dhall.Deriving.SumModifier "Output") Output)
 
 data File = File
   { path :: Path,
