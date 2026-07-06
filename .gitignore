@@ -17,6 +17,7 @@
 # Unignore subtrees:
 !/.github/
 !/design/
+!/docs/
 !/dhall/
 !/haskell/
 !/pages/
