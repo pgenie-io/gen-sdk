@@ -21,6 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Remove existing docs directory
+        run: rm -rf docs
+
       - name: Generate Documentation
         id: generate
         uses: nikita-volkov/dhall-docs.github-action@v1
