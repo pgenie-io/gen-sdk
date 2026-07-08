@@ -49,8 +49,8 @@ flowchart TD
     Interpreters --> Structures["Structures/* — shared pure data (optional layer)"]
     Templates --> Config
     Templates --> Structures
-    Interpreters --> AlgI["Algebras/Interpreter"]
-    Templates --> AlgT["Algebras/Template"]
+    Interpreters --> SigI["Sdk.Sigs.Interpreter"]
+    Templates --> SigT["Sdk.Sigs.Template"]
 ```
 
 Forbidden edges (enforced by review, not by tooling):
@@ -68,15 +68,12 @@ gen/
   Gen.dhall            -- entry point: Sdk.module Config compile
   Config.dhall         -- the generator's user-facing config record type
   compile.dhall        -- Optional Config -> Project -> Compiled (List File)
+  InterpreterConfig.dhall -- internal config Type + resolve, threaded through Interpreters
   Deps/                -- pinned remote imports ONLY (one file per dependency)
-    Sdk.dhall          -- this SDK
+    Sdk.dhall          -- this SDK (exposes Sdk.Sigs.Interpreter / Sdk.Sigs.Template)
     Prelude.dhall      -- Dhall Prelude
     Lude.dhall         -- lude.dhall (Compiled, File, Text utilities)
     Typeclasses.dhall  -- typeclasses.dhall (Applicative, Alternative, ...)
-    package.dhall
-  Algebras/
-    Interpreter.dhall  -- the Interpreter module shape
-    Template.dhall     -- the Template module shape
     package.dhall
   Interpreters/        -- one module per model node kind; forms a tree
   Templates/           -- one module per rendered text fragment or file kind
@@ -88,18 +85,18 @@ demo-output/           -- committed materialisation of a test fixture
 `Deps/` holds nothing but frozen (`sha256`-pinned) remote imports. Utilities
 belong in the layer that owns them, not in a grab-bag directory.
 
-## The two algebras
+## The two sigs
 
-`Algebras/` defines the two module shapes every generator uses. They are
-smart constructors for first-class module records — a poor-man's ML module
-signature (see the Glossary).
+`Sdk.Sigs` ([`dhall/Sigs/`](../dhall/Sigs)) defines the two module shapes
+every generator uses. They are smart constructors for first-class module
+records — a poor-man's ML module signature (see the Glossary) — shared by
+every generator via this SDK, not copied per-repo.
 
-**Interpreter** (`Algebras/Interpreter.dhall`):
+**Interpreter** (`Sdk.Sigs.Interpreter`, [`dhall/Sigs/Interpreter.dhall`](../dhall/Sigs/Interpreter.dhall)):
 
 ```dhall
-let Config = { ... }  -- generator-internal config, built once in compile.dhall
-
 let module =
+      \(Config : Type) ->
       \(Input : Type) ->
       \(Output : Type) ->
         let Result = Compiled Output
@@ -107,11 +104,13 @@ let module =
         in  \(run : Run) -> { Input, Output, Result, Run, run }
 ```
 
-`Config` here is not the user-facing `Config.dhall`; it is the internal record
-`compile.dhall` derives from the user config plus the project (package name,
-flags, ...) and threads through the whole tree.
+`Config` is supplied by the generator at each call site — it is not the
+user-facing `Config.dhall`, but the generator's own internal record (see
+`InterpreterConfig.dhall` below), which `compile.dhall` derives from the user
+config plus the project (package name, flags, ...) and threads through the
+whole tree.
 
-**Template** (`Algebras/Template.dhall`):
+**Template** (`Sdk.Sigs.Template`, [`dhall/Sigs/Template.dhall`](../dhall/Sigs/Template.dhall)):
 
 ```dhall
 let module =
@@ -120,10 +119,17 @@ let module =
         in  \(run : Run) -> { Params, Run, run }
 ```
 
-Every module in `Interpreters/` ends with `Algebra.module Input Output run`;
-every module in `Templates/` ends with `Algebra.module Params run`. No
+Every module in `Interpreters/` ends with
+`Sdk.Sigs.Interpreter.module InterpreterConfig.Type Input Output run`; every
+module in `Templates/` ends with `Sdk.Sigs.Template.module Params run`. No
 exceptions — uniformity is what lets an agent open any module and know its
 shape.
+
+Each generator defines its own internal config in `gen/InterpreterConfig.dhall`,
+exporting a `Type` (the shape threaded through `Interpreters/`) and a
+`resolve : Optional Config -> Project -> Type` (the derivation from the
+user-facing `Config.dhall` plus project metadata, previously inlined in
+`compile.dhall`).
 
 ## Interpreters
 
@@ -256,10 +262,11 @@ let Sdk = ./Deps/Sdk.dhall in Sdk.module ./Config.dhall ./compile.dhall
 `contractVersion` and returns `{ contractVersion, Config, compile,
 compileToFileMap }` — the interface `pgn` consumes.
 
-`compile.dhall` is the only place that sees the user-facing `Config`: it
-resolves defaults (`Optional Config -> ...`), derives the internal
-interpreter `Config` (package name, flags) from it and from project metadata,
-and delegates to `Interpreters/Project`.
+`compile.dhall` is the only place that sees the user-facing `Config`. It
+delegates the resolution of the internal interpreter config to
+`InterpreterConfig.resolve` (package name, flags, derived from the user
+config and the project metadata) and hands the result to
+`Interpreters/Project`.
 
 A generator is **distributed** as a single self-contained file: resolve and
 freeze `gen/Gen.dhall` into `resolved.dhall` and attach it to a GitHub
@@ -297,9 +304,11 @@ artifacts:
 
 ## Implementing a new generator: the recipe
 
-1. **Scaffold** the layout above: `gen/{Gen,Config,compile}.dhall`,
-   `gen/{Deps,Algebras,Interpreters,Templates}/`. Copy `Algebras/` and
-   `Deps/` from java.gen or rust.gen; update pins.
+1. **Scaffold** the layout above: `gen/{Gen,Config,compile,InterpreterConfig}.dhall`,
+   `gen/{Deps,Interpreters,Templates}/`. Copy `Deps/` from java.gen or
+   rust.gen and update pins; every `Interpreters/*.dhall`/`Templates/*.dhall`
+   module references `Sdk.Sigs.Interpreter`/`Sdk.Sigs.Template` directly —
+   there is no local shape file to copy.
 2. **Study the target.** Decide the shape of the generated artifact first —
    ideally as a hand-written design repo (cf. `java.gen-design`): one
    statement module, one custom-type module, manifest, README, one test.
@@ -342,8 +351,8 @@ artifacts:
 
 | Term | Operational meaning | Nearest FP analogue |
 |---|---|---|
-| **Algebra** | A smart constructor fixing the record shape (`{Input, Output, Result, Run, run}` or `{Params, Run, run}`) that every module of a layer must have | ML module signature |
-| **Interpreter** | A module translating one model node kind into target-specific data, running children applicatively | Algebra of a fold over the model (tagless-final style) |
+| **Sig** | A smart constructor fixing the record shape (`{Input, Output, Result, Run, run}` or `{Params, Run, run}`) that every module of a layer must have; short for "ML module signature" | ML module signature |
+| **Interpreter** | A module translating one model node kind into target-specific data, running children applicatively | Sig of a fold over the model (tagless-final style) |
 | **Template** | A pure `Params -> Text` module, blind to the model | Function; text combinator |
 | **Structure** | A pure shared data type with `empty`/`combine` | Monoid |
 | **Compiled** | `< Ok { warnings, value } | Err Report >` with applicative and alternative composition | Validation/Writer hybrid |

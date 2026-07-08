@@ -1,3 +1,9 @@
+# v0.12.0
+
+## Non-breaking
+
+- Add generic `Sigs.Interpreter`/`Sigs.Template` module-shape constructors, and document the `Sigs`/`InterpreterConfig` convention that replaces the old `Algebras` pattern.
+
 # v0.11.0
 
 ## Breaking
