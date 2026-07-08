@@ -18,8 +18,7 @@
 !/.github/
 !/design/
 !/docs/
-!/dhall/
-!/haskell/
+!/src/
 !/pages/
 
 # Ignore noise:

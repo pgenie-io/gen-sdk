@@ -1,20 +1,27 @@
 # AGENTS.md
 
-This repository is the shared SDK and contract for pGenie code generators.
+This repository is the helper kit (SDK) for pGenie code generator authors. The
+contract/schema itself lives in the sibling `gen-contract` repository.
 
 ## What this repo contains
 
-- `dhall/` is the generator contract: the canonical Dhall input model, fixtures, versioning, and the `module` constructor used by generator authors.
-- `haskell/` is the runtime bridge used by the pGenie CLI to load, validate, and invoke generators, including Template Haskell bundling.
+- `src/` contains fixtures and helper signatures for generator authors. The
+  canonical input model (`Project`) and the generator `module` constructor are
+  imported from `gen-contract/dhall/`.
+- No Haskell. All pGenie generators are written in Dhall, and this repo has no
+  consumers that need a Haskell projection of the model — that lives in
+  `gen-contract` (minimal model) and `pgenie` (runtime bridge).
 
 ## Working rules
 
-- Treat `dhall/Project.dhall` and the Haskell model under `haskell/library/PGenieGen/Model*` as a synchronized pair.
-- When changing the contract, update the compatibility tests in `haskell/model-test/Main.hs` so record fields and union alternatives stay aligned.
-- Keep edits focused; do not touch generated build artifacts in `dist-newstyle/` unless the task explicitly requires regeneration.
-- Prefer Dhall formatting and validation for `dhall/` changes.
+- Do not duplicate the contract from `gen-contract`. Import `Project` and
+  `module` from `../gen-contract/dhall/` in Dhall.
+- Do not reintroduce a Haskell package here. If a generator author or test
+  needs Haskell-side fixtures, that belongs in the consuming repo (`pgenie`),
+  not here.
+- Prefer Dhall formatting and validation for `src/` changes.
 
 ## Validation
 
-- Use `./build.bash` for the repo's full build path.
-- The repository also has Cabal test suites for model compatibility, integration, and bundling.
+- Run `dhall type --file src/package.dhall` and type-check any Dhall files
+  that changed.

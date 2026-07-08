@@ -20,7 +20,7 @@ compile : Optional Config -> Project -> Compiled (List File)
 ```
 
 - **`Project`** is the input model, defined by this SDK
-  ([`dhall/Project.dhall`](../dhall/Project.dhall)): the parsed, analysed
+  ([`src/Project.dhall`](../src/Project.dhall)): the parsed, analysed
   pGenie project — queries with typed parameters and result columns, custom
   types, migrations, names in all casings.
 - **`Config`** is the generator's own user-facing configuration record,
@@ -87,12 +87,12 @@ belong in the layer that owns them, not in a grab-bag directory.
 
 ## The two sigs
 
-`Sdk.Sigs` ([`dhall/Sigs/`](../dhall/Sigs)) defines the two module shapes
+`Sdk.Sigs` ([`src/Sigs/`](../src/Sigs)) defines the two module shapes
 every generator uses. They are smart constructors for first-class module
 records — a poor-man's ML module signature (see the Glossary) — shared by
 every generator via this SDK, not copied per-repo.
 
-**Interpreter** (`Sdk.Sigs.Interpreter`, [`dhall/Sigs/Interpreter.dhall`](../dhall/Sigs/Interpreter.dhall)):
+**Interpreter** (`Sdk.Sigs.Interpreter`, [`src/Sigs/Interpreter.dhall`](../src/Sigs/Interpreter.dhall)):
 
 ```dhall
 let module =
@@ -110,7 +110,7 @@ user-facing `Config.dhall`, but the generator's own internal record (see
 config plus the project (package name, flags, ...) and threads through the
 whole tree.
 
-**Template** (`Sdk.Sigs.Template`, [`dhall/Sigs/Template.dhall`](../dhall/Sigs/Template.dhall)):
+**Template** (`Sdk.Sigs.Template`, [`src/Sigs/Template.dhall`](../src/Sigs/Template.dhall)):
 
 ```dhall
 let module =
@@ -258,7 +258,7 @@ produces a sole `error.yaml`. Diagnostics are just more Files.
 let Sdk = ./Deps/Sdk.dhall in Sdk.module ./Config.dhall ./compile.dhall
 ```
 
-`Sdk.module` ([`dhall/module.dhall`](../dhall/module.dhall)) stamps the SDK's
+`Sdk.module` ([`src/module.dhall`](../src/module.dhall)) stamps the SDK's
 `contractVersion` and returns `{ contractVersion, Config, compile,
 compileToFileMap }` — the interface `pgn` consumes.
 
@@ -284,7 +284,7 @@ artifacts:
 ## Testing and verification
 
 - `tests/` holds executable fixtures. Each applies the generator to an SDK
-  fixture project ([`dhall/Fixtures/`](../dhall/Fixtures)) via
+  fixture project ([`src/Fixtures/`](../src/Fixtures)) via
   `compileToFileMap`:
 
   ```dhall
@@ -317,7 +317,7 @@ artifacts:
    write `compile.dhall`: resolve defaults, derive the internal interpreter
    `Config`, delegate to `Interpreters/Project`.
 4. **Build the interpreter tree bottom-up**, mirroring
-   [`Project.dhall`](../dhall/Project.dhall): `Primitive` (the type-mapping
+   [`Project.dhall`](../src/Project.dhall): `Primitive` (the type-mapping
    table; unsupported types fail here) → `Scalar` → `Value` → `Name` →
    the member interpreters → `Query` and `CustomType` → `Project`.
    Wrap each level in `nest`; make every `Output` plain data.

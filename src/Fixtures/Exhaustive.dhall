@@ -1,6 +1,6 @@
 let Prelude = ../Deps/Prelude.dhall
 
-let Project = ../Project.dhall
+let Project = ../Deps/Contract.dhall
 
 let Declarations =
       { customTypes : List Project.CustomType, queries : List Project.Query }

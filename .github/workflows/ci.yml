@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to test (defaults to current SHA)
+        required: false
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  typecheck:
+    name: Type-check Dhall
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gen-sdk
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          path: gen-sdk
+
+      # src/package.dhall imports Project/module from gen-contract via a
+      # relative path (../../gen-contract/dhall/...), mirroring the sibling
+      # checkout layout used in local development.
+      - name: Checkout gen-contract
+        uses: actions/checkout@v6
+        with:
+          repository: pgenie-io/gen-contract
+          path: gen-contract
+
+      - name: Install Dhall
+        uses: dhall-lang/setup-dhall@v4
+
+      - name: Type-check package.dhall
+        working-directory: gen-sdk
+        run: dhall type --file src/package.dhall
+
+      - name: Type-check Sigs package
+        working-directory: gen-sdk
+        run: dhall type --file src/Sigs/package.dhall
+
+      - name: Type-check Fixtures package
+        working-directory: gen-sdk
+        run: dhall type --file src/Fixtures/package.dhall
+
+      - name: Check Dhall formatting
+        working-directory: gen-sdk
+        run: |
+          dhall format --check \
+            src/package.dhall \
+            src/Sigs/package.dhall \
+            src/Sigs/Interpreter.dhall \
+            src/Sigs/Template.dhall \
+            src/Fixtures/package.dhall \
+            src/Fixtures/Exhaustive.dhall \
+            src/Primitive/toText.dhall
+
+  resolve:
+    name: Resolve frozen package
+    needs: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gen-sdk
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+          path: gen-sdk
+
+      - name: Checkout gen-contract
+        uses: actions/checkout@v6
+        with:
+          repository: pgenie-io/gen-contract
+          path: gen-contract
+
+      - name: Resolve Dhall
+        id: resolve
+        uses: nikita-volkov/dhall-resolve.github-action@v3
+        with:
+          file: gen-sdk/src/package.dhall
+
+      - name: Upload frozen package artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: dhall-frozen-package-${{ github.run_id }}
+          path: ${{ steps.resolve.outputs.path }}
+          retention-days: 1
+          if-no-files-found: error

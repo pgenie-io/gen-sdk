@@ -1,3 +1,16 @@
+# Upcoming
+
+## Breaking
+
+- Extracted the generator contract (`Project` schema, `module` constructor, and the Lude-based output types) into the new `gen-contract` repository; `dhall/package.dhall` now re-exports `Project` and `module` from `gen-contract` instead of defining them locally.
+- Removed the Haskell package entirely (`PGenieGen.Fixtures.Project1`, `PGenieGen.Prelude`). This repo is now Dhall-only — all pGenie generators are written in Dhall, and the sole consumer of the Haskell fixture (`pgenie`'s test suites) now carries it in-house.
+- Renamed the `dhall/` directory to `src/`. Update imports of `package.dhall` (and any other file under the old `dhall/` path) to `src/`.
+
+## Non-breaking
+
+- Removed leftover local Haskell build artifacts (`dist/`, `dist-newstyle/`) now that the repo carries no Haskell package.
+- Restructured CI/CD: added a reusable `ci.yml` (Dhall type-checking), and `bump.yml`/`release.yml` workflows that automate tagged GitHub releases of the frozen, resolved `src/package.dhall`, following the same pattern as `java.gen`.
+
 # v0.12.0
 
 ## Non-breaking
