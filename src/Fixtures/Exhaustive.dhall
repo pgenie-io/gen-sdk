@@ -2,6 +2,8 @@ let Prelude = ../Deps/Prelude.dhall
 
 let Contract = ../Deps/Contract.dhall
 
+let Lude = ../Deps/Lude.dhall
+
 let Declarations =
       { customTypes : List Contract.CustomType, queries : List Contract.Query }
 
@@ -47,7 +49,7 @@ let scalarQueries =
                 inScreamingSnakeCase
 
         let scalarTypeSig =
-              if Text/equal inSnakeCase "char" then "\"char\"" else inSnakeCase
+              Lude.Text.replaceIfEqual "char" "\"char\"" inSnakeCase
 
         let query =
               \(nullable : Bool) ->
