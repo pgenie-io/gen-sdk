@@ -13,6 +13,7 @@
 - `Sigs.Interpreter`'s `Report`/`File`/`Result` now import from
   gen-contract's `Report`/`File`/`Output` instead of redefining them
   locally. No shape change.
+- Add `Output.toFileMap` to convert `Output` to a `Prelude.Map Text Text` for writing to disk.
 
 # v0.12.0
 
