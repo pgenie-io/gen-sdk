@@ -4,9 +4,6 @@
 
 Helper kit (Dhall-only) for authors of [pGenie](https://pgenie.io) code generators: fixtures and opt-in signature helpers layered on top of the [`gen-contract`](https://github.com/pgenie-io/gen-contract) schema. All pGenie generators are written in Dhall, so this SDK carries no Haskell.
 
-> [!IMPORTANT]
-> This library relies on a fork of Dhall that provides primitives for `Natural/equal` and `Natural/lessThan`. These have been [PRd](https://github.com/dhall-lang/dhall-haskell/pull/2739) into the main repo. Until they get merged you will need to use the custom Dhall binary provided in https://github.com/nikita-volkov/dhall-haskell.
-
 ## Structure
 
 ### `src/`
