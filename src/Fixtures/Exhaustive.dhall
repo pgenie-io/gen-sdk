@@ -1,9 +1,9 @@
 let Prelude = ../Deps/Prelude.dhall
 
-let Project = ../Deps/Contract.dhall
+let Contract = ../Deps/Contract.dhall
 
 let Declarations =
-      { customTypes : List Project.CustomType, queries : List Project.Query }
+      { customTypes : List Contract.CustomType, queries : List Contract.Query }
 
 let name =
       \(inCamelCase : Text) ->
@@ -23,10 +23,10 @@ let name =
           , inCamelSnakeCase
           , inScreamingSnakeCase
           }
-        : Project.Name
+        : Contract.Name
 
 let scalarQueries =
-      \(scalar : Project.Scalar) ->
+      \(scalar : Contract.Scalar) ->
       \(inCamelCase : Text) ->
       \(inPascalCase : Text) ->
       \(inKebabCase : Text) ->
@@ -64,7 +64,7 @@ let scalarQueries =
                       , value =
                         { arraySettings =
                             if    Natural/isZero dimensionality
-                            then  None Project.ArraySettings
+                            then  None Contract.ArraySettings
                             else  Some { dimensionality, elementIsNullable }
                         , scalar
                         }
@@ -93,19 +93,20 @@ let scalarQueries =
                     , idempotent = True
                     , params = [ member ]
                     , result =
-                        Project.Result.Rows
-                          { cardinality = Project.ResultRowsCardinality.Multiple
+                        Contract.Result.Rows
+                          { cardinality =
+                              Contract.ResultRowsCardinality.Multiple
                           , columns =
-                            { head = member, tail = [] : List Project.Member }
+                            { head = member, tail = [] : List Contract.Member }
                           }
                     , fragments =
-                      [ Project.QueryFragment.Sql "select "
-                      , Project.QueryFragment.Var
+                      [ Contract.QueryFragment.Sql "select "
+                      , Contract.QueryFragment.Var
                           { name = primitiveName
                           , rawName = inSnakeCase
                           , paramIndex = 0
                           }
-                      , Project.QueryFragment.Sql "::${typeSig}"
+                      , Contract.QueryFragment.Sql "::${typeSig}"
                       ]
                     }
 
@@ -122,11 +123,11 @@ let scalarQueries =
             ]
 
 let primitiveQueries =
-      \(primitive : Project.Primitive) ->
-        scalarQueries (Project.Scalar.Primitive primitive)
+      \(primitive : Contract.Primitive) ->
+        scalarQueries (Contract.Scalar.Primitive primitive)
 
 let customTypeDeclarations =
-      \(definition : Project.CustomTypeDefinition) ->
+      \(definition : Contract.CustomTypeDefinition) ->
       \(inCamelCase : Text) ->
       \(inPascalCase : Text) ->
       \(inKebabCase : Text) ->
@@ -153,7 +154,7 @@ let customTypeDeclarations =
             ]
           , queries =
               scalarQueries
-                ( Project.Scalar.Custom
+                ( Contract.Scalar.Custom
                     ( name
                         inCamelCase
                         inPascalCase
@@ -177,12 +178,12 @@ let customTypeDeclarations =
         : Declarations
 
 let enumDeclarations =
-      \(values : List Project.EnumVariant) ->
-        customTypeDeclarations (Project.CustomTypeDefinition.Enum values)
+      \(values : List Contract.EnumVariant) ->
+        customTypeDeclarations (Contract.CustomTypeDefinition.Enum values)
 
 let compositeDeclarations =
-      \(members : List Project.Member) ->
-        customTypeDeclarations (Project.CustomTypeDefinition.Composite members)
+      \(members : List Contract.Member) ->
+        customTypeDeclarations (Contract.CustomTypeDefinition.Composite members)
 
 let moodDeclarations =
       enumDeclarations
@@ -218,16 +219,16 @@ let coordinatesDeclarations =
           , pgName = "x"
           , isNullable = True
           , value =
-            { arraySettings = None Project.ArraySettings
-            , scalar = Project.Scalar.Primitive Project.Primitive.Float8
+            { arraySettings = None Contract.ArraySettings
+            , scalar = Contract.Scalar.Primitive Contract.Primitive.Float8
             }
           }
         , { name = name "y" "Y" "y" "Y" "Y" "y" "Y" "Y"
           , pgName = "y"
           , isNullable = True
           , value =
-            { arraySettings = None Project.ArraySettings
-            , scalar = Project.Scalar.Primitive Project.Primitive.Float8
+            { arraySettings = None Contract.ArraySettings
+            , scalar = Contract.Scalar.Primitive Contract.Primitive.Float8
             }
           }
         ]
@@ -241,7 +242,7 @@ let coordinatesDeclarations =
         "COORDINATE"
 
 let idempotentNonIdentityQuery
-    : Project.Query
+    : Contract.Query
     = { name =
           name
             "setApplicationName"
@@ -255,14 +256,14 @@ let idempotentNonIdentityQuery
       , srcPath = "./queries/set_application_name.sql"
       , identity = False
       , idempotent = True
-      , params = [] : List Project.Member
-      , result = Project.Result.Void
+      , params = [] : List Contract.Member
+      , result = Contract.Result.Void
       , fragments =
-        [ Project.QueryFragment.Sql "set application_name = 'pgenie_fixture'" ]
+        [ Contract.QueryFragment.Sql "set application_name = 'pgenie_fixture'" ]
       }
 
 let nonIdempotentNonIdentityQuery
-    : Project.Query
+    : Contract.Query
     = { name =
           name
             "notifyFixtureChannel"
@@ -276,37 +277,37 @@ let nonIdempotentNonIdentityQuery
       , srcPath = "./queries/notify_fixture_channel.sql"
       , identity = False
       , idempotent = False
-      , params = [] : List Project.Member
-      , result = Project.Result.Void
+      , params = [] : List Contract.Member
+      , result = Contract.Result.Void
       , fragments =
-        [ Project.QueryFragment.Sql "notify fixture_channel, 'fixture'" ]
+        [ Contract.QueryFragment.Sql "notify fixture_channel, 'fixture'" ]
       }
 
 let multiParamColQuery
-    : Project.Query
+    : Contract.Query
     = let textMember =
-            \(memberName : Project.Name) ->
+            \(memberName : Contract.Name) ->
             \(pgName : Text) ->
             \(isNullable : Bool) ->
               { name = memberName
               , pgName
               , isNullable
               , value =
-                { arraySettings = None Project.ArraySettings
-                , scalar = Project.Scalar.Primitive Project.Primitive.Text
+                { arraySettings = None Contract.ArraySettings
+                , scalar = Contract.Scalar.Primitive Contract.Primitive.Text
                 }
               }
 
       let int8Member =
-            \(memberName : Project.Name) ->
+            \(memberName : Contract.Name) ->
             \(pgName : Text) ->
             \(isNullable : Bool) ->
               { name = memberName
               , pgName
               , isNullable
               , value =
-                { arraySettings = None Project.ArraySettings
-                , scalar = Project.Scalar.Primitive Project.Primitive.Int8
+                { arraySettings = None Contract.ArraySettings
+                , scalar = Contract.Scalar.Primitive Contract.Primitive.Int8
                 }
               }
 
@@ -385,18 +386,18 @@ let multiParamColQuery
           , idempotent = True
           , params = [ param1, param2 ]
           , result =
-              Project.Result.Rows
-                { cardinality = Project.ResultRowsCardinality.Multiple
+              Contract.Result.Rows
+                { cardinality = Contract.ResultRowsCardinality.Multiple
                 , columns = { head = col1, tail = [ col2 ] }
                 }
           , fragments =
-            [ Project.QueryFragment.Sql "select "
-            , Project.QueryFragment.Var
+            [ Contract.QueryFragment.Sql "select "
+            , Contract.QueryFragment.Var
                 { name = param1.name, rawName = "param_1", paramIndex = 0 }
-            , Project.QueryFragment.Sql "::text, "
-            , Project.QueryFragment.Var
+            , Contract.QueryFragment.Sql "::text, "
+            , Contract.QueryFragment.Var
                 { name = param2.name, rawName = "param_2", paramIndex = 1 }
-            , Project.QueryFragment.Sql "::int8"
+            , Contract.QueryFragment.Sql "::int8"
             ]
           }
 
@@ -423,13 +424,13 @@ in  { space =
     , version = { major = 1, minor = 0, patch = 1 }
     , customTypes =
         Prelude.List.concat
-          Project.CustomType
+          Contract.CustomType
           [ moodDeclarations.customTypes, coordinatesDeclarations.customTypes ]
     , queries =
         Prelude.List.concat
-          Project.Query
+          Contract.Query
           [ primitiveQueries
-              Project.Primitive.Bit
+              Contract.Primitive.Bit
               "bit"
               "Bit"
               "bit"
@@ -439,7 +440,7 @@ in  { space =
               "Bit"
               "BIT"
           , primitiveQueries
-              Project.Primitive.Bool
+              Contract.Primitive.Bool
               "bool"
               "Bool"
               "bool"
@@ -449,7 +450,7 @@ in  { space =
               "Bool"
               "BOOL"
           , primitiveQueries
-              Project.Primitive.Box
+              Contract.Primitive.Box
               "box"
               "Box"
               "box"
@@ -459,7 +460,7 @@ in  { space =
               "Box"
               "BOX"
           , primitiveQueries
-              Project.Primitive.Bpchar
+              Contract.Primitive.Bpchar
               "bpchar"
               "Bpchar"
               "bpchar"
@@ -469,7 +470,7 @@ in  { space =
               "Bpchar"
               "BPCHAR"
           , primitiveQueries
-              Project.Primitive.Bytea
+              Contract.Primitive.Bytea
               "bytea"
               "Bytea"
               "bytea"
@@ -479,7 +480,7 @@ in  { space =
               "Bytea"
               "BYTEA"
           , primitiveQueries
-              Project.Primitive.Char
+              Contract.Primitive.Char
               "char"
               "Char"
               "char"
@@ -489,7 +490,7 @@ in  { space =
               "Char"
               "CHAR"
           , primitiveQueries
-              Project.Primitive.Cidr
+              Contract.Primitive.Cidr
               "cidr"
               "Cidr"
               "cidr"
@@ -499,7 +500,7 @@ in  { space =
               "Cidr"
               "CIDR"
           , primitiveQueries
-              Project.Primitive.Circle
+              Contract.Primitive.Circle
               "circle"
               "Circle"
               "circle"
@@ -509,7 +510,7 @@ in  { space =
               "Circle"
               "CIRCLE"
           , primitiveQueries
-              Project.Primitive.Citext
+              Contract.Primitive.Citext
               "citext"
               "Citext"
               "citext"
@@ -519,7 +520,7 @@ in  { space =
               "Citext"
               "CITEXT"
           , primitiveQueries
-              Project.Primitive.Date
+              Contract.Primitive.Date
               "date"
               "Date"
               "date"
@@ -529,7 +530,7 @@ in  { space =
               "Date"
               "DATE"
           , primitiveQueries
-              Project.Primitive.Datemultirange
+              Contract.Primitive.Datemultirange
               "datemultirange"
               "Datemultirange"
               "datemultirange"
@@ -539,7 +540,7 @@ in  { space =
               "Datemultirange"
               "DATEMULTIRANGE"
           , primitiveQueries
-              Project.Primitive.Daterange
+              Contract.Primitive.Daterange
               "daterange"
               "Daterange"
               "daterange"
@@ -549,7 +550,7 @@ in  { space =
               "Daterange"
               "DATERANGE"
           , primitiveQueries
-              Project.Primitive.Float4
+              Contract.Primitive.Float4
               "float4"
               "Float4"
               "float4"
@@ -559,7 +560,7 @@ in  { space =
               "Float4"
               "FLOAT4"
           , primitiveQueries
-              Project.Primitive.Float8
+              Contract.Primitive.Float8
               "float8"
               "Float8"
               "float8"
@@ -569,7 +570,7 @@ in  { space =
               "Float8"
               "FLOAT8"
           , primitiveQueries
-              Project.Primitive.Hstore
+              Contract.Primitive.Hstore
               "hstore"
               "Hstore"
               "hstore"
@@ -579,7 +580,7 @@ in  { space =
               "Hstore"
               "HSTORE"
           , primitiveQueries
-              Project.Primitive.Inet
+              Contract.Primitive.Inet
               "inet"
               "Inet"
               "inet"
@@ -589,7 +590,7 @@ in  { space =
               "Inet"
               "INET"
           , primitiveQueries
-              Project.Primitive.Int2
+              Contract.Primitive.Int2
               "int2"
               "Int2"
               "int2"
@@ -599,7 +600,7 @@ in  { space =
               "Int2"
               "INT2"
           , primitiveQueries
-              Project.Primitive.Int4
+              Contract.Primitive.Int4
               "int4"
               "Int4"
               "int4"
@@ -609,7 +610,7 @@ in  { space =
               "Int4"
               "INT4"
           , primitiveQueries
-              Project.Primitive.Int4multirange
+              Contract.Primitive.Int4multirange
               "int4multirange"
               "Int4multirange"
               "int4multirange"
@@ -619,7 +620,7 @@ in  { space =
               "Int4multirange"
               "INT4MULTIRANGE"
           , primitiveQueries
-              Project.Primitive.Int4range
+              Contract.Primitive.Int4range
               "int4range"
               "Int4range"
               "int4range"
@@ -629,7 +630,7 @@ in  { space =
               "Int4range"
               "INT4RANGE"
           , primitiveQueries
-              Project.Primitive.Int8
+              Contract.Primitive.Int8
               "int8"
               "Int8"
               "int8"
@@ -639,7 +640,7 @@ in  { space =
               "Int8"
               "INT8"
           , primitiveQueries
-              Project.Primitive.Int8multirange
+              Contract.Primitive.Int8multirange
               "int8multirange"
               "Int8multirange"
               "int8multirange"
@@ -649,7 +650,7 @@ in  { space =
               "Int8multirange"
               "INT8MULTIRANGE"
           , primitiveQueries
-              Project.Primitive.Int8range
+              Contract.Primitive.Int8range
               "int8range"
               "Int8range"
               "int8range"
@@ -659,7 +660,7 @@ in  { space =
               "Int8range"
               "INT8RANGE"
           , primitiveQueries
-              Project.Primitive.Interval
+              Contract.Primitive.Interval
               "interval"
               "Interval"
               "interval"
@@ -669,7 +670,7 @@ in  { space =
               "Interval"
               "INTERVAL"
           , primitiveQueries
-              Project.Primitive.Json
+              Contract.Primitive.Json
               "json"
               "Json"
               "json"
@@ -679,7 +680,7 @@ in  { space =
               "Json"
               "JSON"
           , primitiveQueries
-              Project.Primitive.Jsonb
+              Contract.Primitive.Jsonb
               "jsonb"
               "Jsonb"
               "jsonb"
@@ -689,7 +690,7 @@ in  { space =
               "Jsonb"
               "JSONB"
           , primitiveQueries
-              Project.Primitive.Line
+              Contract.Primitive.Line
               "line"
               "Line"
               "line"
@@ -699,7 +700,7 @@ in  { space =
               "Line"
               "LINE"
           , primitiveQueries
-              Project.Primitive.Lseg
+              Contract.Primitive.Lseg
               "lseg"
               "Lseg"
               "lseg"
@@ -709,7 +710,7 @@ in  { space =
               "Lseg"
               "LSEG"
           , primitiveQueries
-              Project.Primitive.Ltree
+              Contract.Primitive.Ltree
               "ltree"
               "Ltree"
               "ltree"
@@ -719,7 +720,7 @@ in  { space =
               "Ltree"
               "LTREE"
           , primitiveQueries
-              Project.Primitive.Macaddr
+              Contract.Primitive.Macaddr
               "macaddr"
               "Macaddr"
               "macaddr"
@@ -729,7 +730,7 @@ in  { space =
               "Macaddr"
               "MACADDR"
           , primitiveQueries
-              Project.Primitive.Macaddr8
+              Contract.Primitive.Macaddr8
               "macaddr8"
               "Macaddr8"
               "macaddr8"
@@ -739,7 +740,7 @@ in  { space =
               "Macaddr8"
               "MACADDR8"
           , primitiveQueries
-              Project.Primitive.Money
+              Contract.Primitive.Money
               "money"
               "Money"
               "money"
@@ -749,7 +750,7 @@ in  { space =
               "Money"
               "MONEY"
           , primitiveQueries
-              Project.Primitive.Name
+              Contract.Primitive.Name
               "name"
               "Name"
               "name"
@@ -759,7 +760,7 @@ in  { space =
               "Name"
               "NAME"
           , primitiveQueries
-              Project.Primitive.Numeric
+              Contract.Primitive.Numeric
               "numeric"
               "Numeric"
               "numeric"
@@ -769,7 +770,7 @@ in  { space =
               "Numeric"
               "NUMERIC"
           , primitiveQueries
-              Project.Primitive.Nummultirange
+              Contract.Primitive.Nummultirange
               "nummultirange"
               "Nummultirange"
               "nummultirange"
@@ -779,7 +780,7 @@ in  { space =
               "Nummultirange"
               "NUMMULTIRANGE"
           , primitiveQueries
-              Project.Primitive.Numrange
+              Contract.Primitive.Numrange
               "numrange"
               "Numrange"
               "numrange"
@@ -789,7 +790,7 @@ in  { space =
               "Numrange"
               "NUMRANGE"
           , primitiveQueries
-              Project.Primitive.Oid
+              Contract.Primitive.Oid
               "oid"
               "Oid"
               "oid"
@@ -799,7 +800,7 @@ in  { space =
               "Oid"
               "OID"
           , primitiveQueries
-              Project.Primitive.Path
+              Contract.Primitive.Path
               "path"
               "Path"
               "path"
@@ -809,7 +810,7 @@ in  { space =
               "Path"
               "PATH"
           , primitiveQueries
-              Project.Primitive.PgLsn
+              Contract.Primitive.PgLsn
               "pgLsn"
               "PgLsn"
               "pg-lsn"
@@ -819,7 +820,7 @@ in  { space =
               "Pg_Lsn"
               "PG_LSN"
           , primitiveQueries
-              Project.Primitive.PgSnapshot
+              Contract.Primitive.PgSnapshot
               "pgSnapshot"
               "PgSnapshot"
               "pg-snapshot"
@@ -829,7 +830,7 @@ in  { space =
               "Pg_Snapshot"
               "PG_SNAPSHOT"
           , primitiveQueries
-              Project.Primitive.Point
+              Contract.Primitive.Point
               "point"
               "Point"
               "point"
@@ -839,7 +840,7 @@ in  { space =
               "Point"
               "POINT"
           , primitiveQueries
-              Project.Primitive.Polygon
+              Contract.Primitive.Polygon
               "polygon"
               "Polygon"
               "polygon"
@@ -849,7 +850,7 @@ in  { space =
               "Polygon"
               "POLYGON"
           , primitiveQueries
-              Project.Primitive.Text
+              Contract.Primitive.Text
               "text"
               "Text"
               "text"
@@ -859,7 +860,7 @@ in  { space =
               "Text"
               "TEXT"
           , primitiveQueries
-              Project.Primitive.Time
+              Contract.Primitive.Time
               "time"
               "Time"
               "time"
@@ -869,7 +870,7 @@ in  { space =
               "Time"
               "TIME"
           , primitiveQueries
-              Project.Primitive.Timestamp
+              Contract.Primitive.Timestamp
               "timestamp"
               "Timestamp"
               "timestamp"
@@ -879,7 +880,7 @@ in  { space =
               "Timestamp"
               "TIMESTAMP"
           , primitiveQueries
-              Project.Primitive.Timestamptz
+              Contract.Primitive.Timestamptz
               "timestamptz"
               "Timestamptz"
               "timestamptz"
@@ -889,7 +890,7 @@ in  { space =
               "Timestamptz"
               "TIMESTAMPTZ"
           , primitiveQueries
-              Project.Primitive.Timetz
+              Contract.Primitive.Timetz
               "timetz"
               "Timetz"
               "timetz"
@@ -899,7 +900,7 @@ in  { space =
               "Timetz"
               "TIMETZ"
           , primitiveQueries
-              Project.Primitive.Tsmultirange
+              Contract.Primitive.Tsmultirange
               "tsmultirange"
               "Tsmultirange"
               "tsmultirange"
@@ -909,7 +910,7 @@ in  { space =
               "Tsmultirange"
               "TSMULTIRANGE"
           , primitiveQueries
-              Project.Primitive.Tsquery
+              Contract.Primitive.Tsquery
               "tsquery"
               "Tsquery"
               "tsquery"
@@ -919,7 +920,7 @@ in  { space =
               "Tsquery"
               "TSQUERY"
           , primitiveQueries
-              Project.Primitive.Tsrange
+              Contract.Primitive.Tsrange
               "tsrange"
               "Tsrange"
               "tsrange"
@@ -929,7 +930,7 @@ in  { space =
               "Tsrange"
               "TSRANGE"
           , primitiveQueries
-              Project.Primitive.Tstzmultirange
+              Contract.Primitive.Tstzmultirange
               "tstzmultirange"
               "Tstzmultirange"
               "tstzmultirange"
@@ -939,7 +940,7 @@ in  { space =
               "Tstzmultirange"
               "TSTZMULTIRANGE"
           , primitiveQueries
-              Project.Primitive.Tstzrange
+              Contract.Primitive.Tstzrange
               "tstzrange"
               "Tstzrange"
               "tstzrange"
@@ -949,7 +950,7 @@ in  { space =
               "Tstzrange"
               "TSTZRANGE"
           , primitiveQueries
-              Project.Primitive.Tsvector
+              Contract.Primitive.Tsvector
               "tsvector"
               "Tsvector"
               "tsvector"
@@ -959,7 +960,7 @@ in  { space =
               "Tsvector"
               "TSVECTOR"
           , primitiveQueries
-              Project.Primitive.Uuid
+              Contract.Primitive.Uuid
               "uuid"
               "Uuid"
               "uuid"
@@ -969,7 +970,7 @@ in  { space =
               "Uuid"
               "UUID"
           , primitiveQueries
-              Project.Primitive.Varbit
+              Contract.Primitive.Varbit
               "varbit"
               "Varbit"
               "varbit"
@@ -979,7 +980,7 @@ in  { space =
               "Varbit"
               "VARBIT"
           , primitiveQueries
-              Project.Primitive.Varchar
+              Contract.Primitive.Varchar
               "varchar"
               "Varchar"
               "varchar"
@@ -989,7 +990,7 @@ in  { space =
               "Varchar"
               "VARCHAR"
           , primitiveQueries
-              Project.Primitive.Xml
+              Contract.Primitive.Xml
               "xml"
               "Xml"
               "xml"
