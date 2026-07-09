@@ -19,8 +19,10 @@ A generator is a pure Dhall program with this type at its core:
 compile : Optional Config -> Project -> Compiled (List File)
 ```
 
-- **`Project`** is the input model, defined by this SDK
-  ([`src/Project.dhall`](../src/Project.dhall)): the parsed, analysed
+- **`Project`** is the input model, defined by the companion
+  [`gen-contract`](https://github.com/pgenie-io/gen-contract) package
+  ([`src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall)):
+  the parsed, analysed
   pGenie project — queries with typed parameters and result columns, custom
   types, migrations, names in all casings.
 - **`Config`** is the generator's own user-facing configuration record,
@@ -57,7 +59,8 @@ Forbidden edges (enforced by review, not by tooling):
 
 - `Templates → Interpreters` — templates never see the model or its
   interpretation.
-- `Templates → Deps.Sdk` — templates never import the Project model.
+- `Templates → Deps.Sdk` / `Deps.Contract` — templates never import the
+  Project model.
 - `Template → Template` — no inter-template dependencies; only interpreters
   compose templates.
 
@@ -65,12 +68,13 @@ Forbidden edges (enforced by review, not by tooling):
 
 ```
 gen/
-  Gen.dhall            -- entry point: Sdk.module Config compile
+  Gen.dhall            -- entry point: Contract.module Config compile
   Config.dhall         -- the generator's user-facing config record type
   compile.dhall        -- Optional Config -> Project -> Compiled (List File)
   InterpreterConfig.dhall -- internal config Type + resolve, threaded through Interpreters
   Deps/                -- pinned remote imports ONLY (one file per dependency)
-    Sdk.dhall          -- this SDK (exposes Sdk.Sigs.Interpreter / Sdk.Sigs.Template)
+    Contract.dhall     -- gen-contract (Project model + module constructor)
+    Sdk.dhall          -- this SDK (Sigs, Fixtures, Primitive/toText)
     Prelude.dhall      -- Dhall Prelude
     Lude.dhall         -- lude.dhall (Compiled, File, Text utilities)
     Typeclasses.dhall  -- typeclasses.dhall (Applicative, Alternative, ...)
@@ -255,12 +259,13 @@ produces a sole `error.yaml`. Diagnostics are just more Files.
 `Gen.dhall` is one line:
 
 ```dhall
-let Sdk = ./Deps/Sdk.dhall in Sdk.module ./Config.dhall ./compile.dhall
+let Contract = ./Deps/Contract.dhall in Contract.module ./Config.dhall ./compile.dhall
 ```
 
-`Sdk.module` ([`src/module.dhall`](../src/module.dhall)) stamps the SDK's
-`contractVersion` and returns `{ contractVersion, Config, compile,
-compileToFileMap }` — the interface `pgn` consumes.
+`Contract.module`
+([`src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall))
+stamps the generator contract version and returns `{ contractVersion, Config,
+compile, compileToFileMap }` — the interface `pgn` consumes.
 
 `compile.dhall` is the only place that sees the user-facing `Config`. It
 delegates the resolution of the internal interpreter config to
@@ -305,10 +310,12 @@ artifacts:
 ## Implementing a new generator: the recipe
 
 1. **Scaffold** the layout above: `gen/{Gen,Config,compile,InterpreterConfig}.dhall`,
-   `gen/{Deps,Interpreters,Templates}/`. Copy `Deps/` from java.gen or
-   rust.gen and update pins; every `Interpreters/*.dhall`/`Templates/*.dhall`
-   module references `Sdk.Sigs.Interpreter`/`Sdk.Sigs.Template` directly —
-   there is no local shape file to copy.
+   `gen/{Deps,Interpreters,Templates}/`. `Deps/` needs two SDK pins:
+   `Contract.dhall` pointing to `gen-contract/src/package.dhall` and
+   `Sdk.dhall` pointing to `gen-sdk/src/package.dhall`. Every
+   `Interpreters/*.dhall`/`Templates/*.dhall` module references
+   `Sdk.Sigs.Interpreter`/`Sdk.Sigs.Template` directly — there is no local
+   shape file to copy.
 2. **Study the target.** Decide the shape of the generated artifact first —
    ideally as a hand-written design repo (cf. `java.gen-design`): one
    statement module, one custom-type module, manifest, README, one test.
@@ -317,7 +324,8 @@ artifacts:
    write `compile.dhall`: resolve defaults, derive the internal interpreter
    `Config`, delegate to `Interpreters/Project`.
 4. **Build the interpreter tree bottom-up**, mirroring
-   [`Project.dhall`](../src/Project.dhall): `Primitive` (the type-mapping
+   [`gen-contract/src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall):
+   `Primitive` (the type-mapping
    table; unsupported types fail here) → `Scalar` → `Value` → `Name` →
    the member interpreters → `Query` and `CustomType` → `Project`.
    Wrap each level in `nest`; make every `Output` plain data.
@@ -359,5 +367,5 @@ artifacts:
 | **Report** | `{ path : List Text, message }`; a warning when generation succeeds, the error when it fails | — |
 | **`nest`** | Prefixes a path segment onto every report in a subtree | `local` over the report path |
 | **Skippable unit** | The granularity at which unsupported input is excised (query, custom type) | `Alternative.optional` boundary |
-| **Model** | The `Project` type in this SDK; the generator's entire input | — |
+| **Model** | The `Project` type in `gen-contract`; the generator's entire input | — |
 | **File** | `{ path, content }`; the universal output — code, manifests, docs, tests, diagnostics | — |

@@ -7,7 +7,7 @@ contract/schema itself lives in the sibling `gen-contract` repository.
 
 - `src/` contains fixtures and helper signatures for generator authors. The
   canonical input model (`Project`) and the generator `module` constructor are
-  imported from `gen-contract/dhall/`.
+  imported from `gen-contract/src/package.dhall`.
 - No Haskell. All pGenie generators are written in Dhall, and this repo has no
   consumers that need a Haskell projection of the model — that lives in
   `gen-contract` (minimal model) and `pgenie` (runtime bridge).
@@ -15,7 +15,7 @@ contract/schema itself lives in the sibling `gen-contract` repository.
 ## Working rules
 
 - Do not duplicate the contract from `gen-contract`. Import `Project` and
-  `module` from `../gen-contract/dhall/` in Dhall.
+  `module` from `../gen-contract/src/package.dhall` in Dhall.
 - Do not reintroduce a Haskell package here. If a generator author or test
   needs Haskell-side fixtures, that belongs in the consuming repo (`pgenie`),
   not here.
