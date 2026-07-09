@@ -3,14 +3,16 @@
 -- An interpreter takes a config and the project input and returns a result
 -- that is either success with warnings and generated files, or an error
 -- report.
-let Report = { path : List Text, message : Text }
+let Contract = ../Deps/Contract.dhall
 
 let module =
       \(Config : Type) ->
       \(Input : Type) ->
       \(Output : Type) ->
         let Result =
-              < Ok : { warnings : List Report, value : Output } | Err : Report >
+              < Ok : { warnings : List Contract.Report, value : Output }
+              | Err : Contract.Report
+              >
 
         let Run = Config -> Input -> Result
 

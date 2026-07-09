@@ -10,6 +10,9 @@
 
 - Removed leftover local Haskell build artifacts (`dist/`, `dist-newstyle/`) now that the repo carries no Haskell package.
 - Restructured CI/CD: added a reusable `ci.yml` (Dhall type-checking), and `bump.yml`/`release.yml` workflows that automate tagged GitHub releases of the frozen, resolved `src/package.dhall`, following the same pattern as `java.gen`.
+- `Sigs.Interpreter`'s `Report`/`File`/`Result` now import from
+  gen-contract's `Report`/`File`/`Output` instead of redefining them
+  locally. No shape change.
 
 # v0.12.0
 
