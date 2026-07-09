@@ -16,8 +16,11 @@ permissions:
   id-token: write
 
 jobs:
-  generate-dhall-docs:
+  deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -32,32 +35,10 @@ jobs:
           package-name: gen-sdk
           add-repo-reference: true
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: dhall
-          path: ${{ steps.generate.outputs.path }}
-
-  deploy:
-    needs: [generate-dhall-docs]
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download all artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: combined-site
-
-      - name: Add index page and icons
-        run: cp -r pages/* combined-site/
-
       - name: Upload to Pages
         uses: actions/upload-pages-artifact@v4
         with:
-          path: combined-site
+          path: ${{ steps.generate.outputs.path }}
 
       - name: Deploy
         id: deploy
