@@ -74,7 +74,7 @@ gen/
   InterpreterConfig.dhall -- internal config Type + resolve, threaded through Interpreters
   Deps/                -- pinned remote imports ONLY (one file per dependency)
     Contract.dhall     -- gen-contract (Project model + module constructor)
-    Sdk.dhall          -- this SDK (Sigs, Fixtures, Primitive/toText)
+    Sdk.dhall          -- this SDK (Sigs, Fixtures, Primitive.toText, Output.toFileMap)
     Prelude.dhall      -- Dhall Prelude
     Lude.dhall         -- lude.dhall (Compiled, File, Text utilities)
     Typeclasses.dhall  -- typeclasses.dhall (Applicative, Alternative, ...)
@@ -254,6 +254,13 @@ whole generation when it can be excised cleanly:
 rendered into `warnings.yaml` next to the generated tree; a top-level failure
 produces a sole `error.yaml`. Diagnostics are just more Files.
 
+`compile.dhall` returns `Contract.Output` — the concrete instantiation of
+`Compiled (List File)` defined in gen-contract. `Sdk.Output.toFileMap`
+(`../src/Output/toFileMap.dhall`) is the ready-made bridge from that `Output`
+to a flat `Prelude.Map.Type Text Text`, applying the above materialisation.
+Callers (tests, and any host that wants a path→content map instead of a
+`Compiled` value) go through it rather than reimplementing the traversal.
+
 ## Entry and distribution contract
 
 `Gen.dhall` is one line:
@@ -265,7 +272,10 @@ let Contract = ./Deps/Contract.dhall in Contract.module ./Config.dhall ./compile
 `Contract.module`
 ([`src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall))
 stamps the generator contract version and returns `{ contractVersion, Config,
-compile, compileToFileMap }` — the interface `pgn` consumes.
+compile }` — the interface `pgn` consumes. `compile` itself has type
+`Optional Config -> Project -> Output`; there is no `compileToFileMap` on the
+module — turning an `Output` into files is the caller's job, via
+`Sdk.Output.toFileMap` (see above).
 
 `compile.dhall` is the only place that sees the user-facing `Config`. It
 delegates the resolution of the internal interpreter config to
@@ -289,12 +299,16 @@ artifacts:
 ## Testing and verification
 
 - `tests/` holds executable fixtures. Each applies the generator to an SDK
-  fixture project ([`src/Fixtures/`](../src/Fixtures)) via
-  `compileToFileMap`:
+  fixture project ([`src/Fixtures/`](../src/Fixtures)) and turns the result
+  into a file map with `Sdk.Output.toFileMap`:
 
   ```dhall
   let Gen = ../gen/Gen.dhall
-  in  Gen.compileToFileMap (Some { useOptional = True }) Deps.Sdk.Fixtures.Exhaustive
+
+  let Deps = ../gen/Deps/package.dhall
+
+  in  Deps.Sdk.Output.toFileMap
+        (Gen.compile (Some { useOptional = True }) Deps.Sdk.Fixtures.Exhaustive)
   ```
 
 - Materialise with
