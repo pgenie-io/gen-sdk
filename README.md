@@ -1,30 +1,17 @@
 # gen-sdk
 
-[![Continuous Docs for Dhall](https://img.shields.io/badge/dhall_docs-master-blue)](https://pgenie-io.github.io/gen-sdk/)
+[![Dhall Docs](https://img.shields.io/badge/dhall_docs-master-blue)](https://pgenie-io.github.io/gen-sdk/)
 
-Helper kit (Dhall-only) for authors of [pGenie](https://pgenie.io) code generators: fixtures and opt-in signature helpers layered on top of the [`gen-contract`](https://github.com/pgenie-io/gen-contract) schema. All pGenie generators are written in Dhall, so this SDK carries no Haskell.
+Helper kit for authors of [pGenie](https://pgenie.io) code generators. It layers fixtures and opt-in signature helpers on top of the [`gen-contract`](https://github.com/pgenie-io/gen-contract) schema.
+
+`gen-sdk` itself carries no Haskell — all pGenie generators are written in Dhall. The canonical input model (`Project`) and the generator `module` constructor live in `gen-contract` and are re-exported here for convenience.
 
 ## Structure
 
-### `src/`
+The entry point is [`src/package.dhall`](src/package.dhall). It re-exports `Project` and `module` from `gen-contract` and adds:
 
-See the [Dhall docs](https://pgenie-io.github.io/gen-sdk/dhall/) for the full reference.
-
-The entry point is `package.dhall`, which re-exports `Project` and `module` from [`gen-contract`](https://github.com/pgenie-io/gen-contract) and adds:
-
-- **`Fixtures`** — sample projects for generator tests
-- **`Sigs`** — opt-in generator signature helpers
-- **`Primitive/toText`** — a helper for rendering primitive types
-
-A minimal generator looks like this:
-
-```dhall
-let Sdk = https://raw.githubusercontent.com/pgenie-io/gen-sdk/<tag>/src/package.dhall
-
-in  Sdk.module
-      { major = 1, minor = 0 }
-      ./Config.dhall
-      ./compile.dhall
-```
-
-For a real-world example see [haskell-hasql.gen](https://github.com/pgenie-io/haskell-hasql.gen).
+- **`Fixtures`** — sample `Project` values for generator tests. [`src/Fixtures/Exhaustive.dhall`](src/Fixtures/Exhaustive.dhall) exercises the full contract surface.
+- **`Sigs`** — opt-in module-shape constructors shared by every generator:
+  - `Sigs.Interpreter` — for `Interpreters/` modules
+  - `Sigs.Template` — for `Templates/` modules
+- **`Primitive/toText`** — helper that renders a PostgreSQL primitive type to its SQL name (e.g. `Int4` → `"int4"`).
