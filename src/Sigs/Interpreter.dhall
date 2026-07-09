@@ -5,15 +5,13 @@
 -- report.
 let Report = { path : List Text, message : Text }
 
-let File = { path : Text, content : Text }
-
-let Result =
-      < Ok : { warnings : List Report, value : List File } | Err : Report >
-
 let module =
       \(Config : Type) ->
       \(Input : Type) ->
       \(Output : Type) ->
+        let Result =
+              < Ok : { warnings : List Report, value : Output } | Err : Report >
+
         let Run = Config -> Input -> Result
 
         in  \(run : Run) -> { Input, Output, Result, Run, run }
