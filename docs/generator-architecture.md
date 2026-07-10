@@ -44,15 +44,11 @@ at the leaves rendering text.
 flowchart TD
     Gen["Gen.dhall — entry point"] --> compile["compile.dhall"]
     Gen --> Config["Config.dhall"]
-    compile --> IP["Interpreters/Project"]
-    IP --> Interpreters["Interpreters/* — model → data, tree-shaped"]
+    compile --> Interpreters["Interpreters/* — model → data, tree-shaped"]
     Interpreters --> Config
     Interpreters --> Templates["Templates/* — Params → Text, pure"]
     Interpreters --> Structures["Structures/* — shared pure data (optional layer)"]
-    Templates --> Config
     Templates --> Structures
-    Interpreters --> SigI["Sdk.Sigs.Interpreter"]
-    Templates --> SigT["Sdk.Sigs.Template"]
 ```
 
 Forbidden edges (enforced by review, not by tooling):
@@ -140,7 +136,7 @@ user-facing `Config.dhall` plus project metadata, previously inlined in
 Interpreters translate the model into target-specific data. Rules:
 
 - **The tree mirrors the model.** One interpreter module per model node kind,
-  named after it: `Project`, `Query`, `CustomType`, `ParamsMember`, `Value`,
+  named after it: `Project`, `Query`, `CustomType`, `Member`, `Value`,
   `Scalar`, `Primitive`, `Name`. A parent interpreter runs its children with
   the applicative operations of `Compiled` and combines their outputs.
 - **`Output` is data, not functions.** An interpreter's `Output` type is a
@@ -169,16 +165,12 @@ The interpreter tree of java.gen, as a representative instance:
 flowchart LR
     Project --> Query
     Project --> CustomType
-    Query --> Result --> ResultRows --> ResultColumns --> ResultColumnsMember
+    Query --> Result --> ResultRows --> ResultColumns --> Member
     Query --> QueryFragments
-    Query --> ParamsMember
-    CustomType --> CustomTypeMember
-    CustomTypeMember --> Name
-    CustomTypeMember --> Value
-    ParamsMember --> Name
-    ParamsMember --> Value
-    ResultColumnsMember --> Name
-    ResultColumnsMember --> Value
+    Query --> Member
+    CustomType --> Member
+    Member --> Name
+    Member --> Value
     Value --> Scalar --> Primitive
 ```
 
@@ -341,7 +333,7 @@ artifacts:
    [`gen-contract/src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall):
    `Primitive` (the type-mapping
    table; unsupported types fail here) → `Scalar` → `Value` → `Name` →
-   the member interpreters → `Query` and `CustomType` → `Project`.
+   `Member` → `Query` and `CustomType` → `Project`.
    Wrap each level in `nest`; make every `Output` plain data.
 5. **Extract templates** as each interpreter grows a rendering concern.
    The moment an interpreter concatenates more than a line or two of target
@@ -377,7 +369,7 @@ artifacts:
 | **Interpreter** | A module translating one model node kind into target-specific data, running children applicatively | Sig of a fold over the model (tagless-final style) |
 | **Template** | A pure `Params -> Text` module, blind to the model | Function; text combinator |
 | **Structure** | A pure shared data type with `empty`/`combine` | Monoid |
-| **Compiled** | `< Ok { warnings, value } | Err Report >` with applicative and alternative composition | Validation/Writer hybrid |
+| **Compiled** | `< Ok { warnings, value } \| Err Report >` with applicative and alternative composition | Validation/Writer hybrid |
 | **Report** | `{ path : List Text, message }`; a warning when generation succeeds, the error when it fails | — |
 | **`nest`** | Prefixes a path segment onto every report in a subtree | `local` over the report path |
 | **Skippable unit** | The granularity at which unsupported input is excised (query, custom type) | `Alternative.optional` boundary |
