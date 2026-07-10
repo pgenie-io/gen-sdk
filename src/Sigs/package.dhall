@@ -1,1 +1,4 @@
-{ Interpreter = ./Interpreter.dhall, Template = ./Template.dhall }
+{ Generator = ./Generator.dhall
+, Interpreter = ./Interpreter.dhall
+, Template = ./Template.dhall
+}
