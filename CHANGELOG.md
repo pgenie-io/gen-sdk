@@ -1,5 +1,9 @@
 # Upcoming
 
+## Breaking
+
+- `Sigs.Interpreter` and `Sigs.Template` module-shape constructors are now called directly as functions instead of through a `.module` field — use `Sigs.Interpreter Config Input Output run` / `Sigs.Template Params run` in place of `Sigs.Interpreter.module ...` / `Sigs.Template.module ...`.
+
 ## Non-breaking
 
 - Add a `Sigs.Generator` module-shape constructor (`Config`, `defaultConfig`, `interpret` → `{ contractVersion, compile }`), taking over the module-constructor role that `gen-contract` is dropping so it can stay types-only.

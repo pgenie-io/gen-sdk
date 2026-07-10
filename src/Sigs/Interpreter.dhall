@@ -5,17 +5,14 @@
 -- report.
 let Contract = ../Deps/Contract.dhall
 
-let module =
-      \(Config : Type) ->
-      \(Input : Type) ->
-      \(Output : Type) ->
-        let Result =
-              < Ok : { warnings : List Contract.Report, value : Output }
-              | Err : Contract.Report
-              >
+in  \(Config : Type) ->
+    \(Input : Type) ->
+    \(Output : Type) ->
+      let Result =
+            < Ok : { warnings : List Contract.Report, value : Output }
+            | Err : Contract.Report
+            >
 
-        let Run = Config -> Input -> Result
+      let Run = Config -> Input -> Result
 
-        in  \(run : Run) -> { Input, Output, Result, Run, run }
-
-in  { module }
+      in  \(run : Run) -> { Input, Output, Result, Run, run }
