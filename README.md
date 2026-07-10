@@ -11,8 +11,9 @@ Helper kit for authors of [pGenie](https://pgenie.io) code generators. It layers
 The entry point is [`src/package.dhall`](src/package.dhall). It exposes:
 
 - **`Fixtures`** — sample `Project` values for generator tests. [`src/Fixtures/Exhaustive.dhall`](src/Fixtures/Exhaustive.dhall) exercises the full contract surface.
-- **`Sigs`** — opt-in module-shape constructors shared by every generator:
-  - `Sigs.Interpreter` — for `Interpreters/` modules
-  - `Sigs.Template` — for `Templates/` modules
+- **`Sigs`** — opt-in module-shape constructors shared by every generator, each called directly as a function (no `.module` field to reach through):
+  - `Sigs.interpreter Config Input Output run` — for `Interpreters/` modules
+  - `Sigs.template Params run` — for `Templates/` modules
+  - `Sigs.generator Config defaultConfig interpret` — builds the value `src/package.dhall` returns, by assembling `compile` and forwarding it to `gen-contract`'s `module` constructor
 - **`Primitive.toText`** — helper that renders a PostgreSQL primitive type to its SQL name (e.g. `Int4` → `"int4"`).
 - **`Output.toFileMap`** — converts a generator's `Contract.Output` (warnings/files or an error report) into a flat `Prelude.Map.Type Text Text`, materialising diagnostics as `warnings.yaml`/`error.yaml` alongside the generated files.

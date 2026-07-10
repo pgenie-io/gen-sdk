@@ -8,8 +8,7 @@ It is written for agents implementing a new generator or extending an existing
 one. It prescribes the target architecture; where an existing generator
 deviates, the deviation is a defect in that generator, not a licence to copy.
 
-The reference implementation is [java.gen](https://github.com/pgenie-io/java.gen)
-([rust.gen](https://github.com/pgenie-io/rust.gen) is a second, leaner instance).
+The reference implementation is [java.gen](https://github.com/pgenie-io/java.gen).
 
 ## The big picture
 
@@ -42,10 +41,7 @@ at the leaves rendering text.
 
 ```mermaid
 flowchart TD
-    package["src/package.dhall — entry point"] --> compile["compile.dhall"]
-    package --> Config["Config.dhall"]
-    compile --> Interpreters["Interpreters/* — model → data, tree-shaped"]
-    Interpreters --> Config
+    package["src/package.dhall — entry point: Config, defaultConfig, Sdk.Sigs.generator"] --> Interpreters["Interpreters/* — model → data, tree-shaped, rooted at Project"]
     Interpreters --> Templates["Templates/* — Params → Text, pure"]
     Interpreters --> Structures["Structures/* — shared pure data (optional layer)"]
     Templates --> Structures
@@ -64,17 +60,14 @@ Forbidden edges (enforced by review, not by tooling):
 
 ```
 src/
-  package.dhall        -- entry point: Contract.module Config compile
-  Config.dhall         -- the generator's user-facing config record type
-  compile.dhall        -- Optional Config -> Project -> Compiled (List File)
-  InterpreterConfig.dhall -- internal config Type + resolve, threaded through Interpreters
+  package.dhall        -- entry point: Config, defaultConfig, Sdk.Sigs.generator Config defaultConfig ProjectInterpreter.run
   Deps/                -- pinned remote imports ONLY (one file per dependency)
-    Contract.dhall     -- gen-contract (Project model + module constructor)
+    Contract.dhall     -- gen-contract (Project model + Output/Report/File types + module constructor)
     Sdk.dhall          -- this SDK (Sigs, Fixtures, Primitive.toText, Output.toFileMap)
     Prelude.dhall      -- Dhall Prelude
     Lude.dhall         -- lude.dhall (Compiled, File, Text utilities)
     Typeclasses.dhall  -- typeclasses.dhall (Applicative, Alternative, ...)
-  Interpreters/        -- one module per model node kind; forms a tree
+  Interpreters/        -- one module per model node kind; forms a tree, rooted at Project.dhall
   Templates/           -- one module per rendered text fragment or file kind
   Structures/          -- (optional) pure shared data types, e.g. ImportSet
 demos/                 -- executable fixture drivers, e.g. Exhaustive.dhall
@@ -82,60 +75,96 @@ demos/                 -- executable fixture drivers, e.g. Exhaustive.dhall
 
 `Deps/` holds nothing but frozen (`sha256`-pinned) remote imports. Utilities
 belong in the layer that owns them, not in a grab-bag directory. There is no
-`package.dhall` aggregator in `Deps/`: every consumer — `Interpreters/*`,
-`Templates/*`, `src/InterpreterConfig.dhall`, `demos/*` — imports exactly the
+`package.dhall` aggregator in `Deps/`: every consumer — `src/package.dhall`,
+`Interpreters/*`, `Templates/*`, `demos/*` — imports exactly the
 `Deps/*.dhall` files it uses, bound to a name matching the file
 (`let Sdk = ../Deps/Sdk.dhall`, `let Prelude = ../Deps/Prelude.dhall`, ...).
 A barrel import would let a leaf module reach dependencies it doesn't
-actually need and obscures which ones it does. The same rule applies to
-`src/InterpreterConfig.dhall` and fixture drivers in `demos/`: import only
-the `Deps/*.dhall` files they actually use.
+actually need and obscures which ones it does.
 
-## The two sigs
+## The three sigs
 
-`Sdk.Sigs` ([`src/Sigs/`](../src/Sigs)) defines the two module shapes
+`Sdk.Sigs` ([`src/Sigs/`](../src/Sigs)) defines the three module shapes
 every generator uses. They are smart constructors for first-class module
 records — a poor-man's ML module signature (see the Glossary) — shared by
-every generator via this SDK, not copied per-repo.
+every generator via this SDK, not copied per-repo. Each is a flat function,
+called directly (`Sdk.Sigs.interpreter Config Input Output run`) — there is
+no `.module` field to reach through.
 
-**Interpreter** (`Sdk.Sigs.Interpreter`, [`src/Sigs/Interpreter.dhall`](../src/Sigs/Interpreter.dhall)):
-
-```dhall
-let module =
-      \(Config : Type) ->
-      \(Input : Type) ->
-      \(Output : Type) ->
-        let Result = Compiled Output
-        let Run = Config -> Input -> Result
-        in  \(run : Run) -> { Input, Output, Result, Run, run }
-```
-
-`Config` is supplied by the generator at each call site — it is not the
-user-facing `Config.dhall`, but the generator's own internal record (see
-`InterpreterConfig.dhall` below), which `compile.dhall` derives from the user
-config plus the project (package name, flags, ...) and threads through the
-whole tree.
-
-**Template** (`Sdk.Sigs.Template`, [`src/Sigs/Template.dhall`](../src/Sigs/Template.dhall)):
+**Interpreter** (`Sdk.Sigs.interpreter`, [`src/Sigs/interpreter.dhall`](../src/Sigs/interpreter.dhall)):
 
 ```dhall
-let module =
-      \(Params : Type) ->
-        let Run = Params -> Text
-        in  \(run : Run) -> { Params, Run, run }
+\(Config : Type) ->
+\(Input : Type) ->
+\(Output : Type) ->
+  let Result =
+        < Ok : { warnings : List Contract.Report, value : Output }
+        | Err : Contract.Report
+        >
+
+  let Run = Config -> Input -> Result
+
+  in  \(run : Run) -> { Input, Output, Result, Run, run }
 ```
+
+`gen-contract` does not depend on Lude, so `Result` is spelled out here rather
+than named as `Compiled Output` — but it is structurally identical to Lude's
+`Compiled Output` (see [The `Compiled` contract](#the-compiled-contract)
+below), which is what lets interpreters compose it with `Lude.Compiled`'s
+operations (`map2`, `nest`, `alternative`, ...) without gen-contract itself
+importing Lude.
+
+`Config` is supplied by the generator at each call site, and is local to
+each interpreter module — just the fields that interpreter (and the ones
+below it) actually need, not one type threaded unchanged through the whole
+tree. At the root, `Interpreters/Project`'s `Config` is exactly the
+generator's public `Config` — there is no separate internal config type or
+a `resolve` step. Values `Project.run` derives from `Config` and the
+`Project` model (package name, source/test path prefixes, Maven
+`groupId`/`artifactId`, ...) are computed inline into a small record local
+to that module, and handed down to children narrowed to just the fields
+each one declares in its own `Config` — Dhall's structural typing accepts a
+record projection (`resolved.{ packageName, useOptional }`) anywhere the
+narrower type is expected.
+
+**Template** (`Sdk.Sigs.template`, [`src/Sigs/template.dhall`](../src/Sigs/template.dhall)):
+
+```dhall
+\(Params : Type) ->
+  let Run = Params -> Text
+  in  \(run : Run) -> { Params, Run, run }
+```
+
+**Generator** (`Sdk.Sigs.generator`, [`src/Sigs/generator.dhall`](../src/Sigs/generator.dhall)):
+
+```dhall
+\(Config : Type) ->
+\(defaultConfig : Config) ->
+\(interpret : Config -> Contract.Project -> Contract.Output) ->
+  let compile =
+        \(config : Optional Config) ->
+          merge { None = interpret defaultConfig, Some = interpret } config
+
+  in  Contract.module Config compile
+```
+
+`generator` is the odd one out: it doesn't fix a shape reused by many
+sibling files, it builds the single top-level value `src/package.dhall`
+returns. It takes the generator's public `Config`, a `defaultConfig` for
+when the user omits config from the pGenie project file, and the root
+interpreter's `run` (as `interpret : Config -> Project -> Output`); it
+assembles `compile` and forwards it straight to `Contract.module`, which is
+where `{ contractVersion, Config, compile }` is actually constructed (see
+Entry and distribution contract, below). `gen-contract` owns both the
+`Project`/`Output`/`Report`/`File` types *and* the `module` constructor that
+assembles a generator record from them; `Sdk.Sigs.generator` is a thin
+convenience layer on top, not a competing construction site.
 
 Every module in `Interpreters/` ends with
-`Sdk.Sigs.Interpreter.module InterpreterConfig.Type Input Output run`; every
-module in `Templates/` ends with `Sdk.Sigs.Template.module Params run`. No
-exceptions — uniformity is what lets an agent open any module and know its
-shape.
-
-Each generator defines its own internal config in `src/InterpreterConfig.dhall`,
-exporting a `Type` (the shape threaded through `Interpreters/`) and a
-`resolve : Optional Config -> Project -> Type` (the derivation from the
-user-facing `Config.dhall` plus project metadata, previously inlined in
-`compile.dhall`).
+`Sdk.Sigs.interpreter Config Input Output run`, with `Config` declared right
+there in the same module; every module in `Templates/` ends with
+`Sdk.Sigs.template Params run`. No exceptions — uniformity is what lets an
+agent open any module and know its shape.
 
 ## Interpreters
 
@@ -203,7 +232,7 @@ operations (`empty`, `combine`) — for example java.gen's `ImportSet`, which
 accumulates which import groups a compilation unit needs. Structures are the
 only vocabulary besides primitives that Interpreters and Templates may share.
 A generator that needs no such shared type simply has no `Structures/`
-directory (rust.gen doesn't).
+directory.
 
 ## The `Compiled` contract
 
@@ -252,34 +281,56 @@ whole generation when it can be excised cleanly:
 rendered into `warnings.yaml` next to the generated tree; a top-level failure
 produces a sole `error.yaml`. Diagnostics are just more Files.
 
-`compile.dhall` returns `Contract.Output` — the concrete instantiation of
-`Compiled (List File)` defined in gen-contract. `Sdk.Output.toFileMap`
-(`../src/Output/toFileMap.dhall`) is the ready-made bridge from that `Output`
-to a flat `Prelude.Map.Type Text Text`, applying the above materialisation.
-Callers (tests, and any host that wants a path→content map instead of a
-`Compiled` value) go through it rather than reimplementing the traversal.
+`compile` (built by `Sdk.Sigs.generator`, see below) returns `Contract.Output`
+— a type gen-contract spells out directly (it does not import Lude), but
+which is structurally identical to `Compiled (List File)`. `Sdk.Output.toFileMap`
+(`../src/Output/toFileMap.dhall`) exploits exactly that structural equality:
+it hands the `Output` straight to `Lude.Compiled.map`/`Lude.Compiled.toFileMap`
+to produce a flat `Prelude.Map.Type Text Text`, applying the above
+materialisation. Callers (tests, and any host that wants a path→content map
+instead of a `Compiled` value) go through it rather than reimplementing the
+traversal.
 
 ## Entry and distribution contract
 
-`src/package.dhall` is one line:
+`src/package.dhall` is the entry point and the only place that sees the
+user-facing `Config`; a minimal instance
+([java.gen's](https://github.com/pgenie-io/java.gen/blob/master/src/package.dhall)):
 
 ```dhall
-let Contract = ./Deps/Contract.dhall in Contract.module ./Config.dhall ./compile.dhall
+let Sdk = ./Deps/Sdk.dhall
+
+let ProjectInterpreter = ./Interpreters/Project.dhall
+
+let Config = { useOptional : Bool }
+
+let defaultConfig = { useOptional = False }
+
+in  Sdk.Sigs.generator Config defaultConfig ProjectInterpreter.run
 ```
 
-`Contract.module`
-([`src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall))
-stamps the generator contract version and returns `{ contractVersion, Config,
-compile }` — the interface `pgn` consumes. `compile` itself has type
-`Optional Config -> Project -> Output`; there is no `compileToFileMap` on the
-module — turning an `Output` into files is the caller's job, via
-`Sdk.Output.toFileMap` (see above).
+`Sdk.Sigs.generator` ([`src/Sigs/generator.dhall`](../src/Sigs/generator.dhall))
+assembles `compile` — falling back to `defaultConfig` when the user omits
+config from the pGenie project file, otherwise passing the parsed config
+straight through to `interpret` — and forwards `Config` and `compile` to
+`Contract.module`, which stamps the contract version and returns
+`{ contractVersion, Config, compile }`, the interface `pgn` consumes.
+`compile` itself has type `Optional Config -> Project -> Output`; there is
+no `compileToFileMap` on the module — turning an `Output` into files is the
+caller's job, via `Sdk.Output.toFileMap` (see above).
 
-`compile.dhall` is the only place that sees the user-facing `Config`. It
-delegates the resolution of the internal interpreter config to
-`InterpreterConfig.resolve` (package name, flags, derived from the user
-config and the project metadata) and hands the result to
-`Interpreters/Project`.
+`gen-contract` owns construction: it exports `module`, a function
+`\(Config : Type) -> \(compile : Optional Config -> Project -> Output) ->
+{ contractVersion, Config, compile }`, and `contractVersion` is baked in
+there rather than exported separately. `Sdk.Sigs.generator` does not build
+this record itself — it only assembles `compile` from `defaultConfig` and
+`interpret` and hands both to `Contract.module`.
+
+`package.dhall` passes `Config` straight through to the root interpreter
+(`Interpreters/Project`) as that interpreter's own `Config` — there is no
+intermediate resolution step. Any values `Project.run` needs beyond the
+public `Config` (package name, path prefixes, ...) it derives itself from
+the `Project` model it's handed (see [The three sigs](#the-three-sigs)).
 
 A generator is **distributed** as a single self-contained file: resolve and
 freeze `src/package.dhall` into `resolved.dhall` and attach it to a GitHub
@@ -320,20 +371,21 @@ artifacts:
 
 ## Implementing a new generator: the recipe
 
-1. **Scaffold** the layout above: `src/{package,Config,compile,InterpreterConfig}.dhall`,
+1. **Scaffold** the layout above: `src/package.dhall`,
    `src/{Deps,Interpreters,Templates}/`. `Deps/` needs two SDK pins:
    `Contract.dhall` pointing to `gen-contract/src/package.dhall` and
    `Sdk.dhall` pointing to `gen-sdk/src/package.dhall`. Every
    `Interpreters/*.dhall`/`Templates/*.dhall` module references
-   `Sdk.Sigs.Interpreter`/`Sdk.Sigs.Template` directly — there is no local
+   `Sdk.Sigs.interpreter`/`Sdk.Sigs.template` directly — there is no local
    shape file to copy.
 2. **Study the target.** Decide the shape of the generated artifact first —
    ideally as a hand-written design repo (cf. `java.gen-design`): one
    statement module, one custom-type module, manifest, README, one test.
    Templates are extracted from this design, not invented.
-3. **Define `Config.dhall`** with the user-facing options (keep it small) and
-   write `compile.dhall`: resolve defaults, derive the internal interpreter
-   `Config`, delegate to `Interpreters/Project`.
+3. **Define the public `Config` and a `defaultConfig`** directly in
+   `package.dhall` (keep `Config` small), and call
+   `Sdk.Sigs.generator Config defaultConfig ProjectInterpreter.run` to
+   delegate straight to `Interpreters/Project`.
 4. **Build the interpreter tree bottom-up**, mirroring
    [`gen-contract/src/package.dhall`](https://github.com/pgenie-io/gen-contract/blob/master/src/package.dhall):
    `Primitive` (the type-mapping
@@ -371,9 +423,10 @@ artifacts:
 
 | Term | Operational meaning | Nearest FP analogue |
 |---|---|---|
-| **Sig** | A smart constructor fixing the record shape (`{Input, Output, Result, Run, run}` or `{Params, Run, run}`) that every module of a layer must have; short for "ML module signature" | ML module signature |
+| **Sig** | A smart constructor fixing the record shape (`{Input, Output, Result, Run, run}`, `{Params, Run, run}`, or `{contractVersion, Config, compile}`) that every module of a layer must have; short for "ML module signature" | ML module signature |
 | **Interpreter** | A module translating one model node kind into target-specific data, running children applicatively | Sig of a fold over the model (tagless-final style) |
 | **Template** | A pure `Params -> Text` module, blind to the model | Function; text combinator |
+| **Generator** | The `{ contractVersion, Config, compile }` value `src/package.dhall` returns, built by `Contract.module` via `Sdk.Sigs.generator`; the interface `pgn` consumes | Module functor's result |
 | **Structure** | A pure shared data type with `empty`/`combine` | Monoid |
 | **Compiled** | `< Ok { warnings, value } \| Err Report >` with applicative and alternative composition | Validation/Writer hybrid |
 | **Report** | `{ path : List Text, message }`; a warning when generation succeeds, the error when it fails | — |
