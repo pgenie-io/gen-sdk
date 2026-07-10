@@ -1,3 +1,11 @@
+# Upcoming
+
+## Non-breaking
+
+- Add a `Sigs.Generator` module-shape constructor (`Config`, `defaultConfig`, `interpret` → `{ contractVersion, compile }`), taking over the module-constructor role that `gen-contract` is dropping so it can stay types-only.
+- Bump the pinned `gen-contract` dependency to the commit that extracts the module constructor.
+- Document generator-repository conventions in `docs/generator-architecture.md`: drop the `Deps/` package aggregator (each module imports only the `Deps/*.dhall` files it uses), adopt `demos/` (not `tests/`) for fixture drivers, and stop committing materialised demo output (CI verifies it transiently).
+
 # v1.0.0
 
 ## Breaking
