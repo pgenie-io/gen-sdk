@@ -2,7 +2,7 @@
 
 ## Breaking
 
-- `Sigs.Interpreter` and `Sigs.Template` module-shape constructors are now called directly as functions instead of through a `.module` field — use `Sigs.Interpreter Config Input Output run` / `Sigs.Template Params run` in place of `Sigs.Interpreter.module ...` / `Sigs.Template.module ...`.
+- `Sigs.Interpreter` and `Sigs.Template` module-shape constructors are now called directly as functions instead of through a `.module` field — use `Sigs.interpreter Config Input Output run` / `Sigs.template Params run` in place of `Sigs.Interpreter.module ...` / `Sigs.Template.module ...`.
 
 ## Non-breaking
 

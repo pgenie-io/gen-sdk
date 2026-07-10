@@ -59,8 +59,8 @@ jobs:
           dhall format --check \
             src/package.dhall \
             src/Sigs/package.dhall \
-            src/Sigs/Interpreter.dhall \
-            src/Sigs/Template.dhall \
+            src/Sigs/interpreter.dhall \
+            src/Sigs/template.dhall \
             src/Fixtures/package.dhall \
             src/Fixtures/Exhaustive.dhall \
             src/Primitive/toText.dhall
