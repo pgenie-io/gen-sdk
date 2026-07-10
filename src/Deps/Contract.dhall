@@ -1,2 +1,2 @@
-https://raw.githubusercontent.com/pgenie-io/gen-contract/4afe7aea4b1a03f35a7d46b89a60739afa383b9e/src/package.dhall
+https://raw.githubusercontent.com/pgenie-io/gen-contract/v5.0.0/src/package.dhall
   sha256:1d465b62d9b8f3aef84d8341a0b23b0ce2ef17867cdea1b0ff0711f6f780ddd2
