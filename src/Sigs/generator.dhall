@@ -7,5 +7,4 @@ in  \(Config : Type) ->
             \(config : Optional Config) ->
               merge { None = interpret defaultConfig, Some = interpret } config
 
-      in    { contractVersion = Contract.contractVersion, compile }
-          : Contract.Generator Config
+      in  Contract.module Config compile
