@@ -42,8 +42,8 @@ at the leaves rendering text.
 
 ```mermaid
 flowchart TD
-    Gen["Gen.dhall — entry point"] --> compile["compile.dhall"]
-    Gen --> Config["Config.dhall"]
+    package["src/package.dhall — entry point"] --> compile["compile.dhall"]
+    package --> Config["Config.dhall"]
     compile --> Interpreters["Interpreters/* — model → data, tree-shaped"]
     Interpreters --> Config
     Interpreters --> Templates["Templates/* — Params → Text, pure"]
@@ -63,8 +63,8 @@ Forbidden edges (enforced by review, not by tooling):
 ## Anatomy of a generator repository
 
 ```
-gen/
-  Gen.dhall            -- entry point: Contract.module Config compile
+src/
+  package.dhall        -- entry point: Contract.module Config compile
   Config.dhall         -- the generator's user-facing config record type
   compile.dhall        -- Optional Config -> Project -> Compiled (List File)
   InterpreterConfig.dhall -- internal config Type + resolve, threaded through Interpreters
@@ -77,18 +77,19 @@ gen/
   Interpreters/        -- one module per model node kind; forms a tree
   Templates/           -- one module per rendered text fragment or file kind
   Structures/          -- (optional) pure shared data types, e.g. ImportSet
-tests/                 -- executable fixtures, e.g. Exhaustive.dhall
-demo-output/           -- committed materialisation of a test fixture
+demos/                 -- executable fixture drivers, e.g. Exhaustive.dhall
 ```
 
 `Deps/` holds nothing but frozen (`sha256`-pinned) remote imports. Utilities
 belong in the layer that owns them, not in a grab-bag directory. There is no
 `package.dhall` aggregator in `Deps/`: every consumer — `Interpreters/*`,
-`Templates/*`, `ResolvedTarget.dhall`, `tests/*` — imports exactly the
+`Templates/*`, `src/InterpreterConfig.dhall`, `demos/*` — imports exactly the
 `Deps/*.dhall` files it uses, bound to a name matching the file
 (`let Sdk = ../Deps/Sdk.dhall`, `let Prelude = ../Deps/Prelude.dhall`, ...).
 A barrel import would let a leaf module reach dependencies it doesn't
-actually need and obscures which ones it does.
+actually need and obscures which ones it does. The same rule applies to
+`src/InterpreterConfig.dhall` and fixture drivers in `demos/`: import only
+the `Deps/*.dhall` files they actually use.
 
 ## The two sigs
 
@@ -130,7 +131,7 @@ module in `Templates/` ends with `Sdk.Sigs.Template.module Params run`. No
 exceptions — uniformity is what lets an agent open any module and know its
 shape.
 
-Each generator defines its own internal config in `gen/InterpreterConfig.dhall`,
+Each generator defines its own internal config in `src/InterpreterConfig.dhall`,
 exporting a `Type` (the shape threaded through `Interpreters/`) and a
 `resolve : Optional Config -> Project -> Type` (the derivation from the
 user-facing `Config.dhall` plus project metadata, previously inlined in
@@ -260,7 +261,7 @@ Callers (tests, and any host that wants a path→content map instead of a
 
 ## Entry and distribution contract
 
-`Gen.dhall` is one line:
+`src/package.dhall` is one line:
 
 ```dhall
 let Contract = ./Deps/Contract.dhall in Contract.module ./Config.dhall ./compile.dhall
@@ -281,7 +282,7 @@ config and the project metadata) and hands the result to
 `Interpreters/Project`.
 
 A generator is **distributed** as a single self-contained file: resolve and
-freeze `gen/Gen.dhall` into `resolved.dhall` and attach it to a GitHub
+freeze `src/package.dhall` into `resolved.dhall` and attach it to a GitHub
 release. Users reference it by URL (optionally with integrity hash) in their
 pGenie project file:
 
@@ -295,33 +296,32 @@ artifacts:
 
 ## Testing and verification
 
-- `tests/` holds executable fixtures. Each applies the generator to an SDK
-  fixture project ([`src/Fixtures/`](../src/Fixtures)) and turns the result
+- `demos/` holds executable fixture drivers. Each applies the generator to an
+  SDK fixture project ([`src/Fixtures/`](../src/Fixtures)) and turns the result
   into a file map with `Sdk.Output.toFileMap`:
 
   ```dhall
-  let Sdk = ../gen/Deps/Sdk.dhall
+  let Sdk = ../src/Deps/Sdk.dhall
 
-  let Gen = ../gen/Gen.dhall
+  let Gen = ../src/package.dhall
 
   in  Sdk.Output.toFileMap
         (Gen.compile (Some { useOptional = True }) Sdk.Fixtures.Exhaustive)
   ```
 
-- Materialise with
-  `dhall to-directory-tree --allow-path-separators --file tests/Exhaustive.dhall --output demo-output`.
+- Materialise locally with
+  `dhall to-directory-tree --allow-path-separators --file demos/Exhaustive.dhall --output demos/Exhaustive`.
 - **Verify with the target toolchain**: the generated artifact must build and
   its generated tests must pass (`mvn verify`, `cargo test`, ...). Type-checking
   the Dhall is necessary but not sufficient.
-- `demo-output/` is committed, so diffs in generated output are reviewable
-  alongside the generator change that caused them. Never edit it by hand.
-- CI regenerates every fixture and builds the result; the release workflow
-  reuses the same check before publishing `resolved.dhall`.
+- The materialised output under `demos/*/` is **not committed**. CI regenerates
+  every fixture into a transient directory and builds the result; the release
+  workflow reuses the same check before publishing `resolved.dhall`.
 
 ## Implementing a new generator: the recipe
 
-1. **Scaffold** the layout above: `gen/{Gen,Config,compile,InterpreterConfig}.dhall`,
-   `gen/{Deps,Interpreters,Templates}/`. `Deps/` needs two SDK pins:
+1. **Scaffold** the layout above: `src/{package,Config,compile,InterpreterConfig}.dhall`,
+   `src/{Deps,Interpreters,Templates}/`. `Deps/` needs two SDK pins:
    `Contract.dhall` pointing to `gen-contract/src/package.dhall` and
    `Sdk.dhall` pointing to `gen-sdk/src/package.dhall`. Every
    `Interpreters/*.dhall`/`Templates/*.dhall` module references
@@ -347,8 +347,9 @@ artifacts:
    custom type in `Interpreters/Project`.
 7. **Aggregate** the cross-file outputs (README, manifest, shared runtime
    module) in `Interpreters/Project` from the children's outputs.
-8. **Add a test fixture** in `tests/` against `Sdk.Fixtures.Exhaustive`,
-   commit `demo-output/`, make CI build it with the target toolchain.
+8. **Add a fixture driver** in `demos/` against `Sdk.Fixtures.Exhaustive`,
+   make CI generate it into a transient directory and build it with the target
+   toolchain.
 9. **Release**: freeze to `resolved.dhall`, publish as a release asset.
 
 ## Dhall style rules
