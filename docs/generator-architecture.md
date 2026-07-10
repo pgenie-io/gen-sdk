@@ -74,7 +74,6 @@ gen/
     Prelude.dhall      -- Dhall Prelude
     Lude.dhall         -- lude.dhall (Compiled, File, Text utilities)
     Typeclasses.dhall  -- typeclasses.dhall (Applicative, Alternative, ...)
-    package.dhall
   Interpreters/        -- one module per model node kind; forms a tree
   Templates/           -- one module per rendered text fragment or file kind
   Structures/          -- (optional) pure shared data types, e.g. ImportSet
@@ -83,7 +82,13 @@ demo-output/           -- committed materialisation of a test fixture
 ```
 
 `Deps/` holds nothing but frozen (`sha256`-pinned) remote imports. Utilities
-belong in the layer that owns them, not in a grab-bag directory.
+belong in the layer that owns them, not in a grab-bag directory. There is no
+`package.dhall` aggregator in `Deps/`: every consumer — `Interpreters/*`,
+`Templates/*`, `ResolvedTarget.dhall`, `tests/*` — imports exactly the
+`Deps/*.dhall` files it uses, bound to a name matching the file
+(`let Sdk = ../Deps/Sdk.dhall`, `let Prelude = ../Deps/Prelude.dhall`, ...).
+A barrel import would let a leaf module reach dependencies it doesn't
+actually need and obscures which ones it does.
 
 ## The two sigs
 
@@ -295,12 +300,12 @@ artifacts:
   into a file map with `Sdk.Output.toFileMap`:
 
   ```dhall
+  let Sdk = ../gen/Deps/Sdk.dhall
+
   let Gen = ../gen/Gen.dhall
 
-  let Deps = ../gen/Deps/package.dhall
-
-  in  Deps.Sdk.Output.toFileMap
-        (Gen.compile (Some { useOptional = True }) Deps.Sdk.Fixtures.Exhaustive)
+  in  Sdk.Output.toFileMap
+        (Gen.compile (Some { useOptional = True }) Sdk.Fixtures.Exhaustive)
   ```
 
 - Materialise with
