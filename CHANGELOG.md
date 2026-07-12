@@ -1,3 +1,9 @@
+# Upcoming
+
+## Non-breaking
+
+- Renamed `demos/` to `fixtures/` in the generator-repository conventions documented in `docs/generator-architecture.md`, aligning the directory name with the `Sdk.Fixtures` module it exercises. The local verification output directory is now `generated-output/` instead of `demos/Exhaustive/`.
+
 # v2.0.0
 
 ## Breaking

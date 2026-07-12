@@ -70,13 +70,13 @@ src/
   Interpreters/        -- one module per model node kind; forms a tree, rooted at Project.dhall
   Templates/           -- one module per rendered text fragment or file kind
   Structures/          -- (optional) pure shared data types, e.g. ImportSet
-demos/                 -- executable fixture drivers, e.g. Exhaustive.dhall
+fixtures/              -- executable fixture drivers, e.g. Exhaustive.dhall
 ```
 
 `Deps/` holds nothing but frozen (`sha256`-pinned) remote imports. Utilities
 belong in the layer that owns them, not in a grab-bag directory. There is no
 `package.dhall` aggregator in `Deps/`: every consumer — `src/package.dhall`,
-`Interpreters/*`, `Templates/*`, `demos/*` — imports exactly the
+`Interpreters/*`, `Templates/*`, `fixtures/*` — imports exactly the
 `Deps/*.dhall` files it uses, bound to a name matching the file
 (`let Sdk = ../Deps/Sdk.dhall`, `let Prelude = ../Deps/Prelude.dhall`, ...).
 A barrel import would let a leaf module reach dependencies it doesn't
@@ -347,7 +347,7 @@ artifacts:
 
 ## Testing and verification
 
-- `demos/` holds executable fixture drivers. Each applies the generator to an
+- `fixtures/` holds executable fixture drivers. Each applies the generator to an
   SDK fixture project ([`src/Fixtures/`](../src/Fixtures)) and turns the result
   into a file map with `Sdk.Output.toFileMap`:
 
@@ -361,11 +361,11 @@ artifacts:
   ```
 
 - Materialise locally with
-  `dhall to-directory-tree --allow-path-separators --file demos/Exhaustive.dhall --output demos/Exhaustive`.
+  `dhall to-directory-tree --allow-path-separators --file fixtures/Exhaustive.dhall --output generated-output`.
 - **Verify with the target toolchain**: the generated artifact must build and
   its generated tests must pass (`mvn verify`, `cargo test`, ...). Type-checking
   the Dhall is necessary but not sufficient.
-- The materialised output under `demos/*/` is **not committed**. CI regenerates
+- The materialised output under `fixtures/*/` is **not committed**. CI regenerates
   every fixture into a transient directory and builds the result; the release
   workflow reuses the same check before publishing `resolved.dhall`.
 
@@ -399,7 +399,7 @@ artifacts:
    custom type in `Interpreters/Project`.
 7. **Aggregate** the cross-file outputs (README, manifest, shared runtime
    module) in `Interpreters/Project` from the children's outputs.
-8. **Add a fixture driver** in `demos/` against `Sdk.Fixtures.Exhaustive`,
+8. **Add a fixture driver** in `fixtures/` against `Sdk.Fixtures.Exhaustive`,
    make CI generate it into a transient directory and build it with the target
    toolchain.
 9. **Release**: freeze to `resolved.dhall`, publish as a release asset.
