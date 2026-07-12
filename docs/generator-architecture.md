@@ -44,6 +44,7 @@ flowchart TD
     package["src/package.dhall — entry point: Config, defaultConfig, Sdk.Sigs.generator"] --> Interpreters["Interpreters/* — model → data, tree-shaped, rooted at Project"]
     Interpreters --> Templates["Templates/* — Params → Text, pure"]
     Interpreters --> Structures["Structures/* — shared pure data (optional layer)"]
+    package --> Structures
     Templates --> Structures
 ```
 
@@ -197,7 +198,7 @@ Interpreters translate the model into target-specific data. Rules:
 The interpreter tree of java.gen, as a representative instance:
 
 ```mermaid
-flowchart LR
+flowchart TD
     Project --> Query
     Project --> CustomType
     Query --> Result --> ResultRows --> ResultColumns --> Member
