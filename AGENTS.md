@@ -15,11 +15,14 @@ contract/schema itself lives in the sibling `gen-contract` repository.
 ## Working rules
 
 - Do not duplicate the contract from `gen-contract`. Import `Project` and
-  `module` from `../gen-contract/src/package.dhall` in Dhall.
+  `module` from the pinned remote import in `src/Deps/Contract.dhall`
+  (a `https://raw.githubusercontent.com/pgenie-io/gen-contract/...` URL with
+  a `sha256` integrity check) — never a local filesystem path.
 - Do not reintroduce a Haskell package here. If a generator author or test
   needs Haskell-side fixtures, that belongs in the consuming repo (`pgenie`),
   not here.
 - Prefer Dhall formatting and validation for `src/` changes.
+- Never reference `gen-contract` or any other sibling `pgenie-io` repository via a local filesystem path (`../gen-contract/...`). Always use a pinned remote import (`https://raw.githubusercontent.com/pgenie-io/<repo>/<tag>/...` with a `sha256`), as `src/Deps/Contract.dhall` already does.
 
 ## Validation
 
