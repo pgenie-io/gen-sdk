@@ -1,5 +1,11 @@
 # Upcoming
 
+## Breaking
+
+- Pinned `gen-contract` to v5.0.0. `Scalar.Custom` now carries a `CustomTypeRef` (`{ name, pgSchema, pgName, index }`, resolvable into `Project.customTypes`) instead of a bare `Name`.
+- Added `CustomTypes.{supportedCustomTypes, supportedCustomTypesReasoned, customTypeIsSupported, queryIsSupported}`, built on one topological left fold over `Project.customTypes`, for generators to detect and skip (with a warning) custom types and queries that transitively depend on a kind of custom type they don't support.
+- Extended `Fixtures.Exhaustive` with a domain custom type and a composite-over-domain custom type, in a non-`public` schema with a `pgName` that diverges from its identifier's snake_case, to exercise both the new support-fold helpers and authentic-`pgSchema`/`pgName` resolution in downstream generators.
+
 ## Non-breaking
 
 - Renamed `demos/` to `fixtures/` in the generator-repository conventions documented in `docs/generator-architecture.md`, aligning the directory name with the `Sdk.Fixtures` module it exercises. The local verification output directory is now `generated-output/` instead of `demos/Exhaustive/`.
