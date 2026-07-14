@@ -5,6 +5,7 @@
 - Pinned `gen-contract` to v5.0.0. `Scalar.Custom` now carries a `CustomTypeRef` (`{ name, pgSchema, pgName, index }`, resolvable into `Project.customTypes`) instead of a bare `Name`.
 - Added `CustomTypes.{supportedCustomTypes, supportedCustomTypesReasoned, customTypeIsSupported, queryIsSupported}`, built on one topological left fold over `Project.customTypes`, for generators to detect and skip (with a warning) custom types and queries that transitively depend on a kind of custom type they don't support.
 - Extended `Fixtures.Exhaustive` with a domain custom type and a composite-over-domain custom type, in a non-`public` schema with a `pgName` that diverges from its identifier's snake_case, to exercise both the new support-fold helpers and authentic-`pgSchema`/`pgName` resolution in downstream generators.
+- Pinned `gen-contract`'s inlined `Value` shape: `dimensionality : Natural` and `elementIsNullable : Bool` now sit directly on `Value` (no more `arraySettings : Optional ArraySettings`), with `dimensionality = 0` meaning a bare scalar. Updated `Fixtures.Exhaustive` accordingly.
 
 ## Non-breaking
 

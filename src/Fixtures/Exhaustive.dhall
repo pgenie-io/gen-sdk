@@ -63,13 +63,7 @@ let scalarQueries =
                       { name = primitiveName
                       , pgName = inSnakeCase
                       , isNullable = nullable
-                      , value =
-                        { arraySettings =
-                            if    Natural/isZero dimensionality
-                            then  None Contract.ArraySettings
-                            else  Some { dimensionality, elementIsNullable }
-                        , scalar
-                        }
+                      , value = { dimensionality, elementIsNullable, scalar }
                       }
 
                 let dimensionality = Natural/show dimensionality
@@ -219,7 +213,8 @@ let coordinatesDeclarations =
           , pgName = "x"
           , isNullable = True
           , value =
-            { arraySettings = None Contract.ArraySettings
+            { dimensionality = 0
+            , elementIsNullable = False
             , scalar = Contract.Scalar.Primitive Contract.Primitive.Float8
             }
           }
@@ -227,7 +222,8 @@ let coordinatesDeclarations =
           , pgName = "y"
           , isNullable = True
           , value =
-            { arraySettings = None Contract.ArraySettings
+            { dimensionality = 0
+            , elementIsNullable = False
             , scalar = Contract.Scalar.Primitive Contract.Primitive.Float8
             }
           }
@@ -246,7 +242,8 @@ let coordinatesDeclarations =
 
 let temperatureCelsiusDeclarations =
       domainDeclarations
-        { arraySettings = None Contract.ArraySettings
+        { dimensionality = 0
+        , elementIsNullable = False
         , scalar = Contract.Scalar.Primitive Contract.Primitive.Float8
         }
         "temperatureCelsius"
@@ -276,7 +273,8 @@ let weatherReadingDeclarations =
           , pgName = "temperature"
           , isNullable = False
           , value =
-            { arraySettings = None Contract.ArraySettings
+            { dimensionality = 0
+            , elementIsNullable = False
             , scalar =
                 Contract.Scalar.Custom
                   { name =
@@ -360,7 +358,8 @@ let multiParamColQuery
               , pgName
               , isNullable
               , value =
-                { arraySettings = None Contract.ArraySettings
+                { dimensionality = 0
+                , elementIsNullable = False
                 , scalar = Contract.Scalar.Primitive Contract.Primitive.Text
                 }
               }
@@ -373,7 +372,8 @@ let multiParamColQuery
               , pgName
               , isNullable
               , value =
-                { arraySettings = None Contract.ArraySettings
+                { dimensionality = 0
+                , elementIsNullable = False
                 , scalar = Contract.Scalar.Primitive Contract.Primitive.Int8
                 }
               }
