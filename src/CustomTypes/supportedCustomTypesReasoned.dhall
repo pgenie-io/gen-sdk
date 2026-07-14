@@ -21,7 +21,9 @@ let valueVerdict =
       \(value : Contract.Value) ->
         merge
           { Primitive = \(_ : Contract.Primitive) -> None Contract.CustomTypeRef
-          , Custom = \(ref : Contract.CustomTypeRef) -> verdictAt verdictsSoFar ref.index
+          , Custom =
+              \(ref : Contract.CustomTypeRef) ->
+                verdictAt verdictsSoFar ref.index
           }
           value.scalar
 
@@ -45,7 +47,7 @@ let firstUnsupported =
 let supportedCustomTypesReasoned
     : (Contract.CustomTypeDefinition -> Bool) ->
       List Contract.CustomType ->
-      List Verdict
+        List Verdict
     = \(kindIsSupported : Contract.CustomTypeDefinition -> Bool) ->
       \(customTypes : List Contract.CustomType) ->
         foldl
@@ -62,25 +64,29 @@ let supportedCustomTypesReasoned
                       , index = Prelude.List.length Verdict verdictsSoFar
                       }
 
-              in  verdictsSoFar
-                # [ if    kindIsSupported customType.definition == False
-                    then  selfCause
-                    else  merge
-                            { Composite =
-                                \(members : List Contract.Member) ->
-                                  firstUnsupported
-                                    verdictsSoFar
-                                    ( Prelude.List.map
-                                        Contract.Member
-                                        Contract.Value
-                                        (\(m : Contract.Member) -> m.value)
-                                        members
-                                    )
-                            , Enum = \(_ : List Contract.EnumVariant) -> None Contract.CustomTypeRef
-                            , Domain = \(value : Contract.Value) -> valueVerdict verdictsSoFar value
-                            }
-                            customType.definition
-                  ]
+              in    verdictsSoFar
+                  # [ if    kindIsSupported customType.definition == False
+                      then  selfCause
+                      else  merge
+                              { Composite =
+                                  \(members : List Contract.Member) ->
+                                    firstUnsupported
+                                      verdictsSoFar
+                                      ( Prelude.List.map
+                                          Contract.Member
+                                          Contract.Value
+                                          (\(m : Contract.Member) -> m.value)
+                                          members
+                                      )
+                              , Enum =
+                                  \(_ : List Contract.EnumVariant) ->
+                                    None Contract.CustomTypeRef
+                              , Domain =
+                                  \(value : Contract.Value) ->
+                                    valueVerdict verdictsSoFar value
+                              }
+                              customType.definition
+                    ]
           )
           ([] : List Verdict)
 

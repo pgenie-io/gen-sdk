@@ -4,7 +4,7 @@ let foldl
       forall (b : Type) ->
       (b -> a -> b) ->
       b ->
-      b
+        b
     = \(a : Type) ->
       \(xs : List a) ->
       \(b : Type) ->

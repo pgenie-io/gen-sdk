@@ -152,10 +152,13 @@ let customTypeDeclarations =
                 inCamelSnakeCase
                 inScreamingSnakeCase
 
-        in    { customTypes = [ { name = typeName, pgSchema, pgName, definition } ]
+        in    { customTypes =
+                [ { name = typeName, pgSchema, pgName, definition } ]
               , queries =
                   scalarQueries
-                    (Contract.Scalar.Custom { name = typeName, pgSchema, pgName, index })
+                    ( Contract.Scalar.Custom
+                        { name = typeName, pgSchema, pgName, index }
+                    )
                     inCamelCase
                     inPascalCase
                     inKebabCase
