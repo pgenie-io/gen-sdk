@@ -138,36 +138,11 @@ let customTypeDeclarations =
       \(inSnakeCase : Text) ->
       \(inCamelSnakeCase : Text) ->
       \(inScreamingSnakeCase : Text) ->
-          { customTypes =
-            [ { name =
-                  name
-                    inCamelCase
-                    inPascalCase
-                    inKebabCase
-                    inTrainCase
-                    inScreamingKebabCase
-                    inSnakeCase
-                    inCamelSnakeCase
-                    inScreamingSnakeCase
-              , pgSchema = "public"
-              , pgName = inSnakeCase
-              , definition
-              }
-            ]
-          , queries =
-              scalarQueries
-                ( Contract.Scalar.Custom
-                    ( name
-                        inCamelCase
-                        inPascalCase
-                        inKebabCase
-                        inTrainCase
-                        inScreamingKebabCase
-                        inSnakeCase
-                        inCamelSnakeCase
-                        inScreamingSnakeCase
-                    )
-                )
+      \(pgSchema : Text) ->
+      \(pgName : Text) ->
+      \(index : Natural) ->
+        let typeName =
+              name
                 inCamelCase
                 inPascalCase
                 inKebabCase
@@ -176,8 +151,21 @@ let customTypeDeclarations =
                 inSnakeCase
                 inCamelSnakeCase
                 inScreamingSnakeCase
-          }
-        : Declarations
+
+        in    { customTypes = [ { name = typeName, pgSchema, pgName, definition } ]
+              , queries =
+                  scalarQueries
+                    (Contract.Scalar.Custom { name = typeName, pgSchema, pgName, index })
+                    inCamelCase
+                    inPascalCase
+                    inKebabCase
+                    inTrainCase
+                    inScreamingKebabCase
+                    inSnakeCase
+                    inCamelSnakeCase
+                    inScreamingSnakeCase
+              }
+            : Declarations
 
 let enumDeclarations =
       \(values : List Contract.EnumVariant) ->
@@ -186,6 +174,10 @@ let enumDeclarations =
 let compositeDeclarations =
       \(members : List Contract.Member) ->
         customTypeDeclarations (Contract.CustomTypeDefinition.Composite members)
+
+let domainDeclarations =
+      \(value : Contract.Value) ->
+        customTypeDeclarations (Contract.CustomTypeDefinition.Domain value)
 
 let moodDeclarations =
       enumDeclarations
@@ -214,6 +206,9 @@ let moodDeclarations =
         "mood"
         "Mood"
         "MOOD"
+        "public"
+        "mood"
+        0
 
 let coordinatesDeclarations =
       compositeDeclarations
@@ -242,6 +237,73 @@ let coordinatesDeclarations =
         "coordinate"
         "Coordinate"
         "COORDINATE"
+        "public"
+        "coordinate"
+        1
+
+let temperatureCelsiusDeclarations =
+      domainDeclarations
+        { arraySettings = None Contract.ArraySettings
+        , scalar = Contract.Scalar.Primitive Contract.Primitive.Float8
+        }
+        "temperatureCelsius"
+        "TemperatureCelsius"
+        "temperature-celsius"
+        "Temperature-Celsius"
+        "TEMPERATURE-CELSIUS"
+        "temperature_celsius"
+        "Temperature_Celsius"
+        "TEMPERATURE_CELSIUS"
+        "measurements"
+        "temp_c"
+        2
+
+let weatherReadingDeclarations =
+      compositeDeclarations
+        [ { name =
+              name
+                "temperature"
+                "Temperature"
+                "temperature"
+                "Temperature"
+                "TEMPERATURE"
+                "temperature"
+                "Temperature"
+                "TEMPERATURE"
+          , pgName = "temperature"
+          , isNullable = False
+          , value =
+            { arraySettings = None Contract.ArraySettings
+            , scalar =
+                Contract.Scalar.Custom
+                  { name =
+                      name
+                        "temperatureCelsius"
+                        "TemperatureCelsius"
+                        "temperature-celsius"
+                        "Temperature-Celsius"
+                        "TEMPERATURE-CELSIUS"
+                        "temperature_celsius"
+                        "Temperature_Celsius"
+                        "TEMPERATURE_CELSIUS"
+                  , pgSchema = "measurements"
+                  , pgName = "temp_c"
+                  , index = 2
+                  }
+            }
+          }
+        ]
+        "weatherReading"
+        "WeatherReading"
+        "weather-reading"
+        "Weather-Reading"
+        "WEATHER-READING"
+        "weather_reading"
+        "Weather_Reading"
+        "WEATHER_READING"
+        "public"
+        "weather_reading"
+        3
 
 let idempotentNonIdentityQuery
     : Contract.Query
@@ -427,7 +489,11 @@ in  { space =
     , customTypes =
         Prelude.List.concat
           Contract.CustomType
-          [ moodDeclarations.customTypes, coordinatesDeclarations.customTypes ]
+          [ moodDeclarations.customTypes
+          , coordinatesDeclarations.customTypes
+          , temperatureCelsiusDeclarations.customTypes
+          , weatherReadingDeclarations.customTypes
+          ]
     , queries =
         Prelude.List.concat
           Contract.Query
@@ -1003,6 +1069,8 @@ in  { space =
               "XML"
           , moodDeclarations.queries
           , coordinatesDeclarations.queries
+          , temperatureCelsiusDeclarations.queries
+          , weatherReadingDeclarations.queries
           , [ idempotentNonIdentityQuery
             , nonIdempotentNonIdentityQuery
             , multiParamColQuery
@@ -1022,6 +1090,9 @@ in  { space =
             ''
             create type mood as enum ('sad', 'ok', 'happy');
             create type coordinate as (x float8, y float8);
+            create schema measurements;
+            create domain measurements.temp_c as float8;
+            create type weather_reading as (temperature measurements.temp_c);
             ''
         }
       ]
